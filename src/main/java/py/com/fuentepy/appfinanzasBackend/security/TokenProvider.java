@@ -1,6 +1,7 @@
 package py.com.fuentepy.appfinanzasBackend.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import py.com.fuentepy.appfinanzasBackend.config.AppProperties;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Service;
 import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TokenProvider {
@@ -32,10 +35,16 @@ public class TokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
+        List<String> roles = new ArrayList<>();
+
+        for (GrantedAuthority authority : userPrincipal.getAuthorities()) {
+            roles.add(authority.getAuthority());
+        }
+
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .claim("email", userPrincipal.getEmail())
-                .claim("authorities", userPrincipal.getAuthorities())
+                .claim("authorities", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
