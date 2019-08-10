@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -54,6 +55,30 @@ public class AuthResource {
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
+    @PostMapping("/loginSocial")
+    public ResponseEntity<?> authenticateUserSocial(@Valid @RequestBody LoginRequest loginRequest) {
+        Usuario usuario = null;
+
+        Optional<Usuario> optional = usuarioRepository.findByEmail(loginRequest.getEmail());
+        if (optional.isPresent()) {
+            usuario = optional.get();
+        }else {
+            throw new BadRequestException("Email no existe.");
+        }
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        usuario.getEmail(),
+                        usuario.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = tokenProvider.createToken(authentication);
+        return ResponseEntity.ok(new AuthResponse(token));
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (usuarioRepository.existsByEmail(signUpRequest.getEmail())) {
@@ -76,7 +101,7 @@ public class AuthResource {
                 .buildAndExpand(result.getId()).toUri();
 
         return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "Usuario registered successfully@"));
+                .body(new ApiResponse(true, "Usuario registered successfully"));
     }
 
 }
