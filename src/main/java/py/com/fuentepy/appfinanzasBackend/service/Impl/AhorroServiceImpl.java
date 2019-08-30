@@ -13,6 +13,7 @@ import py.com.fuentepy.appfinanzasBackend.entity.Concepto;
 import py.com.fuentepy.appfinanzasBackend.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.payload.request.ahorro.AhorroNew;
 import py.com.fuentepy.appfinanzasBackend.repository.AhorroRepository;
 import py.com.fuentepy.appfinanzasBackend.repository.ConceptoRepository;
 import py.com.fuentepy.appfinanzasBackend.repository.MovimientoRepository;
@@ -81,30 +82,31 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public AhorroModel save(AhorroModel ahorroModel) {
-        Usuario usuario = usuarioRepository.findById2(ahorroModel.getUsuarioId());
-        Ahorro entity = AhorroConverter.modelToEntity(ahorroModel);
-
-        if(!entity.getEstado()){
-            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-
-            Movimiento movimiento = new Movimiento();
-            movimiento.setNumeroComprobante("");
-            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-            movimiento.setMontoPagado(entity.getMontoCapital());
-            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-            movimiento.setPrestamoId(null);
-            movimiento.setAhorroId(entity);
-            movimiento.setTarjetaId(null);
-            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-            movimiento.setConceptoId(concepto);
-            movimiento.setMonedaId(entity.getMonedaId());
-//            movimiento.setTipoPagoId(entity.getTipoCobroId());
-            movimiento.setUsuarioId(usuario);
-            movimientoRepository.save(movimiento);
+    public boolean create(AhorroNew ahorroNew, Long usuarioId) {
+        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroNewToAhorroEntity(ahorroNew, usuarioId));
+        if (entity != null) {
+            return true;
         }
+        return false;
 
-        return AhorroConverter.entityToModel(ahorroRepository.save(entity));
+//        if(!entity.getEstado()){
+//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
+//
+//            Movimiento movimiento = new Movimiento();
+//            movimiento.setNumeroComprobante("");
+//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
+//            movimiento.setMontoPagado(entity.getMontoCapital());
+//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
+//            movimiento.setPrestamoId(null);
+//            movimiento.setAhorroId(entity);
+//            movimiento.setTarjetaId(null);
+//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
+//            movimiento.setConceptoId(concepto);
+//            movimiento.setMonedaId(entity.getMonedaId());
+////            movimiento.setTipoPagoId(entity.getTipoCobroId());
+//            movimiento.setUsuarioId(usuario);
+//            movimientoRepository.save(movimiento);
+//        }
     }
 
     @Override

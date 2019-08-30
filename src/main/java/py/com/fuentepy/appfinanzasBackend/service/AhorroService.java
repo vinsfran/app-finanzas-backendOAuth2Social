@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.entity.Ahorro;
 import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.payload.request.ahorro.AhorroNew;
 
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,7 @@ public interface AhorroService {
 
     AhorroModel findById(Long id);
 
-    AhorroModel save(AhorroModel ahorroModel);
+    boolean create(AhorroNew ahorroNew, Long usuarioId);
 
     void delete(Long id);
 

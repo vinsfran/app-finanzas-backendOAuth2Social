@@ -1,5 +1,7 @@
 package py.com.fuentepy.appfinanzasBackend.resource;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.payload.request.ahorro.AhorroNew;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
@@ -80,13 +83,19 @@ public class AhorroResource {
         return new ResponseEntity<>(ahorro, HttpStatus.OK);
     }
 
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @PostMapping()
-    public ResponseEntity<?> create(@Valid @RequestBody AhorroModel ahorroModel, BindingResult result) {
+    public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @Valid @RequestBody AhorroNew ahorroNew,
+                                    @ApiIgnore BindingResult result) {
 
-        System.out.println("create: " + ahorroModel.toString());
+        Long usuarioId = userPrincipal.getId();
 
-        AhorroModel ahorroNew = null;
+//        AhorroModel ahorroNew = null;
         Map<String, Object> response = new HashMap<>();
         if (result.hasErrors()) {
 //            List<String> errors = new ArrayList<>();
@@ -106,14 +115,18 @@ public class AhorroResource {
         }
 
         try {
-            ahorroNew = ahorroService.save(ahorroModel);
+            if (ahorroService.create(ahorroNew, usuarioId)) {
+                response.put("mensaje", "El Ahorro ha sido creada con éxito!");
+            }else {
+                response.put("mensaje", "El Ahorro se pudo crear!");
+            }
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar el insert en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "El Ahorro ha sido creada con éxito!");
-        response.put("ahorro", ahorroNew);
+
+//        response.put("ahorro", ahorroNew);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -146,7 +159,7 @@ public class AhorroResource {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         try {
-            ahorroUpdated = ahorroService.save(ahorroModel);
+//            ahorroUpdated = ahorroService.save(ahorroModel);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar el insert en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
