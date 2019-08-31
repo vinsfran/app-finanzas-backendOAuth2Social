@@ -7,9 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroNewRequest;
 import py.com.fuentepy.appfinanzasBackend.entity.*;
 import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.payload.request.ahorro.AhorroNew;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,30 +20,30 @@ public class AhorroConverter {
 
     private static final Log LOG = LogFactory.getLog(AhorroConverter.class);
 
-    public static Ahorro ahorroNewToAhorroEntity(AhorroNew ahorroNew, Long usuarioId) {
+    public static Ahorro ahorroNewToAhorroEntity(AhorroNewRequest ahorroNewRequest, Long usuarioId) {
         TipoAhorro tipoAhorro = new TipoAhorro();
-        tipoAhorro.setId(ahorroNew.getTipoAhorroId());
+        tipoAhorro.setId(ahorroNewRequest.getTipoAhorroId());
         Moneda moneda = new Moneda();
-        moneda.setId(ahorroNew.getMonedaId());
+        moneda.setId(ahorroNewRequest.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
-        entidadFinanciera.setId(ahorroNew.getEntidadFinancieraId());
+        entidadFinanciera.setId(ahorroNewRequest.getEntidadFinancieraId());
         TipoCobro tipoCobro = new TipoCobro();
-        tipoCobro.setId(ahorroNew.getTipoAhorroId());
+        tipoCobro.setId(ahorroNewRequest.getTipoAhorroId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
-        entity.setMontoCapital(ahorroNew.getMontoCapital());
-        entity.setFechaInicio(ahorroNew.getFechaInicio());
-        entity.setFechaVencimiento(ahorroNew.getFechaVencimiento());
-        entity.setPlazoTotal(ahorroNew.getPlazoTotal());
-        entity.setMontoCuota(ahorroNew.getMontoCuota());
-        entity.setInteres(ahorroNew.getInteres());
-        entity.setTasa(ahorroNew.getTasa());
-        entity.setCantidadCuotas(ahorroNew.getCantidadCuotas());
-        entity.setCantidadCuotasPagadas(ahorroNew.getCantidadCuotasPagadas());
-        entity.setMontoInteresCuota(ahorroNew.getMontoInteresCuota());
-        entity.setCantidadCobro(ahorroNew.getCantidadCobro());
-        entity.setEstado(ahorroNew.getEstado());
+        entity.setMontoCapital(ahorroNewRequest.getMontoCapital());
+        entity.setFechaInicio(ahorroNewRequest.getFechaInicio());
+        entity.setFechaVencimiento(ahorroNewRequest.getFechaVencimiento());
+        entity.setPlazoTotal(ahorroNewRequest.getPlazoTotal());
+        entity.setMontoCuota(ahorroNewRequest.getMontoCuota());
+        entity.setInteres(ahorroNewRequest.getInteres());
+        entity.setTasa(ahorroNewRequest.getTasa());
+        entity.setCantidadCuotas(ahorroNewRequest.getCantidadCuotas());
+        entity.setCantidadCuotasPagadas(ahorroNewRequest.getCantidadCuotasPagadas());
+        entity.setMontoInteresCuota(ahorroNewRequest.getMontoInteresCuota());
+        entity.setCantidadCobro(ahorroNewRequest.getCantidadCobro());
+        entity.setEstado(ahorroNewRequest.getEstado());
         entity.setTipoAhorroId(tipoAhorro);
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);

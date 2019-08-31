@@ -8,12 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.AhorroConverter;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroNewRequest;
 import py.com.fuentepy.appfinanzasBackend.entity.Ahorro;
-import py.com.fuentepy.appfinanzasBackend.entity.Concepto;
-import py.com.fuentepy.appfinanzasBackend.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.payload.request.ahorro.AhorroNew;
 import py.com.fuentepy.appfinanzasBackend.repository.AhorroRepository;
 import py.com.fuentepy.appfinanzasBackend.repository.ConceptoRepository;
 import py.com.fuentepy.appfinanzasBackend.repository.MovimientoRepository;
@@ -82,8 +80,8 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean create(AhorroNew ahorroNew, Long usuarioId) {
-        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroNewToAhorroEntity(ahorroNew, usuarioId));
+    public boolean create(AhorroNewRequest ahorroNewRequest, Long usuarioId) {
+        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroNewToAhorroEntity(ahorroNewRequest, usuarioId));
         if (entity != null) {
             return true;
         }

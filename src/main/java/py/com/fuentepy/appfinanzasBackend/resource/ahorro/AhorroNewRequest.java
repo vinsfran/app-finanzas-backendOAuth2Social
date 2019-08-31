@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.payload.request.ahorro;
+package py.com.fuentepy.appfinanzasBackend.resource.ahorro;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
@@ -13,8 +13,8 @@ import java.util.Date;
  * @author vinsfran
  */
 @Data
-@ApiModel(value="AhorroNew", description="Ejemplo de para un nuevo Ahorro")
-public class AhorroNew implements Serializable {
+@ApiModel(value="AhorroNewRequest", description="Ejemplo de para un nuevo Ahorro")
+public class AhorroNewRequest implements Serializable {
 
     @ApiModelProperty(value = "Cantidad de Cobro", required = true)
     @JsonProperty("cantidad_cobro")

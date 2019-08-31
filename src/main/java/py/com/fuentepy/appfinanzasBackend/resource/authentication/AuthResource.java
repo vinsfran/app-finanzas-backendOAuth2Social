@@ -1,13 +1,15 @@
-package py.com.fuentepy.appfinanzasBackend.resource;
+package py.com.fuentepy.appfinanzasBackend.resource.authentication;
 
+import org.springframework.http.HttpStatus;
 import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.exception.BadRequestException;
 import py.com.fuentepy.appfinanzasBackend.entity.AuthProvider;
 import py.com.fuentepy.appfinanzasBackend.payload.ApiResponse;
-import py.com.fuentepy.appfinanzasBackend.payload.AuthResponse;
-import py.com.fuentepy.appfinanzasBackend.payload.LoginRequest;
 import py.com.fuentepy.appfinanzasBackend.payload.SignUpRequest;
 import py.com.fuentepy.appfinanzasBackend.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.BaseResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.MessageResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -42,6 +46,11 @@ public class AuthResource {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -50,33 +59,12 @@ public class AuthResource {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
-    }
-
-    @PostMapping("/loginSocial")
-    public ResponseEntity<?> authenticateUserSocial(@Valid @RequestBody LoginRequest loginRequest) {
-        Usuario usuario = null;
-
-        Optional<Usuario> optional = usuarioRepository.findByEmail(loginRequest.getEmail());
-        if (optional.isPresent()) {
-            usuario = optional.get();
-        }else {
-            throw new BadRequestException("Email no existe.");
-        }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        usuario.getEmail(),
-                        usuario.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
+        TokenDTO tokenDTO = new TokenDTO(tokenProvider.createToken(authentication));
+        httpStatus = HttpStatus.OK;
+        message = new MessageResponse(StatusLevel.INFO, "Autenticacion correcta");
+        messages.add(message);
+        response = new LoginResponse(httpStatus.value(), messages, tokenDTO);
+        return new ResponseEntity<>(response, httpStatus);
     }
 
     @PostMapping("/signup")
