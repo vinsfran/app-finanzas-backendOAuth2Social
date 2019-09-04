@@ -13,7 +13,7 @@ import java.util.Date;
  * @author vinsfran
  */
 @Data
-@ApiModel(value = "ahorroUpdateRequest", description = "Ejemplo de para un Ahorro a modificar")
+@ApiModel(value = "ahorroUpdate", description = "Ejemplo de para un Ahorro a modificar")
 public class AhorroRequestUpdate implements Serializable {
 
     @ApiModelProperty(value = "Identificador unico del Ahorro", required = true)

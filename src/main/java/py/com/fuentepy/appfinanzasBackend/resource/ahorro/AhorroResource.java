@@ -117,7 +117,7 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody AhorroRequestNew request,
+                                    @Valid @RequestBody AhorroRequestNew ahorroNew,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -133,7 +133,7 @@ public class AhorroResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (ahorroService.create(request, usuarioId)) {
+                if (ahorroService.create(ahorroNew, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
                     message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido creado con éxito!");
                     messages.add(message);
@@ -162,13 +162,13 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody AhorroRequestUpdate request, BindingResult result) {
+                                    @Valid @RequestBody AhorroRequestUpdate ahorroUpdate, BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        Long id = request.getId();
+        Long id = ahorroUpdate.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -184,7 +184,7 @@ public class AhorroResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (ahorroService.update(request, usuarioId)) {
+                    if (ahorroService.update(ahorroUpdate, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido actualizado con éxito!");
                         messages.add(message);

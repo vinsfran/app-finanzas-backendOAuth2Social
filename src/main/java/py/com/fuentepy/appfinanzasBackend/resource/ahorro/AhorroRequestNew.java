@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "ahorroRequestNew", description = "Ejemplo de para un nuevo Ahorro")
+@ApiModel(value = "ahorroNew", description = "Ejemplo de para un nuevo Ahorro")
 public class AhorroRequestNew implements Serializable {
 
     @ApiModelProperty(value = "Cantidad de Cobro", required = true)
