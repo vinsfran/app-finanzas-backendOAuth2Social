@@ -15,10 +15,9 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.resource.BaseResponse;
-import py.com.fuentepy.appfinanzasBackend.resource.MessageResponse;
-import py.com.fuentepy.appfinanzasBackend.resource.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -41,15 +39,21 @@ public class AhorroResource {
     @Autowired
     private AhorroService ahorroService;
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @GetMapping()
-    public List<AhorroModel> getAll(@CurrentUser UserPrincipal userPrincipal) {
+    public List<AhorroModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         Long usuarioId = userPrincipal.getId();
         return ahorroService.findByUsuarioId(usuarioId);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @GetMapping("/page")
-    public ResponseEntity<?> getPageByUsuarioId(@CurrentUser UserPrincipal userPrincipal,
-                                                @ApiIgnore Pageable pageable) {
+    public ResponseEntity<?> getAllByPage(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                          @ApiIgnore Pageable pageable) {
         Long usuarioId = userPrincipal.getId();
         Page<AhorroModel> ahorros = null;
         Map<String, Object> response = new HashMap<>();
@@ -69,23 +73,41 @@ public class AhorroResource {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id) {
-        AhorroModel ahorro = null;
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                  @PathVariable Long id) {
+
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
         try {
-            ahorro = ahorroService.findById(id);
+            AhorroModel ahorroModel = ahorroService.findByIdAndUsuarioId(id, usuarioId);
+            if (ahorroModel == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
+                messages.add(message);
+                response = new AhorroResponse(httpStatus.value(), messages, ahorroModel);
+            }
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al realizar la en la base de datos!");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = new MessageResponse(StatusLevel.INFO, "Error al realizar la consulta en la base de datos!");
+            messages.add(message);
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
         }
-        if (ahorro == null) {
-            response.put("mensaje", "El Ahorro ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(ahorro, HttpStatus.OK);
+        return new ResponseEntity<>(response, httpStatus);
     }
 
 
@@ -95,7 +117,7 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody AhorroNewRequest ahorroNewRequest,
+                                    @Valid @RequestBody AhorroRequestNew request,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -111,9 +133,9 @@ public class AhorroResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (ahorroService.create(ahorroNewRequest, usuarioId)) {
+                if (ahorroService.create(request, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido creada con éxito!");
+                    message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido creado con éxito!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 } else {
@@ -134,44 +156,56 @@ public class AhorroResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
-    @PutMapping()
-    public ResponseEntity<?> update(@Valid @RequestBody AhorroModel ahorroModel, BindingResult result) {
-        Long id = ahorroModel.getId();
-        AhorroModel ahorroUpdated = null;
-        Map<String, Object> response = new HashMap<>();
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @Valid @RequestBody AhorroRequestUpdate request, BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        Long id = request.getId();
         if (result.hasErrors()) {
-//            List<String> errors = new ArrayList<>();
-//            for (FieldError err : result.getFieldErrors()) {
-//                errors.add("El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
-//            }
-
-            List<String> errors = result.getFieldErrors()
-                    .stream()
-                    .map(err -> {
-                        return "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage());
-                    })
-                    .collect(Collectors.toList());
-
-            response.put("errors", errors);
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                try {
+                    if (ahorroService.update(request, usuarioId)) {
+                        httpStatus = HttpStatus.CREATED;
+                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido actualizado con éxito!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    } else {
+                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro se pudo actualizar!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    }
+                } catch (DataAccessException e) {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+                    messages.add(message);
+                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            }
         }
-
-
-        if (ahorroService.findById(id) == null) {
-            response.put("mensaje", "Error: no se pudo editar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-        try {
-//            ahorroUpdated = ahorroService.save(ahorroModel);
-        } catch (DataAccessException e) {
-            response.put("mensaje", "Error al realizar el insert en la base de datos!");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        response.put("mensaje", "El Ahorro ha sido actualizado con éxito!");
-        response.put("ahorro", ahorroUpdated);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, httpStatus);
     }
 
     @Secured({"ROLE_ADMIN"})

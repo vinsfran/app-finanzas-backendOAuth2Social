@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import py.com.fuentepy.appfinanzasBackend.entity.Cliente;
-import py.com.fuentepy.appfinanzasBackend.repository.ClienteRepository;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Cliente;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ClienteRepository;
 import py.com.fuentepy.appfinanzasBackend.service.ClienteService;
 
 import java.util.List;

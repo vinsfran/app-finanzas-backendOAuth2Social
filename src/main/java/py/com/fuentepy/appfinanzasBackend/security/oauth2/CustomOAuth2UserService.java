@@ -1,9 +1,9 @@
 package py.com.fuentepy.appfinanzasBackend.security.oauth2;
 
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.exception.OAuth2AuthenticationProcessingException;
-import py.com.fuentepy.appfinanzasBackend.entity.AuthProvider;
-import py.com.fuentepy.appfinanzasBackend.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.data.entity.AuthProvider;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.security.oauth2.user.OAuth2UserInfo;
 import py.com.fuentepy.appfinanzasBackend.security.oauth2.user.OAuth2UserInfoFactory;

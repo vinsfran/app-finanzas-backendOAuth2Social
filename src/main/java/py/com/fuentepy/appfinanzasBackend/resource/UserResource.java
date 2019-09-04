@@ -1,8 +1,8 @@
 package py.com.fuentepy.appfinanzasBackend.resource;
 
 import py.com.fuentepy.appfinanzasBackend.exception.ResourceNotFoundException;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;

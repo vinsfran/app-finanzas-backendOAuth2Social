@@ -8,11 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.EntidadFinancieraConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.EntidadFinanciera;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.EntidadFinancieraModel;
-import py.com.fuentepy.appfinanzasBackend.repository.EntidadFinancieraRepository;
-import py.com.fuentepy.appfinanzasBackend.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.EntidadFinancieraRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.service.EntidadFinancieraService;
 
 import java.util.List;

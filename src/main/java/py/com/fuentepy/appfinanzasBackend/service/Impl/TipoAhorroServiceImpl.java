@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import py.com.fuentepy.appfinanzasBackend.entity.TipoAhorro;
-import py.com.fuentepy.appfinanzasBackend.repository.TipoAhorroRepository;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoAhorro;
+import py.com.fuentepy.appfinanzasBackend.data.repository.TipoAhorroRepository;
 import py.com.fuentepy.appfinanzasBackend.service.TipoAhorroService;
 
 import java.util.List;

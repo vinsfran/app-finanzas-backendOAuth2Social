@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import py.com.fuentepy.appfinanzasBackend.entity.TipoCobro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoCobro;
 import py.com.fuentepy.appfinanzasBackend.service.TipoCobroService;
 import springfox.documentation.annotations.ApiIgnore;
 

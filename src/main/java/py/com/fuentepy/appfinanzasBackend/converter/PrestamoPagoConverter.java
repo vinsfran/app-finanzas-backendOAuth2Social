@@ -7,10 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.entity.PrestamoPago;
-import py.com.fuentepy.appfinanzasBackend.entity.TipoPago;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
+import py.com.fuentepy.appfinanzasBackend.data.entity.PrestamoPago;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoPago;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.PrestamoPagoModel;
 
 import java.util.ArrayList;

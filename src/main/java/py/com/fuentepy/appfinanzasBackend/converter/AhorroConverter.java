@@ -7,9 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroNewRequest;
-import py.com.fuentepy.appfinanzasBackend.entity.*;
-import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,30 +21,63 @@ public class AhorroConverter {
 
     private static final Log LOG = LogFactory.getLog(AhorroConverter.class);
 
-    public static Ahorro ahorroNewToAhorroEntity(AhorroNewRequest ahorroNewRequest, Long usuarioId) {
+    public static Ahorro ahorroNewToAhorroEntity(AhorroRequestNew request, Long usuarioId) {
         TipoAhorro tipoAhorro = new TipoAhorro();
-        tipoAhorro.setId(ahorroNewRequest.getTipoAhorroId());
+        tipoAhorro.setId(request.getTipoAhorroId());
         Moneda moneda = new Moneda();
-        moneda.setId(ahorroNewRequest.getMonedaId());
+        moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
-        entidadFinanciera.setId(ahorroNewRequest.getEntidadFinancieraId());
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
         TipoCobro tipoCobro = new TipoCobro();
-        tipoCobro.setId(ahorroNewRequest.getTipoAhorroId());
+        tipoCobro.setId(request.getTipoAhorroId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
-        entity.setMontoCapital(ahorroNewRequest.getMontoCapital());
-        entity.setFechaInicio(ahorroNewRequest.getFechaInicio());
-        entity.setFechaVencimiento(ahorroNewRequest.getFechaVencimiento());
-        entity.setPlazoTotal(ahorroNewRequest.getPlazoTotal());
-        entity.setMontoCuota(ahorroNewRequest.getMontoCuota());
-        entity.setInteres(ahorroNewRequest.getInteres());
-        entity.setTasa(ahorroNewRequest.getTasa());
-        entity.setCantidadCuotas(ahorroNewRequest.getCantidadCuotas());
-        entity.setCantidadCuotasPagadas(ahorroNewRequest.getCantidadCuotasPagadas());
-        entity.setMontoInteresCuota(ahorroNewRequest.getMontoInteresCuota());
-        entity.setCantidadCobro(ahorroNewRequest.getCantidadCobro());
-        entity.setEstado(ahorroNewRequest.getEstado());
+        entity.setMontoCapital(request.getMontoCapital());
+        entity.setFechaInicio(request.getFechaInicio());
+        entity.setFechaVencimiento(request.getFechaVencimiento());
+        entity.setPlazoTotal(request.getPlazoTotal());
+        entity.setMontoCuota(request.getMontoCuota());
+        entity.setInteres(request.getInteres());
+        entity.setTasa(request.getTasa());
+        entity.setCantidadCuotas(request.getCantidadCuotas());
+        entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
+        entity.setMontoInteresCuota(request.getMontoInteresCuota());
+        entity.setCantidadCobro(request.getCantidadCobro());
+        entity.setEstado(request.getEstado());
+        entity.setTipoAhorroId(tipoAhorro);
+        entity.setMonedaId(moneda);
+        entity.setEntidadFinancieraId(entidadFinanciera);
+        entity.setTipoCobroId(tipoCobro);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+    public static Ahorro ahorroUpdateToAhorroEntity(AhorroRequestUpdate request, Long usuarioId) {
+        TipoAhorro tipoAhorro = new TipoAhorro();
+        tipoAhorro.setId(request.getTipoAhorroId());
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
+        EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
+        TipoCobro tipoCobro = new TipoCobro();
+        tipoCobro.setId(request.getTipoAhorroId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Ahorro entity = new Ahorro();
+        entity.setId(request.getId());
+        entity.setMontoCapital(request.getMontoCapital());
+        entity.setFechaInicio(request.getFechaInicio());
+        entity.setFechaVencimiento(request.getFechaVencimiento());
+        entity.setPlazoTotal(request.getPlazoTotal());
+        entity.setMontoCuota(request.getMontoCuota());
+        entity.setInteres(request.getInteres());
+        entity.setTasa(request.getTasa());
+        entity.setCantidadCuotas(request.getCantidadCuotas());
+        entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
+        entity.setMontoInteresCuota(request.getMontoInteresCuota());
+        entity.setCantidadCobro(request.getCantidadCobro());
+        entity.setEstado(request.getEstado());
         entity.setTipoAhorroId(tipoAhorro);
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
@@ -66,8 +100,6 @@ public class AhorroConverter {
         TipoCobro tipoCobro = new TipoCobro();
         tipoCobro.setId(model.getTipoAhorroId());
         tipoCobro.setNombre(model.getTipoAhorroNombre());
-        Usuario usuario = new Usuario();
-        usuario.setId(model.getUsuarioId());
         Ahorro entity = new Ahorro();
         entity.setId(model.getId());
         entity.setMontoCapital(model.getMontoCapital());
@@ -86,7 +118,6 @@ public class AhorroConverter {
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setTipoCobroId(tipoCobro);
-        entity.setUsuarioId(usuario);
         return entity;
     }
 
@@ -114,7 +145,6 @@ public class AhorroConverter {
         model.setEntidadFinancieraNombre(entity.getEntidadFinancieraId().getNombre());
         model.setTipoCobroId(entity.getTipoCobroId().getId());
         model.setTipoCobroNombre(entity.getTipoCobroId().getNombre());
-        model.setUsuarioId(entity.getUsuarioId().getId());
         return model;
     }
 

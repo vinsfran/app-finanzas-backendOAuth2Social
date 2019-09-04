@@ -2,7 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.entity.TipoAhorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoAhorro;
 
 import java.util.List;
 

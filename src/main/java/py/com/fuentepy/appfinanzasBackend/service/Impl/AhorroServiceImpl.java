@@ -8,14 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.AhorroConverter;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroNewRequest;
-import py.com.fuentepy.appfinanzasBackend.entity.Ahorro;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.repository.AhorroRepository;
-import py.com.fuentepy.appfinanzasBackend.repository.ConceptoRepository;
-import py.com.fuentepy.appfinanzasBackend.repository.MovimientoRepository;
-import py.com.fuentepy.appfinanzasBackend.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.AhorroRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ConceptoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
 
 import java.util.Date;
@@ -69,9 +70,11 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional(readOnly = true)
-    public AhorroModel findById(Long id) {
+    public AhorroModel findByIdAndUsuarioId(Long id, Long usuarioId) {
         AhorroModel model = null;
-        Optional<Ahorro> optional = ahorroRepository.findById(id);
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
             model = AhorroConverter.entityToModel(optional.get());
         }
@@ -80,8 +83,8 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean create(AhorroNewRequest ahorroNewRequest, Long usuarioId) {
-        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroNewToAhorroEntity(ahorroNewRequest, usuarioId));
+    public boolean create(AhorroRequestNew request, Long usuarioId) {
+        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroNewToAhorroEntity(request, usuarioId));
         if (entity != null) {
             return true;
         }
@@ -105,6 +108,16 @@ public class AhorroServiceImpl implements AhorroService {
 //            movimiento.setUsuarioId(usuario);
 //            movimientoRepository.save(movimiento);
 //        }
+    }
+
+    @Override
+    @Transactional
+    public boolean update(AhorroRequestUpdate request, Long usuarioId) {
+        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroUpdateToAhorroEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override

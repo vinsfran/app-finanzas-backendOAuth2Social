@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.ConceptoConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.Concepto;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.ConceptoModel;
-import py.com.fuentepy.appfinanzasBackend.repository.ConceptoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ConceptoRepository;
 import py.com.fuentepy.appfinanzasBackend.service.ConceptoService;
 
 import java.util.List;

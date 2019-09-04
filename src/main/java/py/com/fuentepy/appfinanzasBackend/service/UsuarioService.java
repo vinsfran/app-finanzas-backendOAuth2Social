@@ -1,6 +1,6 @@
 package py.com.fuentepy.appfinanzasBackend.service;
 
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 
 public interface UsuarioService {
 

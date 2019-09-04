@@ -10,7 +10,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.converter.MesConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.Mes;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
 import py.com.fuentepy.appfinanzasBackend.model.MesModel;
 import py.com.fuentepy.appfinanzasBackend.service.MesService;
 import springfox.documentation.annotations.ApiIgnore;

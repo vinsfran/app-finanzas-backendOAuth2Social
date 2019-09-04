@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TarjetaConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.Tarjeta;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.TarjetaModel;
-import py.com.fuentepy.appfinanzasBackend.repository.TarjetaRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.TarjetaRepository;
 import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
 
 import java.util.List;

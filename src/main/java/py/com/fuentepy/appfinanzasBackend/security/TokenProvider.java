@@ -1,6 +1,5 @@
 package py.com.fuentepy.appfinanzasBackend.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import py.com.fuentepy.appfinanzasBackend.config.AppProperties;
 import io.jsonwebtoken.*;
@@ -8,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 
 import java.util.ArrayList;
 import java.util.Date;

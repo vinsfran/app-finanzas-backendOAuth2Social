@@ -1,7 +1,7 @@
 package py.com.fuentepy.appfinanzasBackend.security.oauth2.user;
 
 import py.com.fuentepy.appfinanzasBackend.exception.OAuth2AuthenticationProcessingException;
-import py.com.fuentepy.appfinanzasBackend.entity.AuthProvider;
+import py.com.fuentepy.appfinanzasBackend.data.entity.AuthProvider;
 
 import java.util.Map;
 

@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.PrestamoModel;
-import py.com.fuentepy.appfinanzasBackend.repository.PrestamoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
 
 import java.util.Date;

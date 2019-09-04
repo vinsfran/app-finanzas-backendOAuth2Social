@@ -10,7 +10,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.converter.MonedaConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.Moneda;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.model.MonedaModel;
 import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
 import springfox.documentation.annotations.ApiIgnore;

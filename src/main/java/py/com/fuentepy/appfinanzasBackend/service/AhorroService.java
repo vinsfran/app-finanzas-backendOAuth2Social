@@ -2,9 +2,10 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.entity.Ahorro;
-import py.com.fuentepy.appfinanzasBackend.model.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroNewRequest;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestUpdate;
 
 import java.util.Date;
 import java.util.List;
@@ -19,9 +20,11 @@ public interface AhorroService {
 
     Page<AhorroModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    AhorroModel findById(Long id);
+    AhorroModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    boolean create(AhorroNewRequest ahorroNewRequest, Long usuarioId);
+    boolean create(AhorroRequestNew request, Long usuarioId);
+
+    boolean update(AhorroRequestUpdate request, Long usuarioId);
 
     void delete(Long id);
 

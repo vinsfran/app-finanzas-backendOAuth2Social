@@ -3,8 +3,8 @@ package py.com.fuentepy.appfinanzasBackend.service.Impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import py.com.fuentepy.appfinanzasBackend.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 
 import java.util.Optional;

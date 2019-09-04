@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TipoPagoConverter;
-import py.com.fuentepy.appfinanzasBackend.entity.TipoPago;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoPago;
 import py.com.fuentepy.appfinanzasBackend.model.TipoPagoModel;
-import py.com.fuentepy.appfinanzasBackend.repository.TipoPagoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.TipoPagoRepository;
 import py.com.fuentepy.appfinanzasBackend.service.TipoPagoService;
 
 import java.util.List;

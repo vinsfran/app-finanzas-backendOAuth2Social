@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.entity.Moneda;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.model.MonedaModel;
 
 import java.util.ArrayList;
