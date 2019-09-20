@@ -224,11 +224,4 @@ public class AhorroResource {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @PostMapping("/ahorros/upload")
-
-//    @GetMapping("/uploads/img/{nombreFoto:.+}")
-
-//    @Secured({"ROLE_ADMIN"})
-//    @GetMapping("/ahorros/regiones")
 }

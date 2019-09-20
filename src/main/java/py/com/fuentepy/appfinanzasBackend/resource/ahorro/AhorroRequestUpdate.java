@@ -1,10 +1,15 @@
 package py.com.fuentepy.appfinanzasBackend.resource.ahorro;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -46,12 +51,20 @@ public class AhorroRequestUpdate implements Serializable {
     @SerializedName("estado")
     private Boolean estado;
 
+    @ApiModelProperty(value = "Fecha de Inicio", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("fecha_inicio")
     @SerializedName("fecha_inicio")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date fechaInicio;
 
+    @ApiModelProperty(value = "Fecha de Vencimiento", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("fecha_vencimiento")
     @SerializedName("fecha_vencimiento")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date fechaVencimiento;
 
     @JsonProperty("interes")
