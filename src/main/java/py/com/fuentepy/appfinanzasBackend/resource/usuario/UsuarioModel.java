@@ -15,7 +15,7 @@ import java.io.Serializable;
 @ApiModel(value = "usuarioModel", description = "Ejemplo de para datos del Usuario")
 public class UsuarioModel implements Serializable {
 
-//    @ApiModelProperty(value = "Identificador unico del Usuario", required = true)
+    //    @ApiModelProperty(value = "Identificador unico del Usuario", required = true)
     @JsonProperty("id")
     @SerializedName("id")
     private Long id;
@@ -31,5 +31,13 @@ public class UsuarioModel implements Serializable {
     @JsonProperty("email")
     @SerializedName("email")
     private String email;
+
+    @JsonProperty("image_profile_name")
+    @SerializedName("image_profile_name")
+    private String imageProfileName;
+
+    @JsonProperty("image_profile_base64")
+    @SerializedName("image_profile_base64")
+    private String imageProfileBase64;
 
 }

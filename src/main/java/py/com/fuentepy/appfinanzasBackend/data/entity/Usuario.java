@@ -34,8 +34,6 @@ public class Usuario implements Serializable {
     @Column(nullable = false)
     private String email;
 
-    private String imageUrl;
-
     @Column(nullable = false)
     private Boolean emailVerified = false;
 
@@ -47,5 +45,11 @@ public class Usuario implements Serializable {
     private AuthProvider provider;
 
     private String providerId;
+
+    @Column(name = "image_profile_name")
+    private String imageProfileName;
+
+    @Column(name = "image_profile_base64")
+    private String imageProfileBase64;
 
 }
