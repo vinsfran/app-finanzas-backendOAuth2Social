@@ -42,7 +42,7 @@ public class Movimiento implements Serializable {
     private String nombreEntidad;
 
     @Column(name = "numero_cuota")
-    private Integer numeroCuota;
+    private Long numeroCuota;
 
     @JoinColumn(name = "prestamo_id", referencedColumnName = "id")
     @ManyToOne(optional = true)

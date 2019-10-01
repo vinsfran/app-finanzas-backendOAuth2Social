@@ -19,7 +19,7 @@ public class PrestamoPagoModel implements Serializable {
 
     @JsonProperty("numeroCuota")
     @SerializedName("numeroCuota")
-    private Integer numeroCuota;
+    private Long numeroCuota;
 
     @JsonProperty("fechaPago")
     @SerializedName("fechaPago")

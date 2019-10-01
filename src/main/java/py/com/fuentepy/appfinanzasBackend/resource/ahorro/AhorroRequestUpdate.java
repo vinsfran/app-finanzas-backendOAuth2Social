@@ -39,7 +39,7 @@ public class AhorroRequestUpdate implements Serializable {
     @ApiModelProperty(value = "Cantidad de Cuotas Pagadas", required = true)
     @JsonProperty("cantidad_cuotas_pagadas")
     @SerializedName("cantidad_cuotas_pagadas")
-    private Integer cantidadCuotasPagadas;
+    private Long cantidadCuotasPagadas;
 
     @ApiModelProperty(value = "Id de la Entidad Financiera", required = true)
     @JsonProperty("entidad_financiera_id")
@@ -69,7 +69,7 @@ public class AhorroRequestUpdate implements Serializable {
 
     @JsonProperty("interes")
     @SerializedName("interes")
-    private Long interes;
+    private Double interes;
 
     @JsonProperty("moneda_id")
     @SerializedName("moneda_id")
@@ -77,15 +77,15 @@ public class AhorroRequestUpdate implements Serializable {
 
     @JsonProperty("monto_capital")
     @SerializedName("monto_capital")
-    private Long montoCapital;
+    private Double montoCapital;
 
     @JsonProperty("monto_cuota")
     @SerializedName("monto_cuota")
-    private Long montoCuota;
+    private Double montoCuota;
 
     @JsonProperty("monto_interes_cuota")
     @SerializedName("monto_interes_cuota")
-    private Long montoInteresCuota;
+    private Double montoInteresCuota;
 
     @JsonProperty("plazo_total")
     @SerializedName("plazo_total")
@@ -93,7 +93,7 @@ public class AhorroRequestUpdate implements Serializable {
 
     @JsonProperty("tasa")
     @SerializedName("tasa")
-    private Long tasa;
+    private Double tasa;
 
     @JsonProperty("tipo_ahorro_id")
     @SerializedName("tipo_ahorro_id")

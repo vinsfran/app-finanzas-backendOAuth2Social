@@ -66,8 +66,8 @@ public class DashboardResource {
         Long usuarioId = userPrincipal.getId();
         DashboardModel dashboardModel = new DashboardModel();
         try {
-            dashboardModel.setTotalIngresos(0L);
-            dashboardModel.setTotalEgresos(0L);
+            dashboardModel.setTotalIngresos(0.0);
+            dashboardModel.setTotalEgresos(0.0);
             for (Movimiento movimiento : movimientoService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
                 if (movimiento.getConceptoId().getTipoConcepto().equals("Ingreso")) {
                     dashboardModel.setTotalIngresos(dashboardModel.getTotalIngresos() + movimiento.getMontoPagado());
@@ -77,8 +77,8 @@ public class DashboardResource {
             }
             dashboardModel.setSaldoIngresosEgresos(dashboardModel.getTotalIngresos() - dashboardModel.getTotalEgresos());
             dashboardModel.setCantidadPrestamos(0);
-            dashboardModel.setSaldoTotalPrestamos(0L);
-            dashboardModel.setTotalCuotasMontoPrestamos(0L);
+            dashboardModel.setSaldoTotalPrestamos(0.0);
+            dashboardModel.setTotalCuotasMontoPrestamos(0.0);
             dashboardModel.setProximoVencimientoPrestamos(new Date());
             for (Prestamo prestamo : prestamoService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
                 dashboardModel.setCantidadPrestamos(dashboardModel.getCantidadPrestamos() + 1);
@@ -86,8 +86,8 @@ public class DashboardResource {
                 dashboardModel.setTotalCuotasMontoPrestamos(dashboardModel.getTotalCuotasMontoPrestamos() + prestamo.getMontoCuota());
             }
             dashboardModel.setCantidadAhorros(0);
-            dashboardModel.setTotalMontoInteresAhorros(0L);
-            dashboardModel.setTotalMontoCapitalAhorros(0L);
+            dashboardModel.setTotalMontoInteresAhorros(0.0);
+            dashboardModel.setTotalMontoCapitalAhorros(0.0);
             dashboardModel.setProximoVencimientoAhorros(new Date());
             for (Ahorro ahorro : ahorroService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
                 dashboardModel.setCantidadAhorros(dashboardModel.getCantidadAhorros() + 1);
@@ -95,8 +95,8 @@ public class DashboardResource {
                 dashboardModel.setTotalMontoCapitalAhorros(dashboardModel.getTotalMontoCapitalAhorros() + ahorro.getMontoCapital());
             }
             dashboardModel.setCantidadTarjetas(0);
-            dashboardModel.setTotalDeudaTarjetas(0L);
-            dashboardModel.setTotalLineaTarjetas(0L);
+            dashboardModel.setTotalDeudaTarjetas(0.0);
+            dashboardModel.setTotalLineaTarjetas(0.0);
             for (Tarjeta tarjeta : tarjetaService.findByUsuarioIdLista(usuarioId)) {
                 dashboardModel.setCantidadTarjetas(dashboardModel.getCantidadTarjetas() + 1);
                 dashboardModel.setTotalLineaTarjetas(dashboardModel.getTotalLineaTarjetas() + tarjeta.getLineaCredito());

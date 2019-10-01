@@ -44,7 +44,7 @@ public class Prestamo implements Serializable {
     private Integer cantidadCuotas;
 
     @Column(name = "cantidad_cuotas_pagadas")
-    private Integer cantidadCuotasPagadas;
+    private Long cantidadCuotasPagadas;
     
     @Column(name = "monto_cuota")
     private Long montoCuota;

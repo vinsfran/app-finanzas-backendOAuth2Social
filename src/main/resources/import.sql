@@ -1,4 +1,4 @@
-INSERT INTO usuarios (name, email, image_url, email_verified, password, provider, provider_id) VALUES ('Vicente','vinsfran2@gmail.com','',true, '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'local','');
+INSERT INTO usuarios (last_name, name, email, image_url, email_verified, password, provider, provider_id) VALUES ('Insfran','Vicente','vinsfran2@gmail.com','',true, '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'local','');
 
 INSERT INTO monedas (codigo, nombre) VALUES ('Gs.', 'Guarani');
 INSERT INTO monedas (codigo, nombre) VALUES ('Us.', 'Dolar');
@@ -34,8 +34,8 @@ INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_
 INSERT INTO prestamos (cantidad_cuotas, cantidad_cuotas_pagadas, destino_prestamo, estado, fecha_desembolso, fecha_vencimiento, interes, monto_cuota, monto_pagado, monto_prestamo, tasa, entidad_financiera_id, moneda_id, usuario_id) VALUES (12,0,'Construccion',true,'2019-06-10','2019-06-28',1,50000,0,500000,2,1,1,1);
 INSERT INTO prestamos (cantidad_cuotas, cantidad_cuotas_pagadas, destino_prestamo, estado, fecha_desembolso, fecha_vencimiento, interes, monto_cuota, monto_pagado, monto_prestamo, tasa, entidad_financiera_id, moneda_id, usuario_id) VALUES (12,0,'Construccion',true,'2019-06-10','2019-06-28',1,50000,0,500000,2,2,2,1);
 
-INSERT INTO ahorros (cantidad_cobro, estado, cantidad_cuotas, fecha_inicio, fecha_vencimiento, interes, monto_capital, monto_cuota, monto_interes_cuota, monto_pagado, monto_ultimo_pago, plazo_total, tasa, entidades_financieras_id, monedas_id, tipos_ahorros_id, tipos_cobros_id, usuario_id) VALUES (0,'true',12,'2019-06-12','2019-06-13',2,500000,50000,0,0,0,12,1,1,1,1,1,1);
-INSERT INTO ahorros (cantidad_cobro, estado, cantidad_cuotas, fecha_inicio, fecha_vencimiento, interes, monto_capital, monto_cuota, monto_interes_cuota, monto_pagado, monto_ultimo_pago, plazo_total, tasa, entidades_financieras_id, monedas_id, tipos_ahorros_id, tipos_cobros_id, usuario_id) VALUES (0,'true',12,'2019-06-12','2019-06-13',2,100000000,100000,0,0,0,12,1,3,1,1,1,1);
+INSERT INTO ahorros (cantidad_cobro, estado, cantidad_cuotas, fecha_inicio, fecha_vencimiento, interes, monto_capital, monto_cuota, monto_interes_cuota, monto_pagado, monto_ultimo_pago, plazo_total, tasa, entidades_financieras_id, monedas_id, tipos_ahorros_id, tipos_cobros_id, usuario_id, cantidad_cuotas_pagadas) VALUES (0,'true',12,'2019-06-12','2019-06-13',2,500000,50000,0,0,0,12,1,1,1,1,1,1,0);
+INSERT INTO ahorros (cantidad_cobro, estado, cantidad_cuotas, fecha_inicio, fecha_vencimiento, interes, monto_capital, monto_cuota, monto_interes_cuota, monto_pagado, monto_ultimo_pago, plazo_total, tasa, entidades_financieras_id, monedas_id, tipos_ahorros_id, tipos_cobros_id, usuario_id, cantidad_cuotas_pagadas) VALUES (0,'true',12,'2019-06-12','2019-06-13',2,100000000,100000,0,0,0,12,1,3,1,1,1,1,0);
 
 INSERT INTO meses (nombre, numero) VALUES ('Enero', 1);
 INSERT INTO meses (nombre, numero) VALUES ('Febrero', 2);

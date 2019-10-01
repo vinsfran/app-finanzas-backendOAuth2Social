@@ -43,7 +43,7 @@ public class PrestamoModel implements Serializable {
 
     @JsonProperty("cantidadCuotasPagadas")
     @SerializedName("cantidadCuotasPagadas")
-    private Integer cantidadCuotasPagadas;
+    private Long cantidadCuotasPagadas;
 
     @JsonProperty("montoCuota")
     @SerializedName("montoCuota")

@@ -1,8 +1,8 @@
 package py.com.fuentepy.appfinanzasBackend.service;
 
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 
 public interface UsuarioService {
 
-    Usuario findById(Long id);
+    UsuarioModel findById(Long id);
 }

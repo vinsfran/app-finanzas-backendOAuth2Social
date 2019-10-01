@@ -25,7 +25,7 @@ public class PrestamoPago implements Serializable {
 
     //    Ya esta en movimientos
     @Column(name = "numero_cuota")
-    private Integer numeroCuota;
+    private Long numeroCuota;
 
     @Column(name = "fecha_pago")
     @Temporal(TemporalType.DATE)

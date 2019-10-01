@@ -14,15 +14,15 @@ public class DashboardModel {
 
     @JsonProperty("total_ingresos")
     @SerializedName("total_ingresos")
-    private Long totalIngresos;
+    private Double totalIngresos;
 
     @JsonProperty("total_egresos")
     @SerializedName("total_egresos")
-    private Long totalEgresos;
+    private Double totalEgresos;
 
     @JsonProperty("saldo_ingresos_egresos")
     @SerializedName("saldo_ingresos_egresos")
-    private Long saldoIngresosEgresos;
+    private Double saldoIngresosEgresos;
 
     @JsonProperty("cantidad_prestamos")
     @SerializedName("cantidad_prestamos")
@@ -30,11 +30,11 @@ public class DashboardModel {
 
     @JsonProperty("saldo_total_prestamos")
     @SerializedName("saldo_total_prestamos")
-    private Long saldoTotalPrestamos;
+    private Double saldoTotalPrestamos;
 
     @JsonProperty("total_cuotas_monto_prestamos")
     @SerializedName("total_cuotas_monto_prestamos")
-    private Long totalCuotasMontoPrestamos;
+    private Double totalCuotasMontoPrestamos;
 
     @JsonProperty("proximo_vencimiento_prestamos")
     @SerializedName("proximo_vencimiento_prestamos")
@@ -46,11 +46,11 @@ public class DashboardModel {
 
     @JsonProperty("total_monto_interes_ahorros")
     @SerializedName("total_monto_interes_ahorros")
-    private Long totalMontoInteresAhorros;
+    private Double totalMontoInteresAhorros;
 
     @JsonProperty("total_monto_capital_ahorros")
     @SerializedName("total_monto_capital_ahorros")
-    private Long totalMontoCapitalAhorros;
+    private Double totalMontoCapitalAhorros;
 
     @JsonProperty("proximo_vencimiento_ahorros")
     @SerializedName("proximo_vencimiento_ahorros")
@@ -62,9 +62,9 @@ public class DashboardModel {
 
     @JsonProperty("total_deuda_tarjetas")
     @SerializedName("total_deuda_tarjetas")
-    private Long totalDeudaTarjetas;
+    private Double totalDeudaTarjetas;
 
     @JsonProperty("total_linea_tarjetas")
     @SerializedName("total_linea_tarjetas")
-    private Long totalLineaTarjetas;
+    private Double totalLineaTarjetas;
 }

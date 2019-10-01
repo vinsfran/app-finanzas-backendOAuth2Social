@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 
 import java.util.Optional;
@@ -17,12 +18,17 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public Usuario findById(Long id) {
-        Usuario usuario = null;
+    public UsuarioModel findById(Long id) {
+        UsuarioModel usuarioModel = null;
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
-            usuario = optional.get();
+            Usuario usuario = optional.get();
+            usuarioModel = new UsuarioModel();
+            usuarioModel.setId(usuario.getId());
+            usuarioModel.setLastName(usuario.getLastName());
+            usuarioModel.setName(usuario.getName());
+            usuarioModel.setEmail(usuario.getEmail());
         }
-        return usuario;
+        return usuarioModel;
     }
 }
