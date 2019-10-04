@@ -1,5 +1,6 @@
 package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +29,19 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioModel.setLastName(usuario.getLastName());
             usuarioModel.setName(usuario.getName());
             usuarioModel.setEmail(usuario.getEmail());
+            usuarioModel.setImageProfileBase64(Base64.encodeBase64String(usuario.getImageProfileData()));
+            usuarioModel.setImageProfileName(usuario.getImageProfileName());
         }
         return usuarioModel;
     }
 
     @Override
-    public UsuarioModel uploadImage(String imageBase64, String imageName, Long id) {
+    public UsuarioModel uploadImage(byte[] imageBase64, String imageName, Long id) {
         UsuarioModel usuarioModel = null;
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
-            usuario.setImageProfileBase64(imageBase64);
+            usuario.setImageProfileData(imageBase64);
             usuario.setImageProfileName(imageName);
             usuario = usuarioRepository.save(usuario);
             usuarioModel = new UsuarioModel();
@@ -46,7 +49,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioModel.setLastName(usuario.getLastName());
             usuarioModel.setName(usuario.getName());
             usuarioModel.setEmail(usuario.getEmail());
-            usuarioModel.setImageProfileBase64(usuario.getImageProfileBase64());
+            usuarioModel.setImageProfileBase64(Base64.encodeBase64String(usuario.getImageProfileData()));
             usuarioModel.setImageProfileName(usuario.getImageProfileName());
         }
         return usuarioModel;

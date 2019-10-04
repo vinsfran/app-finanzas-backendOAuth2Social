@@ -6,5 +6,5 @@ public interface UsuarioService {
 
     UsuarioModel findById(Long id);
 
-    UsuarioModel uploadImage(String imageBase64, String imageName, Long id);
+    UsuarioModel uploadImage(byte[] imageBase64, String imageName, Long id);
 }
