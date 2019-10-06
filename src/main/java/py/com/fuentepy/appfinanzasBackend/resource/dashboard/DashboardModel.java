@@ -1,8 +1,14 @@
 package py.com.fuentepy.appfinanzasBackend.resource.dashboard;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
 
 import java.util.Date;
 
@@ -36,8 +42,12 @@ public class DashboardModel {
     @SerializedName("total_cuotas_monto_prestamos")
     private Double totalCuotasMontoPrestamos;
 
+    @ApiModelProperty(value = "Fecha de Vencimiento de Prestamos", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("proximo_vencimiento_prestamos")
     @SerializedName("proximo_vencimiento_prestamos")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date proximoVencimientoPrestamos;
 
     @JsonProperty("cantidad_ahorros")
@@ -52,8 +62,12 @@ public class DashboardModel {
     @SerializedName("total_monto_capital_ahorros")
     private Double totalMontoCapitalAhorros;
 
+    @ApiModelProperty(value = "Fecha de Vencimiento de Ahorros", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("proximo_vencimiento_ahorros")
     @SerializedName("proximo_vencimiento_ahorros")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date proximoVencimientoAhorros;
 
     @JsonProperty("cantidad_tarjetas")
