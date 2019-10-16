@@ -21,7 +21,7 @@ import java.util.Date;
 @ApiModel(value = "ahorroUpdate", description = "Ejemplo de para un Ahorro a modificar")
 public class AhorroRequestUpdate implements Serializable {
 
-    @ApiModelProperty(value = "Identificador unico del Ahorro", required = true)
+    @ApiModelProperty(value = "Identificador Unico del Ahorro", required = true)
     @JsonProperty("id")
     @SerializedName("id")
     private Long id;

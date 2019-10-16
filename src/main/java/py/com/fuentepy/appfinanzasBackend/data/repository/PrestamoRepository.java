@@ -11,11 +11,14 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
 
     List<Prestamo> findByUsuarioId(Usuario usuario);
+
+    Optional<Prestamo> findByIdAndUsuarioId(Long id, Usuario usuario);
 
     Page<Prestamo> findByUsuarioId(Usuario usuario, Pageable pageable);
 

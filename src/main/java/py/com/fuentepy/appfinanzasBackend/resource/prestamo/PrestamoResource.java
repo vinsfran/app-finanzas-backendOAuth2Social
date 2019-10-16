@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.resource.ahorro;
+package py.com.fuentepy.appfinanzasBackend.resource.prestamo;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -20,7 +20,7 @@ import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
-import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
+import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -31,45 +31,45 @@ import java.util.Map;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/api/ahorros")
-public class AhorroResource {
+@RequestMapping("/api/prestamos")
+public class PrestamoResource {
 
-    private static final Log LOG = LogFactory.getLog(AhorroResource.class);
+    private static final Log LOG = LogFactory.getLog(PrestamoResource.class);
 
     @Autowired
-    private AhorroService ahorroService;
+    private PrestamoService prestamoService;
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping()
-    public List<AhorroModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public List<PrestamoModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         Long usuarioId = userPrincipal.getId();
-        return ahorroService.findByUsuarioId(usuarioId);
+        return prestamoService.findByUsuarioId(usuarioId);
     }
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping("/page")
-    public ResponseEntity<?> getAllByPage(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                          @ApiIgnore Pageable pageable) {
+    public ResponseEntity<?> getPageByUsuarioId(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                                @ApiIgnore Pageable pageable) {
         Long usuarioId = userPrincipal.getId();
-        Page<AhorroModel> ahorros = null;
+        Page<PrestamoModel> prestamos = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            ahorros = ahorroService.findByUsuarioId(usuarioId, pageable);
+            prestamos = prestamoService.findByUsuarioId(usuarioId, pageable);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (ahorros == null) {
+        if (prestamos == null) {
             response.put("mensaje", "No existen ahorros en la base de datos!");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("page", ahorros);
+        response.put("page", prestamos);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -86,17 +86,17 @@ public class AhorroResource {
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            AhorroModel ahorroModel = ahorroService.findByIdAndUsuarioId(id, usuarioId);
-            if (ahorroModel == null) {
+            PrestamoModel prestamoModel = prestamoService.findByIdAndUsuarioId(id, usuarioId);
+            if (prestamoModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: El Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Prestamo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
                 messages.add(message);
-                response = new AhorroResponse(httpStatus.value(), messages, ahorroModel);
+                response = new PrestamoResponse(httpStatus.value(), messages, prestamoModel);
             }
         } catch (DataAccessException e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -109,14 +109,13 @@ public class AhorroResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody AhorroRequestNew ahorroNew,
+                                    @Valid @RequestBody PrestamoRequestNew prestamoNew,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -132,14 +131,14 @@ public class AhorroResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (ahorroService.create(ahorroNew, usuarioId)) {
+                if (prestamoService.create(prestamoNew, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido creado con éxito!");
+                    message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido creado con éxito!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 } else {
                     httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo crear!");
+                    message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo crear!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
@@ -161,14 +160,14 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody AhorroRequestUpdate ahorroUpdate,
+                                    @Valid @RequestBody PrestamoRequestUpdate prestamoUpdate,
                                     BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        Long id = ahorroUpdate.getId();
+        Long id = prestamoUpdate.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -177,21 +176,21 @@ public class AhorroResource {
             }
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            if (prestamoService.findByIdAndUsuarioId(id, usuarioId) == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, el Prestamo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (ahorroService.update(ahorroUpdate, usuarioId)) {
+                    if (prestamoService.update(prestamoUpdate, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido actualizado con éxito!");
+                        message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido actualizado con éxito!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     } else {
                         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo actualizar!");
+                        message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo actualizar!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     }
@@ -214,14 +213,21 @@ public class AhorroResource {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            ahorroService.delete(id);
+            prestamoService.delete(id);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar el Ahorro de la base de datos!");
+            response.put("mensaje", "Error al eliminar el Prestamo de la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "El Ahorro eliminado con éxito!");
+        response.put("mensaje", "El Prestamo eliminado con éxito!");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+//    @PostMapping("/prestamos/upload")
+
+//    @GetMapping("/uploads/img/{nombreFoto:.+}")
+
+//    @Secured({"ROLE_ADMIN"})
+//    @GetMapping("/prestamos/regiones")
 }

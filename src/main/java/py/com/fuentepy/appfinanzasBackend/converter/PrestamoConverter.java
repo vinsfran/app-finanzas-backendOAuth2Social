@@ -11,7 +11,9 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.PrestamoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,57 @@ import java.util.List;
 public class PrestamoConverter {
 
     private static final Log LOG = LogFactory.getLog(PrestamoConverter.class);
+
+    public static Prestamo prestamoNewToAhorroEntity(PrestamoRequestNew request, Long usuarioId) {
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
+        EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Prestamo entity = new Prestamo();
+        entity.setMontoPrestamo(request.getMontoPrestamo());
+        entity.setFechaDesembolso(request.getFechaDesembolso());
+        entity.setFechaVencimiento(request.getFechaVencimiento());
+        entity.setInteres(request.getInteres());
+        entity.setTasa(request.getTasa());
+        entity.setCantidadCuotas(request.getCantidadCuotas());
+        entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
+        entity.setMontoCuota(request.getMontoCuota());
+        entity.setMontoPagado(request.getMontoPagado());
+        entity.setDestinoPrestamo(request.getDestinoPrestamo());
+        entity.setEstado(request.getEstado());
+        entity.setMonedaId(moneda);
+        entity.setEntidadFinancieraId(entidadFinanciera);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+    public static Prestamo prestamoUpdateToAhorroEntity(PrestamoRequestUpdate request, Long usuarioId) {
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
+        EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Prestamo entity = new Prestamo();
+        entity.setId(request.getId());
+        entity.setMontoPrestamo(request.getMontoPrestamo());
+        entity.setFechaDesembolso(request.getFechaDesembolso());
+        entity.setFechaVencimiento(request.getFechaVencimiento());
+        entity.setInteres(request.getInteres());
+        entity.setTasa(request.getTasa());
+        entity.setCantidadCuotas(request.getCantidadCuotas());
+        entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
+        entity.setMontoCuota(request.getMontoCuota());
+        entity.setMontoPagado(request.getMontoPagado());
+        entity.setDestinoPrestamo(request.getDestinoPrestamo());
+        entity.setEstado(request.getEstado());
+        entity.setMonedaId(moneda);
+        entity.setEntidadFinancieraId(entidadFinanciera);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
 
     public static Prestamo modelToEntity(PrestamoModel model) {
         Moneda moneda = new Moneda();

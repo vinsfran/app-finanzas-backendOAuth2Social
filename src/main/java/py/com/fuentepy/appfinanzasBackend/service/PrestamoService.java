@@ -3,7 +3,9 @@ package py.com.fuentepy.appfinanzasBackend.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.model.PrestamoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
 
 import java.util.Date;
 import java.util.List;
@@ -18,7 +20,11 @@ public interface PrestamoService {
 
     Page<PrestamoModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    PrestamoModel findById(Long id);
+    PrestamoModel findByIdAndUsuarioId(Long id, Long usuarioId);
+
+    boolean create(PrestamoRequestNew request, Long usuarioId);
+
+    boolean update(PrestamoRequestUpdate request, Long usuarioId);
 
     PrestamoModel save(PrestamoModel prestamoModel);
 

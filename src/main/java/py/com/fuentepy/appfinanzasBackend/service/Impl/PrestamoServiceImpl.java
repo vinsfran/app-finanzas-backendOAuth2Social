@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.PrestamoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
 
 import java.util.Date;
@@ -56,13 +58,35 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional(readOnly = true)
-    public PrestamoModel findById(Long id) {
+    public PrestamoModel findByIdAndUsuarioId(Long id, Long usuarioId) {
         PrestamoModel model = null;
-        Optional<Prestamo> optional = prestamoRepository.findById(id);
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Prestamo> optional = prestamoRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
             model = PrestamoConverter.entityToModel(optional.get());
         }
         return model;
+    }
+
+    @Override
+    @Transactional
+    public boolean create(PrestamoRequestNew request, Long usuarioId) {
+        Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoNewToAhorroEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean update(PrestamoRequestUpdate request, Long usuarioId) {
+        Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoUpdateToAhorroEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override
