@@ -89,7 +89,7 @@ public class DashboardResource {
             dashboardModel.setTotalMontoInteresAhorros(0.0);
             dashboardModel.setTotalMontoCapitalAhorros(0.0);
             dashboardModel.setProximoVencimientoAhorros(new Date());
-            for (Ahorro ahorro : ahorroService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
+            for (Ahorro ahorro : ahorroService.findByUsuarioAndEstado(usuarioId, true)) {
                 dashboardModel.setCantidadAhorros(dashboardModel.getCantidadAhorros() + 1);
                 dashboardModel.setTotalMontoInteresAhorros(dashboardModel.getTotalMontoInteresAhorros() + ahorro.getInteres());
                 dashboardModel.setTotalMontoCapitalAhorros(dashboardModel.getTotalMontoCapitalAhorros() + ahorro.getMontoCapital());

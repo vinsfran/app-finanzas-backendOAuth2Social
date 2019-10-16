@@ -135,9 +135,18 @@ public class AhorroServiceImpl implements AhorroService {
     }
 
     @Override
-    public List<Ahorro> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin) {
+    @Transactional(readOnly = true)
+    public List<Ahorro> findByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return ahorroRepository.findByUsuarioIdRangoFecha(usuario, fechaInicio, fechaFin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Ahorro> findByUsuarioAndEstado(Long usuarioId, boolean estado){
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        return ahorroRepository.findByUsuarioIdAndEstado(usuario, estado);
     }
 }

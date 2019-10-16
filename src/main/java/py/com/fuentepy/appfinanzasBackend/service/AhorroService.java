@@ -30,5 +30,7 @@ public interface AhorroService {
 
     Long countByTenantName(Long usuarioId);
 
-    List<Ahorro> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
+    List<Ahorro> findByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
+
+    List<Ahorro> findByUsuarioAndEstado(Long usuarioId, boolean estado);
 }

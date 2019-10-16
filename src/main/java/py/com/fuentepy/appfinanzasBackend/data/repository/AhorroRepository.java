@@ -26,4 +26,7 @@ public interface AhorroRepository extends JpaRepository<Ahorro, Long> {
 
     @Query(value = "select u from Ahorro u where u.usuarioId = :usuario and u.fechaInicio BETWEEN :startDate and :endDate")
     List<Ahorro> findByUsuarioIdRangoFecha(@Param("usuario") Usuario usuario, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    List<Ahorro> findByUsuarioIdAndEstado(Usuario usuario, boolean estado);
+
 }
