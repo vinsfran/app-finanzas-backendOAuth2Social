@@ -90,11 +90,6 @@ public class PrestamoRequestNew implements Serializable {
     @ApiModelProperty(value = "Identificador de la Entidad Financiera", required = true)
     @JsonProperty("entidad_financiera_id")
     @SerializedName("entidad_financiera_id")
-    private Integer entidadFinancieraId;
-
-    @ApiModelProperty(value = "Identificador del Usuario", required = true)
-    @JsonProperty("usuario_id")
-    @SerializedName("usuario_id")
-    private Long usuarioId;
+    private Long entidadFinancieraId;
 
 }

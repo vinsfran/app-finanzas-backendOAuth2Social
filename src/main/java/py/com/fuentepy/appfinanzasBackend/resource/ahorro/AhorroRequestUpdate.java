@@ -44,7 +44,7 @@ public class AhorroRequestUpdate implements Serializable {
     @ApiModelProperty(value = "Id de la Entidad Financiera", required = true)
     @JsonProperty("entidad_financiera_id")
     @SerializedName("entidad_financiera_id")
-    private Integer entidadFinancieraId;
+    private Long entidadFinancieraId;
 
     @ApiModelProperty(value = "Estado del Ahorro", required = true)
     @JsonProperty("estado")

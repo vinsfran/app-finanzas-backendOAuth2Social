@@ -39,7 +39,7 @@ public class TarjetaModel implements Serializable {
 
     @JsonProperty("entidadFinancieraId")
     @SerializedName("entidadFinancieraId")
-    private Integer entidadFinancieraId;
+    private Long entidadFinancieraId;
 
     @JsonProperty("entidadFinancieraNombre")
     @SerializedName("entidadFinancieraNombre")

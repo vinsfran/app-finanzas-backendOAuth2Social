@@ -2,7 +2,9 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.model.EntidadFinancieraModel;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraModel;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestUpdate;
 
 import java.util.List;
 
@@ -16,9 +18,13 @@ public interface EntidadFinancieraService {
 
     Page<EntidadFinancieraModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    EntidadFinancieraModel findById(Integer id);
+    EntidadFinancieraModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    EntidadFinancieraModel save(EntidadFinancieraModel entidadFinancieraModel);
+    EntidadFinancieraModel findById(Long id);
 
-    void delete(Integer id);
+    boolean create(EntidadFinancieraRequestNew request, Long usuarioId);
+
+    boolean update(EntidadFinancieraRequestUpdate request, Long usuarioId);
+
+    void delete(Long id);
 }

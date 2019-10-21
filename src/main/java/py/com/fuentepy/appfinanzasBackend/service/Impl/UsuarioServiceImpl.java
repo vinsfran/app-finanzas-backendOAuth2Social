@@ -26,8 +26,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             Usuario usuario = optional.get();
             usuarioModel = new UsuarioModel();
             usuarioModel.setId(usuario.getId());
+            usuarioModel.setName(usuario.getFirstName());
             usuarioModel.setLastName(usuario.getLastName());
-            usuarioModel.setName(usuario.getName());
             usuarioModel.setEmail(usuario.getEmail());
             usuarioModel.setImageProfileBase64(Base64.encodeBase64String(usuario.getImageProfileData()));
             usuarioModel.setImageProfileName(usuario.getImageProfileName());
@@ -36,6 +36,25 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Optional findUserByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional findUserByResetToken(String resetToken) {
+        return usuarioRepository.findByResetToken(resetToken);
+    }
+
+    @Override
+    @Transactional
+    public void save(Usuario user) {
+        usuarioRepository.save(user);
+    }
+
+    @Override
+    @Transactional
     public UsuarioModel uploadImage(byte[] imageBase64, String imageName, Long id) {
         UsuarioModel usuarioModel = null;
         Optional<Usuario> optional = usuarioRepository.findById(id);
@@ -46,8 +65,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario = usuarioRepository.save(usuario);
             usuarioModel = new UsuarioModel();
             usuarioModel.setId(usuario.getId());
+            usuarioModel.setName(usuario.getFirstName());
             usuarioModel.setLastName(usuario.getLastName());
-            usuarioModel.setName(usuario.getName());
             usuarioModel.setEmail(usuario.getEmail());
             usuarioModel.setImageProfileBase64(Base64.encodeBase64String(usuario.getImageProfileData()));
             usuarioModel.setImageProfileName(usuario.getImageProfileName());

@@ -19,7 +19,7 @@ public class EntidadFinanciera implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "nombre")
     private String nombre;

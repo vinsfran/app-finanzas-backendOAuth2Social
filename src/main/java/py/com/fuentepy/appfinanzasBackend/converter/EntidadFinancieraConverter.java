@@ -6,7 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.EntidadFinancieraModel;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraModel;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +16,29 @@ import java.util.List;
 @Component("entidadFinancieraConverter")
 public class EntidadFinancieraConverter {
 
-    public static EntidadFinanciera modelToEntity(EntidadFinancieraModel model) {
+    public static EntidadFinanciera entidadFinancieraRequestNewToEntidadFinancieraEntity(EntidadFinancieraRequestNew request, Long usuarioId) {
         Usuario usuario = new Usuario();
-        usuario.setId(model.getUsuarioId());
+        usuario.setId(usuarioId);
         EntidadFinanciera entity = new EntidadFinanciera();
-        entity.setId(model.getId());
-        entity.setNombre(model.getNombre());
+        entity.setNombre(request.getNombre());
         entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+    public static EntidadFinanciera entidadFinancieraRequestToAhorroEntity(EntidadFinancieraRequestUpdate request, Long usuarioId) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        EntidadFinanciera entity = new EntidadFinanciera();
+        entity.setId(request.getId());
+        entity.setNombre(request.getNombre());
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+
+    public static EntidadFinanciera modelToEntity(EntidadFinancieraModel model) {
+        EntidadFinanciera entity = new EntidadFinanciera();
+        entity.setNombre(model.getNombre());
         return entity;
     }
 
@@ -28,7 +46,6 @@ public class EntidadFinancieraConverter {
         EntidadFinancieraModel model = new EntidadFinancieraModel();
         model.setId(entity.getId());
         model.setNombre(entity.getNombre());
-        model.setUsuarioId(entity.getUsuarioId().getId());
         return model;
     }
 

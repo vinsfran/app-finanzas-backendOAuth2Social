@@ -75,14 +75,10 @@ public class PrestamoModel implements Serializable {
 
     @JsonProperty("entidad_financiera_id")
     @SerializedName("entidad_financiera_id")
-    private Integer entidadFinancieraId;
+    private Long entidadFinancieraId;
 
     @JsonProperty("entidad_financiera_nombre")
     @SerializedName("entidad_financiera_nombre")
     private String entidadFinancieraNombre;
-
-    @JsonProperty("usuario_id")
-    @SerializedName("usuario_id")
-    private Long usuarioId;
 
 }

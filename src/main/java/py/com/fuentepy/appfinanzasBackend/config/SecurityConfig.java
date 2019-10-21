@@ -111,7 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs",
                         "/swagger*/**")
                 .permitAll()
-                .antMatchers("/auth/**", "/oauth2/**")
+                .antMatchers("/auth/**", "/oauth2/**", "/password/*")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

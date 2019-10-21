@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.EntidadFinancieraConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.EntidadFinancieraModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.EntidadFinancieraRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraModel;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.EntidadFinancieraService;
 
 import java.util.List;
@@ -57,7 +59,20 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
 
     @Override
     @Transactional(readOnly = true)
-    public EntidadFinancieraModel findById(Integer id) {
+    public EntidadFinancieraModel findByIdAndUsuarioId(Long id, Long usuarioId) {
+        EntidadFinancieraModel model = null;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<EntidadFinanciera> optional = entidadFinancieraRepository.findByIdAndUsuarioId(id, usuario);
+        if (optional.isPresent()) {
+            model = EntidadFinancieraConverter.entityToModel(optional.get());
+        }
+        return model;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EntidadFinancieraModel findById(Long id) {
         EntidadFinancieraModel model = null;
         Optional<EntidadFinanciera> optional = entidadFinancieraRepository.findById(id);
         if (optional.isPresent()) {
@@ -68,14 +83,46 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
 
     @Override
     @Transactional
-    public EntidadFinancieraModel save(EntidadFinancieraModel entidadFinancieraModel) {
-        EntidadFinanciera entity = EntidadFinancieraConverter.modelToEntity(entidadFinancieraModel);
-        return EntidadFinancieraConverter.entityToModel(entidadFinancieraRepository.save(entity));
+    public boolean create(EntidadFinancieraRequestNew request, Long usuarioId) {
+        EntidadFinanciera entity = entidadFinancieraRepository.save(EntidadFinancieraConverter.entidadFinancieraRequestNewToEntidadFinancieraEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+
+//        if(!entity.getEstado()){
+//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
+//
+//            Movimiento movimiento = new Movimiento();
+//            movimiento.setNumeroComprobante("");
+//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
+//            movimiento.setMontoPagado(entity.getMontoCapital());
+//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
+//            movimiento.setPrestamoId(null);
+//            movimiento.setAhorroId(entity);
+//            movimiento.setTarjetaId(null);
+//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
+//            movimiento.setConceptoId(concepto);
+//            movimiento.setMonedaId(entity.getMonedaId());
+////            movimiento.setTipoPagoId(entity.getTipoCobroId());
+//            movimiento.setUsuarioId(usuario);
+//            movimientoRepository.save(movimiento);
+//        }
     }
 
     @Override
     @Transactional
-    public void delete(Integer id) {
+    public boolean update(EntidadFinancieraRequestUpdate request, Long usuarioId) {
+        EntidadFinanciera entity = entidadFinancieraRepository.save(EntidadFinancieraConverter.entidadFinancieraRequestToAhorroEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
         entidadFinancieraRepository.deleteById(id);
     }
 }

@@ -71,10 +71,9 @@ public class AuthResource {
         if (usuarioRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new BadRequestException("Email address already in use.");
         }
-
         // Creating usuario's account
         Usuario usuario = new Usuario();
-        usuario.setName(signUpRequest.getName());
+        usuario.setFirstName(signUpRequest.getName());
         usuario.setEmail(signUpRequest.getEmail());
         usuario.setPassword(signUpRequest.getPassword());
         usuario.setProvider(AuthProvider.local);

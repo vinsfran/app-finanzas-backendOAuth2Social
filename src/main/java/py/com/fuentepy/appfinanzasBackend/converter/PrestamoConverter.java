@@ -83,8 +83,6 @@ public class PrestamoConverter {
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
         entidadFinanciera.setId(model.getEntidadFinancieraId());
         entidadFinanciera.setNombre(model.getEntidadFinancieraNombre());
-        Usuario usuario = new Usuario();
-        usuario.setId(model.getUsuarioId());
         Prestamo entity = new Prestamo();
         entity.setId(model.getId());
         entity.setMontoPrestamo(model.getMontoPrestamo());
@@ -100,7 +98,6 @@ public class PrestamoConverter {
         entity.setEstado(model.getEstado());
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
-        entity.setUsuarioId(usuario);
         return entity;
     }
 
@@ -123,7 +120,6 @@ public class PrestamoConverter {
         model.setMonedaCodigo(entity.getMonedaId().getCodigo());
         model.setEntidadFinancieraId(entity.getEntidadFinancieraId().getId());
         model.setEntidadFinancieraNombre(entity.getEntidadFinancieraId().getNombre());
-        model.setUsuarioId(entity.getUsuarioId().getId());
         return model;
     }
 
