@@ -24,7 +24,7 @@ public class Prestamo implements Serializable {
     private Long id;
 
     @Column(name = "monto_prestamo")
-    private Long montoPrestamo;
+    private Double montoPrestamo;
 
     @Column(name = "fecha_desembolso")
     @Temporal(TemporalType.DATE)
@@ -35,10 +35,10 @@ public class Prestamo implements Serializable {
     private Date fechaVencimiento;
 
     @Column(name = "interes")
-    private Long interes;
+    private Double interes;
 
     @Column(name = "tasa")
-    private Long tasa;
+    private Double tasa;
 
     @Column(name = "cantidad_cuotas")
     private Integer cantidadCuotas;
@@ -47,10 +47,10 @@ public class Prestamo implements Serializable {
     private Long cantidadCuotasPagadas;
     
     @Column(name = "monto_cuota")
-    private Long montoCuota;
+    private Double montoCuota;
 
     @Column(name = "monto_pagado")
-    private Long montoPagado;
+    private Double montoPagado;
 
     @Column(name = "monto_ultimo_pago")
     private Long montoUltimoPago;

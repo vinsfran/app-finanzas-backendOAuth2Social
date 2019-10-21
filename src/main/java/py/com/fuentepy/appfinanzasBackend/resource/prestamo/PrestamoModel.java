@@ -19,7 +19,7 @@ public class PrestamoModel implements Serializable {
 
     @JsonProperty("monto_prestamo")
     @SerializedName("monto_prestamo")
-    private Long montoPrestamo;
+    private Double montoPrestamo;
 
     @JsonProperty("fecha_desembolso")
     @SerializedName("fecha_desembolso")
@@ -31,11 +31,11 @@ public class PrestamoModel implements Serializable {
 
     @JsonProperty("interes")
     @SerializedName("interes")
-    private Long interes;
+    private Double interes;
 
     @JsonProperty("tasa")
     @SerializedName("tasa")
-    private Long tasa;
+    private Double tasa;
 
     @JsonProperty("cantidad_cuotas")
     @SerializedName("cantidad_cuotas")
@@ -47,11 +47,11 @@ public class PrestamoModel implements Serializable {
 
     @JsonProperty("monto_cuota")
     @SerializedName("monto_cuota")
-    private Long montoCuota;
+    private Double montoCuota;
 
     @JsonProperty("monto_pagado")
     @SerializedName("monto_pagado")
-    private Long montoPagado;
+    private Double montoPagado;
 
     @JsonProperty("destino_prestamo")
     @SerializedName("destino_prestamo")

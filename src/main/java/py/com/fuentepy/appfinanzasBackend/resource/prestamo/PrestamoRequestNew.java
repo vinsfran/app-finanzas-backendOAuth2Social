@@ -24,7 +24,7 @@ public class PrestamoRequestNew implements Serializable {
     @ApiModelProperty(value = "Monto del Prestamo", required = true)
     @JsonProperty("monto_prestamo")
     @SerializedName("monto_prestamo")
-    private Long montoPrestamo;
+    private Double montoPrestamo;
 
     @ApiModelProperty(value = "Fecha de Desembolso", required = false, example = "AAAA-MM-DD")
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -45,12 +45,12 @@ public class PrestamoRequestNew implements Serializable {
     @ApiModelProperty(value = "Interes del Prestamo", required = true)
     @JsonProperty("interes")
     @SerializedName("interes")
-    private Long interes;
+    private Double interes;
 
     @ApiModelProperty(value = "Tasa del Prestamo", required = true)
     @JsonProperty("tasa")
     @SerializedName("tasa")
-    private Long tasa;
+    private Double tasa;
 
     @ApiModelProperty(value = "Cantidad Cuotas del Prestamo", required = true)
     @JsonProperty("cantidad_cuotas")
@@ -65,12 +65,12 @@ public class PrestamoRequestNew implements Serializable {
     @ApiModelProperty(value = "Monto Cuota del Prestamo", required = true)
     @JsonProperty("monto_cuota")
     @SerializedName("monto_cuota")
-    private Long montoCuota;
+    private Double montoCuota;
 
     @ApiModelProperty(value = "Monto Pagado del Prestamo", required = true)
     @JsonProperty("monto_pagado")
     @SerializedName("monto_pagado")
-    private Long montoPagado;
+    private Double montoPagado;
 
     @ApiModelProperty(value = "Destino del Prestamo", required = true)
     @JsonProperty("destino_prestamo")
