@@ -13,10 +13,14 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "passwordResetRequest", description = "Ejemplo de para un modelo para reset de Password")
-public class PasswordResetRequest implements Serializable {
+public class ResetRequest implements Serializable {
 
-    @JsonProperty("email")
-    @SerializedName("email")
-    private String email;
+    @JsonProperty("token")
+    @SerializedName("token")
+    private String token;
+
+    @JsonProperty("password")
+    @SerializedName("password")
+    private String password;
 
 }

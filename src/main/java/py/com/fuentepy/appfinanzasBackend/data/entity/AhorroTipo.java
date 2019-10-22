@@ -14,8 +14,8 @@ import java.io.Serializable;
 @Data
 @CommonsLog
 @Entity
-@Table(name = "tipos_ahorros")
-public class TipoAhorro implements Serializable {
+@Table(name = "ahorros_tipos")
+public class AhorroTipo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,12 +23,16 @@ public class TipoAhorro implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 45)
     @Column(name = "nombre")
     private String nombre;
+
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Usuario usuarioId;
 
 }

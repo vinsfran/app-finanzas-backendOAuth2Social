@@ -1,4 +1,4 @@
-INSERT INTO usuarios (email, password, first_name, last_name, enabled, created_on, last_login, reset_token, email_verified, provider, provider_id, image_profile_name, image_profile_data) VALUES ('vinsfran2@gmail.com', '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'Vicente', 'Insfran', true, '2019-06-10', '2019-06-10', null, true, 'local', '', null, null);
+INSERT INTO usuarios (email, password, first_name, last_name, enabled, created_on, last_login, reset_token, email_verified, provider, provider_id, image_profile_name, image_profile_data) VALUES ('vinsfran@gmail.com', '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'Vicente', 'Insfran', true, '2019-06-10', '2019-06-10', null, true, 'local', '', null, null);
 
 INSERT INTO monedas (codigo, nombre) VALUES ('Gs.', 'Guarani');
 INSERT INTO monedas (codigo, nombre) VALUES ('Us.', 'Dolar');
@@ -9,14 +9,14 @@ INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO BBVA', 1);
 INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO CONTINENTAL', 1);
 INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('FINANCIERA EL COMERCIO', 1);
 
+INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('CDA', 1);
+INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('BONOS', 1);
+INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('Acciones', 1);
+INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('Programado', 1);
+
 INSERT INTO tipos_pagos (nombre) VALUES ('Efectivo');
 INSERT INTO tipos_pagos (nombre) VALUES ('Tarjeta');
 INSERT INTO tipos_pagos (nombre) VALUES ('Cheque');
-
-INSERT INTO tipos_ahorros (nombre) VALUES ('CDA');
-INSERT INTO tipos_ahorros (nombre) VALUES ('BONOS');
-INSERT INTO tipos_ahorros (nombre) VALUES ('Acciones');
-INSERT INTO tipos_ahorros (nombre) VALUES ('Programado');
 
 INSERT INTO tipos_cobros (nombre) VALUES ('Mensual');
 INSERT INTO tipos_cobros (nombre) VALUES ('Trimestral');

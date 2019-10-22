@@ -1,7 +1,13 @@
 package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
@@ -14,8 +20,17 @@ import java.util.Optional;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
+    private static final Log LOG = LogFactory.getLog(UsuarioServiceImpl.class);
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -33,6 +48,30 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioModel.setImageProfileName(usuario.getImageProfileName());
         }
         return usuarioModel;
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(Long id, String passwordOld, String passwordNew) throws Exception {
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                usuario.getEmail(),
+                                passwordOld
+                        )
+                );
+                usuario.setPassword(passwordEncoder.encode(passwordNew));
+                usuarioRepository.save(usuario);
+            } catch (Exception e) {
+                throw new Exception("Contraseña actual no valida! " + e.getMessage());
+            }
+        } else {
+            throw new Exception("No exite el usuario!");
+        }
+        return true;
     }
 
     @Override

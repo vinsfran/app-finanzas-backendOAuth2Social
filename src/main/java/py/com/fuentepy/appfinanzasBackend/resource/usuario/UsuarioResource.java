@@ -6,14 +6,19 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.auth.LoginRequest;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.password.ResetRequest;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.Impl.UsuarioServiceImpl;
@@ -24,6 +29,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -81,9 +87,54 @@ public class UsuarioResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
+    @PutMapping(value = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> changePassword(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                            @Valid @RequestBody ChangePasswordRequest changePasswordRequest,
+                                            @ApiIgnore BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            try {
+                if (usuarioService.changePassword(usuarioId, changePasswordRequest.getPasswordOld(), changePasswordRequest.getPasswordNew())) {
+                    httpStatus = HttpStatus.OK;
+                    message = new MessageResponse(StatusLevel.INFO, "Cambio de password exitoso!");
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                } else {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.ERROR, "No se pudo cambiar el password!");
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            } catch (Exception e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            }
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @PostMapping("/uploadMultipartFile")
-    public ResponseEntity<?> uploadMultipartFile(@RequestParam("image_profile") MultipartFile imageProfile, @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<?> uploadMultipartFile(@RequestParam("image_profile") MultipartFile imageProfile,
+                                                 @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;

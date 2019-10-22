@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera;
+package py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -20,7 +20,7 @@ import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
-import py.com.fuentepy.appfinanzasBackend.service.EntidadFinancieraService;
+import py.com.fuentepy.appfinanzasBackend.service.TipoAhorroService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -31,44 +31,45 @@ import java.util.Map;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/api/entidades-financieras")
-public class EntidadFinancieraResource {
+@RequestMapping("/api/ahorro-tipo")
+public class AhorroTipoResource {
 
-    private static final Log LOG = LogFactory.getLog(EntidadFinancieraResource.class);
+    private static final Log LOG = LogFactory.getLog(AhorroTipoResource.class);
 
     @Autowired
-    private EntidadFinancieraService entidadFinancieraService;
+    private TipoAhorroService tipoAhorroService;
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping()
-    public List<EntidadFinancieraModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public List<AhorroTipoModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         Long usuarioId = userPrincipal.getId();
-        return entidadFinancieraService.findByUsuarioId(usuarioId);
+        return tipoAhorroService.findByUsuarioId(usuarioId);
     }
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping("/page")
-    public ResponseEntity<?> getPageByUsuarioId(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                                @ApiIgnore Pageable pageable) {
+    public ResponseEntity<?> index(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                   @ApiIgnore Pageable pageable) {
         Long usuarioId = userPrincipal.getId();
-        Page<EntidadFinancieraModel> entidadesFinancieras = null;
+        Page<AhorroTipoModel> tipoAhorros = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            entidadesFinancieras = entidadFinancieraService.findByUsuarioId(usuarioId, pageable);
+            tipoAhorros = tipoAhorroService.findByUsuarioId(usuarioId, pageable);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (entidadesFinancieras == null) {
-            response.put("mensaje", "No existen Entidades Financieras en la base de datos!");
+
+        if (tipoAhorros == null) {
+            response.put("mensaje", "No existen tipoAhorros en la base de datos!");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("page", entidadesFinancieras);
+        response.put("page", tipoAhorros);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -85,17 +86,17 @@ public class EntidadFinancieraResource {
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            EntidadFinancieraModel entidadFinancieraModel = entidadFinancieraService.findByIdAndUsuarioId(id, usuarioId);
-            if (entidadFinancieraModel == null) {
+            AhorroTipoModel ahorroTipoModel = tipoAhorroService.findByIdAndUsuarioId(id, usuarioId);
+            if (ahorroTipoModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: La Entidad Financiera Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Ahorro Tipo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
                 messages.add(message);
-                response = new EntidadFinancieraResponse(httpStatus.value(), messages, entidadFinancieraModel);
+                response = new AhorroTipoResponse(httpStatus.value(), messages, ahorroTipoModel);
             }
         } catch (DataAccessException e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -114,7 +115,7 @@ public class EntidadFinancieraResource {
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody EntidadFinancieraRequestNew entidadFinancieraRequestNew,
+                                    @Valid @RequestBody AhorroTipoRequestNew ahorroTipoRequestNew,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -130,14 +131,14 @@ public class EntidadFinancieraResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (entidadFinancieraService.create(entidadFinancieraRequestNew, usuarioId)) {
+                if (tipoAhorroService.create(ahorroTipoRequestNew, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "La Entidad Financiera ha sido creada con éxito!");
+                    message = new MessageResponse(StatusLevel.INFO, "El Ahorro Tipo ha sido creada con éxito!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 } else {
                     httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "La Entidad Financiera no se pudo crear!");
+                    message = new MessageResponse(StatusLevel.ERROR, "El Ahorro Tipo no se pudo crear!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
@@ -159,14 +160,14 @@ public class EntidadFinancieraResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody EntidadFinancieraRequestUpdate entidadFinancieraRequestUpdate,
+                                    @Valid @RequestBody AhorroTipoRequestUpdate ahorroTipoRequestUpdate,
                                     BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        Long id = entidadFinancieraRequestUpdate.getId();
+        Long id = ahorroTipoRequestUpdate.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -175,21 +176,21 @@ public class EntidadFinancieraResource {
             }
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (entidadFinancieraService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            if (tipoAhorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, la Entidad Financiera Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, El Ahorro Tipo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (entidadFinancieraService.update(entidadFinancieraRequestUpdate, usuarioId)) {
+                    if (tipoAhorroService.update(ahorroTipoRequestUpdate, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "La Entidad Financiera ha sido actualizada con éxito!");
+                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro Tipo ha sido actualizada con éxito!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     } else {
                         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo actualizar!");
+                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro Tipo no se pudo actualizar!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     }
@@ -209,24 +210,24 @@ public class EntidadFinancieraResource {
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            entidadFinancieraService.delete(id);
+            tipoAhorroService.delete(id);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar la Entidad Financiera de la base de datos!");
+            response.put("mensaje", "Error al eliminar el Ahorro Tipo de la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "La Entidad Financiera eliminado con éxito!");
+        response.put("mensaje", "El Ahorro Tipo eliminado con éxito!");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 //    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @PostMapping("/entidadesFinancieras/upload")
+//    @PostMapping("/tipoAhorros/upload")
 
 //    @GetMapping("/uploads/img/{nombreFoto:.+}")
 
 //    @Secured({"ROLE_ADMIN"})
-//    @GetMapping("/entidadesFinancieras/regiones")
+//    @GetMapping("/tipoAhorros/regiones")
 }

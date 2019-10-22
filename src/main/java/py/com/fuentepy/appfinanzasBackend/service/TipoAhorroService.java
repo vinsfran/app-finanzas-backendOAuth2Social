@@ -2,19 +2,28 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.data.entity.TipoAhorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.AhorroTipo;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo.AhorroTipoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo.AhorroTipoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo.AhorroTipoRequestUpdate;
 
 import java.util.List;
 
 public interface TipoAhorroService {
 
-    List<TipoAhorro> findAll();
+    List<AhorroTipo> findAll();
 
-    Page<TipoAhorro> findAll(Pageable pageable);
+    List<AhorroTipoModel> findByUsuarioId(Long usuarioId);
 
-    TipoAhorro findById(Integer id);
+    Page<AhorroTipo> findAll(Pageable pageable);
 
-    TipoAhorro save(TipoAhorro tipoAhorro);
+    Page<AhorroTipoModel> findByUsuarioId(Long usuarioId, Pageable pageable);
+
+    AhorroTipoModel findByIdAndUsuarioId(Long id, Long usuarioId);
+
+    boolean create(AhorroTipoRequestNew request, Long usuarioId);
+
+    boolean update(AhorroTipoRequestUpdate request, Long usuarioId);
 
     void delete(Integer id);
 }

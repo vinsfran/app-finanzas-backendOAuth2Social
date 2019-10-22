@@ -87,9 +87,9 @@ public class AhorroRequestNew implements Serializable {
     @SerializedName("tasa")
     private Double tasa;
 
-    @JsonProperty("tipo_ahorro_id")
-    @SerializedName("tipo_ahorro_id")
-    private Integer tipoAhorroId;
+    @JsonProperty("ahorro_tipo_id")
+    @SerializedName("ahorro_tipo_id")
+    private Long ahorroTipoId;
 
     @JsonProperty("tipo_cobro_id")
     @SerializedName("tipo_cobro_id")

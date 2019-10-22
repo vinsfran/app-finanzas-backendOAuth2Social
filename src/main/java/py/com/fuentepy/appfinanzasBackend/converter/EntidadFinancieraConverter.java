@@ -25,7 +25,7 @@ public class EntidadFinancieraConverter {
         return entity;
     }
 
-    public static EntidadFinanciera entidadFinancieraRequestToAhorroEntity(EntidadFinancieraRequestUpdate request, Long usuarioId) {
+    public static EntidadFinanciera entidadFinancieraRequestUpdateToAhorroEntity(EntidadFinancieraRequestUpdate request, Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         EntidadFinanciera entity = new EntidadFinanciera();

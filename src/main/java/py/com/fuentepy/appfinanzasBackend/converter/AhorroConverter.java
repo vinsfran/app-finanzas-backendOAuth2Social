@@ -22,14 +22,14 @@ public class AhorroConverter {
     private static final Log LOG = LogFactory.getLog(AhorroConverter.class);
 
     public static Ahorro ahorroNewToAhorroEntity(AhorroRequestNew request, Long usuarioId) {
-        TipoAhorro tipoAhorro = new TipoAhorro();
-        tipoAhorro.setId(request.getTipoAhorroId());
+        AhorroTipo ahorroTipo = new AhorroTipo();
+        ahorroTipo.setId(request.getAhorroTipoId());
         Moneda moneda = new Moneda();
         moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
         entidadFinanciera.setId(request.getEntidadFinancieraId());
         TipoCobro tipoCobro = new TipoCobro();
-        tipoCobro.setId(request.getTipoAhorroId());
+        tipoCobro.setId(request.getTipoCobroId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
@@ -45,7 +45,7 @@ public class AhorroConverter {
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
         entity.setCantidadCobro(request.getCantidadCobro());
         entity.setEstado(request.getEstado());
-        entity.setTipoAhorroId(tipoAhorro);
+        entity.setAhorroTipoId(ahorroTipo);
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setTipoCobroId(tipoCobro);
@@ -54,14 +54,14 @@ public class AhorroConverter {
     }
 
     public static Ahorro ahorroUpdateToAhorroEntity(AhorroRequestUpdate request, Long usuarioId) {
-        TipoAhorro tipoAhorro = new TipoAhorro();
-        tipoAhorro.setId(request.getTipoAhorroId());
+        AhorroTipo ahorroTipo = new AhorroTipo();
+        ahorroTipo.setId(request.getAhorroTipoId());
         Moneda moneda = new Moneda();
         moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
         entidadFinanciera.setId(request.getEntidadFinancieraId());
         TipoCobro tipoCobro = new TipoCobro();
-        tipoCobro.setId(request.getTipoAhorroId());
+        tipoCobro.setId(request.getTipoCobroId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
@@ -78,7 +78,7 @@ public class AhorroConverter {
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
         entity.setCantidadCobro(request.getCantidadCobro());
         entity.setEstado(request.getEstado());
-        entity.setTipoAhorroId(tipoAhorro);
+        entity.setAhorroTipoId(ahorroTipo);
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setTipoCobroId(tipoCobro);
@@ -87,9 +87,9 @@ public class AhorroConverter {
     }
 
     public static Ahorro modelToEntity(AhorroModel model) {
-        TipoAhorro tipoAhorro = new TipoAhorro();
-        tipoAhorro.setId(model.getTipoAhorroId());
-        tipoAhorro.setNombre(model.getTipoAhorroNombre());
+        AhorroTipo ahorroTipo = new AhorroTipo();
+        ahorroTipo.setId(model.getAhorroTipoId());
+        ahorroTipo.setNombre(model.getTipoAhorroNombre());
         Moneda moneda = new Moneda();
         moneda.setId(model.getMonedaId());
         moneda.setNombre(model.getMonedaNombre());
@@ -98,7 +98,7 @@ public class AhorroConverter {
         entidadFinanciera.setId(model.getEntidadFinancieraId());
         entidadFinanciera.setNombre(model.getEntidadFinancieraNombre());
         TipoCobro tipoCobro = new TipoCobro();
-        tipoCobro.setId(model.getTipoAhorroId());
+        tipoCobro.setId(model.getTipoCobroId());
         tipoCobro.setNombre(model.getTipoAhorroNombre());
         Ahorro entity = new Ahorro();
         entity.setId(model.getId());
@@ -114,7 +114,7 @@ public class AhorroConverter {
         entity.setMontoInteresCuota(model.getMontoInteresCuota());
         entity.setCantidadCobro(model.getCantidadCobro());
         entity.setEstado(model.getEstado());
-        entity.setTipoAhorroId(tipoAhorro);
+        entity.setAhorroTipoId(ahorroTipo);
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setTipoCobroId(tipoCobro);
@@ -136,8 +136,8 @@ public class AhorroConverter {
         model.setMontoInteresCuota(entity.getMontoInteresCuota());
         model.setCantidadCobro(entity.getCantidadCobro());
         model.setEstado(entity.getEstado());
-        model.setTipoAhorroId(entity.getTipoAhorroId().getId());
-        model.setTipoAhorroNombre(entity.getTipoAhorroId().getNombre());
+        model.setAhorroTipoId(entity.getAhorroTipoId().getId());
+        model.setTipoAhorroNombre(entity.getAhorroTipoId().getNombre());
         model.setMonedaId(entity.getMonedaId().getId());
         model.setMonedaNombre(entity.getMonedaId().getNombre());
         model.setMonedaCodigo(entity.getMonedaId().getCodigo());

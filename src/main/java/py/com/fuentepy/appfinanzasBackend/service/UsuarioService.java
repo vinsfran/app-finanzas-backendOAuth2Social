@@ -9,6 +9,8 @@ public interface UsuarioService {
 
     UsuarioModel findById(Long id);
 
+    boolean changePassword(Long id, String passwordOld, String passwordNew) throws Exception;
+
     Optional<Usuario> findUserByEmail(String email);
 
     Optional<Usuario> findUserByResetToken(String resetToken);

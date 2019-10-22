@@ -113,7 +113,7 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
     @Override
     @Transactional
     public boolean update(EntidadFinancieraRequestUpdate request, Long usuarioId) {
-        EntidadFinanciera entity = entidadFinancieraRepository.save(EntidadFinancieraConverter.entidadFinancieraRequestToAhorroEntity(request, usuarioId));
+        EntidadFinanciera entity = entidadFinancieraRepository.save(EntidadFinancieraConverter.entidadFinancieraRequestUpdateToAhorroEntity(request, usuarioId));
         if (entity != null) {
             return true;
         }
