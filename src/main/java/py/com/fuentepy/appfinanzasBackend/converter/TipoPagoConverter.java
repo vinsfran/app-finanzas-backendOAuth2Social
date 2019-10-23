@@ -5,13 +5,35 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoPago;
-import py.com.fuentepy.appfinanzasBackend.model.TipoPagoModel;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("tipoPagoConverter")
 public class TipoPagoConverter {
+
+    public static TipoPago tipoPagoRequestNewToTipoPagoEntity(TipoPagoRequestNew request, Long usuarioId) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        TipoPago entity = new TipoPago();
+        entity.setNombre(request.getNombre());
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+    public static TipoPago tipoPagoRequestUpdateToPagoEntity(TipoPagoRequestUpdate request, Long usuarioId) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        TipoPago entity = new TipoPago();
+        entity.setId(request.getId());
+        entity.setNombre(request.getNombre());
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
 
     public static TipoPago modelToEntity(TipoPagoModel model) {
         TipoPago entity = new TipoPago();

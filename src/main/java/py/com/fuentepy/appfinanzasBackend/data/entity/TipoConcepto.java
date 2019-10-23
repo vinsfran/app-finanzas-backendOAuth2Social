@@ -9,13 +9,14 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
+ *
  * @author vinsfran
  */
 @Data
 @CommonsLog
 @Entity
-@Table(name = "conceptos")
-public class Concepto implements Serializable {
+@Table(name = "tipos_conceptos")
+public class TipoConcepto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,12 +32,10 @@ public class Concepto implements Serializable {
     @Column(name = "nombre")
     private String nombre;
 
-    @JoinColumn(name = "tipo_concepto_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private TipoConcepto tipoConceptoId;
-
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Usuario usuarioId;
-
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1)
+    @Column(name = "signo")
+    private String signo;
+    
 }

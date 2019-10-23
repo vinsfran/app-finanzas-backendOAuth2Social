@@ -39,7 +39,7 @@ public class PrestamoPagoModel implements Serializable {
 
     @JsonProperty("tipoPagoId")
     @SerializedName("tipoPagoId")
-    private Integer tipoPagoId;
+    private Long tipoPagoId;
 
     @JsonProperty("tipoPagoNombre")
     @SerializedName("tipoPagoNombre")

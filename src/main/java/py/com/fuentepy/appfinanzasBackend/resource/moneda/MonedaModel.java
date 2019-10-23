@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.model;
+package py.com.fuentepy.appfinanzasBackend.resource.moneda;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author vinsfran
  */
 @Data
-public class TipoPagoModel implements Serializable {
+public class MonedaModel implements Serializable {
 
     @JsonProperty("id")
     @SerializedName("id")
@@ -19,5 +19,9 @@ public class TipoPagoModel implements Serializable {
     @JsonProperty("nombre")
     @SerializedName("nombre")
     private String nombre;
+
+    @JsonProperty("codigo")
+    @SerializedName("codigo")
+    private String codigo;
 
 }

@@ -82,7 +82,7 @@ public class TipoCobroServiceImpl implements TipoCobroService {
     @Override
     @Transactional
     public boolean update(TipoCobroRequestUpdate request, Long usuarioId) {
-        TipoCobro entity = tipoCobroRepository.save(TipoCobroConverter.tipoCobroRequestUpdateToAhorroEntity(request, usuarioId));
+        TipoCobro entity = tipoCobroRepository.save(TipoCobroConverter.tipoCobroRequestUpdateToCobroEntity(request, usuarioId));
         if (entity != null) {
             return true;
         }

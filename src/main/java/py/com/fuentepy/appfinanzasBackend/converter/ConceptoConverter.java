@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.model.ConceptoModel;
 
@@ -17,11 +18,11 @@ public class ConceptoConverter {
     public static Concepto modelToEntity(ConceptoModel model) {
         Usuario usuario = new Usuario();
         usuario.setId(model.getUsuarioId());
+        TipoConcepto tipoConcepto = new TipoConcepto();
+        tipoConcepto.setId(model.getTipoConceptoId());
         Concepto entity = new Concepto();
         entity.setId(model.getId());
         entity.setNombre(model.getNombre());
-        entity.setTipoConcepto(model.getTipoConcepto());
-        entity.setCodigoConcepto(model.getCodigoConcepto());
         entity.setUsuarioId(usuario);
         return entity;
     }
@@ -30,8 +31,9 @@ public class ConceptoConverter {
         ConceptoModel model = new ConceptoModel();
         model.setId(entity.getId());
         model.setNombre(entity.getNombre());
-        model.setTipoConcepto(entity.getTipoConcepto());
-        model.setCodigoConcepto(entity.getCodigoConcepto());
+        model.setTipoConceptoId(entity.getTipoConceptoId().getId());
+        model.setTipoConceptoNombre(entity.getTipoConceptoId().getNombre());
+        model.setTipoConceptoSigno(entity.getTipoConceptoId().getSigno());
         model.setUsuarioId(entity.getUsuarioId().getId());
         return model;
     }

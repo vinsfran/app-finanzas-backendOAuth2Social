@@ -3,7 +3,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
-import py.com.fuentepy.appfinanzasBackend.model.MonedaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
 
 import java.util.List;
 

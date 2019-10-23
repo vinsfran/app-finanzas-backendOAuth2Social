@@ -26,11 +26,12 @@ public class MovimientoConverter {
         ahorro.setId(model.getAhorroId());
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setId(model.getTarjetaId());
+        TipoConcepto tipoConcepto = new TipoConcepto();
+        tipoConcepto.setId(model.getTipoConceptoId());
         Concepto concepto = new Concepto();
         concepto.setId(model.getConceptoId());
         concepto.setNombre(model.getConceptoNombre());
-        concepto.setTipoConcepto(model.getTipoConcepto());
-        concepto.setCodigoConcepto(model.getCodigoConcepto());
+        concepto.setTipoConceptoId(tipoConcepto);
         Moneda moneda = new Moneda();
         moneda.setId(model.getMonedaId());
         moneda.setNombre(model.getMonedaNombre());
@@ -76,8 +77,9 @@ public class MovimientoConverter {
         model.setNumeroCuota(entity.getNumeroCuota());
         model.setConceptoId(entity.getConceptoId().getId());
         model.setConceptoNombre(entity.getConceptoId().getNombre());
-        model.setTipoConcepto(entity.getConceptoId().getTipoConcepto());
-        model.setCodigoConcepto(entity.getConceptoId().getCodigoConcepto());
+        model.setTipoConceptoId(entity.getConceptoId().getTipoConceptoId().getId());
+        model.setTipoConceptoNombre(entity.getConceptoId().getTipoConceptoId().getNombre());
+        model.setTipoConceptoSigno(entity.getConceptoId().getTipoConceptoId().getSigno());
         model.setMonedaId(entity.getMonedaId().getId());
         model.setMonedaNombre(entity.getMonedaId().getNombre());
         model.setMonedaCodigo(entity.getMonedaId().getCodigo());

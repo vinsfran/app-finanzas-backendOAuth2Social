@@ -4,13 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
 
 @Repository
-public interface MonedaRepository extends JpaRepository<Moneda, Integer> {
+public interface TipoConceptoRepository extends JpaRepository<TipoConcepto, Integer> {
 
-    Page<Moneda> findAllByOrderByIdAsc(Pageable pageable);
+    Page<TipoConcepto> findAllByOrderByIdAsc(Pageable pageable);
 
-    Page<Moneda> findAll(Pageable pageable);
+    Page<TipoConcepto> findAll(Pageable pageable);
 
 }

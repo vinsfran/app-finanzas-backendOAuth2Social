@@ -1,5 +1,7 @@
-package py.com.fuentepy.appfinanzasBackend.resource;
+package py.com.fuentepy.appfinanzasBackend.resource.tipoConcepto;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -9,8 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import py.com.fuentepy.appfinanzasBackend.model.TipoPagoModel;
-import py.com.fuentepy.appfinanzasBackend.service.TipoPagoService;
+import py.com.fuentepy.appfinanzasBackend.converter.TipoConceptoConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
+import py.com.fuentepy.appfinanzasBackend.service.TipoConceptoService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -21,44 +24,53 @@ import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/api/tipos-pagos")
-public class TipoPagoResource {
+@RequestMapping("/api/tipo-concepto")
+public class TipoConceptoResource {
 
     @Autowired
-    private TipoPagoService tipoPagoService;
+    private TipoConceptoService tipoConceptoService;
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @GetMapping()
-    public List<TipoPagoModel> index() {
-        return tipoPagoService.findAll();
+    public List<TipoConceptoModel> index() {
+        return TipoConceptoConverter.listEntitytoListModel(tipoConceptoService.findAll());
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @GetMapping("/page")
     public ResponseEntity<?> index(@ApiIgnore Pageable pageable) {
-        Page<TipoPagoModel> tipoPagos = null;
+        Page<TipoConcepto> tipoConceptos = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            tipoPagos = tipoPagoService.findAll(pageable);
+            tipoConceptos = tipoConceptoService.findAll(pageable);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (tipoPagos == null) {
-            response.put("mensaje", "No existen tipoPagos en la base de datos!");
+        if (tipoConceptos == null) {
+            response.put("mensaje", "No existen Tipos Conceptos en la base de datos!");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("page", tipoPagos);
+        response.put("page", tipoConceptos);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Integer id) {
-        TipoPagoModel tipoPago = null;
+        TipoConcepto tipoConcepto = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            tipoPago = tipoPagoService.findById(id);
+            tipoConcepto = tipoConceptoService.findById(id);
 
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la en la base de datos!");
@@ -67,19 +79,21 @@ public class TipoPagoResource {
         }
 
 
-        if (tipoPago == null) {
-            response.put("mensaje", "El tipoPago ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+        if (tipoConcepto == null) {
+            response.put("mensaje", "El Tipo Concepto ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(tipoPago, HttpStatus.OK);
+        return new ResponseEntity<>(tipoConcepto, HttpStatus.OK);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @PostMapping()
-    public ResponseEntity<?> create(@Valid @RequestBody TipoPagoModel tipoPagoModel, BindingResult result) {
-        TipoPagoModel tipoPagoNew = null;
+    public ResponseEntity<?> create(@Valid @RequestBody TipoConceptoModel tipoConceptoModel, BindingResult result) {
+        TipoConceptoModel tipoConceptoNew = null;
         Map<String, Object> response = new HashMap<>();
-
         if (result.hasErrors()) {
 //            List<String> errors = new ArrayList<>();
 //            for (FieldError err : result.getFieldErrors()) {
@@ -98,22 +112,25 @@ public class TipoPagoResource {
         }
 
         try {
-            tipoPagoNew = tipoPagoService.save(tipoPagoModel);
+            tipoConceptoNew = tipoConceptoService.save(tipoConceptoModel);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar el insert en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "El tipoPago ha sido creado con éxito!");
-        response.put("tipoPago", tipoPagoNew);
+        response.put("mensaje", "El Tipo Concepto ha sido creado con éxito!");
+        response.put("tipo_concepto", tipoConceptoNew);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @PutMapping()
-    public ResponseEntity<?> update(@Valid @RequestBody TipoPagoModel tipoPagoModel, BindingResult result) {
-        Integer id = tipoPagoModel.getId();
-        TipoPagoModel tipoPagoUpdated = null;
+    public ResponseEntity<?> update(@Valid @RequestBody TipoConceptoModel tipoConceptoModel, BindingResult result) {
+        Integer id = tipoConceptoModel.getId();
+        TipoConceptoModel tipoConceptoUpdated = null;
         Map<String, Object> response = new HashMap<>();
         if (result.hasErrors()) {
 //            List<String> errors = new ArrayList<>();
@@ -131,43 +148,46 @@ public class TipoPagoResource {
             response.put("errors", errors);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        if (tipoPagoService.findById(id) == null) {
-            response.put("mensaje", "Error: no se pudo editar, el tipoPago ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+        if (tipoConceptoService.findById(id) == null) {
+            response.put("mensaje", "Error: no se pudo editar, el Tipo Concepto ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         try {
-            tipoPagoUpdated = tipoPagoService.save(tipoPagoModel);
+            tipoConceptoUpdated = tipoConceptoService.save(tipoConceptoModel);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al realizar el update en la base de datos!");
+            response.put("mensaje", "Error al realizar el insert en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "El tipoPago ha sido actualizado con éxito!");
-        response.put("tipoPago", tipoPagoUpdated);
+        response.put("mensaje", "La Tipo Concepto ha sido actualizado con éxito!");
+        response.put("tipo_concepto", tipoConceptoUpdated);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            tipoPagoService.delete(id);
+            tipoConceptoService.delete(id);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar el Tipo Pago de la base de datos!");
+            response.put("mensaje", "Error al eliminar el Tipo Concepto de la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "El Tipo Pago eliminado con éxito!");
+        response.put("mensaje", "El Tipo Concepto eliminado con éxito!");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 //    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @PostMapping("/tipoPagos/upload")
+//    @PostMapping("/tipoConceptos/upload")
 
 //    @GetMapping("/uploads/img/{nombreFoto:.+}")
 
 //    @Secured({"ROLE_ADMIN"})
-//    @GetMapping("/tipoPagos/regiones")
+//    @GetMapping("/tipoConceptos/regiones")
 }

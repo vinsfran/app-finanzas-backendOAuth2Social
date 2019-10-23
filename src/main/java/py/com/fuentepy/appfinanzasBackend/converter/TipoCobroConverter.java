@@ -25,7 +25,7 @@ public class TipoCobroConverter {
         return entity;
     }
 
-    public static TipoCobro tipoCobroRequestUpdateToAhorroEntity(TipoCobroRequestUpdate request, Long usuarioId) {
+    public static TipoCobro tipoCobroRequestUpdateToCobroEntity(TipoCobroRequestUpdate request, Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         TipoCobro entity = new TipoCobro();

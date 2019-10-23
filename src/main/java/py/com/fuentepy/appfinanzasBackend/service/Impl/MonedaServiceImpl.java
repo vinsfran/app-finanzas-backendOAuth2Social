@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.MonedaConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
-import py.com.fuentepy.appfinanzasBackend.model.MonedaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MonedaRepository;
 import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
 

@@ -57,13 +57,17 @@ public class MovimientoModel implements Serializable {
     @SerializedName("conceptoNombre")
     private String conceptoNombre;
 
-    @JsonProperty("tipoConcepto")
-    @SerializedName("tipoConcepto")
-    private String tipoConcepto;
+    @JsonProperty("tipo_concepto_id")
+    @SerializedName("tipo_concepto_id")
+    private Integer tipoConceptoId;
 
-    @JsonProperty("codigoConcepto")
-    @SerializedName("codigoConcepto")
-    private String codigoConcepto;
+    @JsonProperty("tipo_concepto_nombre")
+    @SerializedName("tipo_concepto_nombre")
+    private String tipoConceptoNombre;
+
+    @JsonProperty("tipo_concepto_signo")
+    @SerializedName("tipo_concepto_signo")
+    private String tipoConceptoSigno;
 
     @JsonProperty("monedaId")
     @SerializedName("monedaId")
@@ -79,7 +83,7 @@ public class MovimientoModel implements Serializable {
 
     @JsonProperty("tipoPagoId")
     @SerializedName("tipoPagoId")
-    private Integer tipoPagoId;
+    private Long tipoPagoId;
 
     @JsonProperty("tipoPagoNombre")
     @SerializedName("tipoPagoNombre")

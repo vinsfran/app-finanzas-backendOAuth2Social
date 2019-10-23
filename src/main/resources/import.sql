@@ -4,33 +4,35 @@ INSERT INTO monedas (codigo, nombre) VALUES ('Gs.', 'Guarani');
 INSERT INTO monedas (codigo, nombre) VALUES ('Us.', 'Dolar');
 INSERT INTO monedas (codigo, nombre) VALUES ('Ps.', 'Peso Argentino');
 
-INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO ITAU', 1);
-INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO BBVA', 1);
-INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO CONTINENTAL', 1);
-INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('FINANCIERA EL COMERCIO', 1);
+INSERT INTO tipos_conceptos (nombre, signo) VALUES ('Ingreso', '+');
+INSERT INTO tipos_conceptos (nombre, signo) VALUES ('Egreso', '-');
 
-INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('CDA', 1);
-INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('BONOS', 1);
-INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('Acciones', 1);
-INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('Programado', 1);
+INSERT INTO tipos_ahorros (nombre, usuario_id) VALUES ('CDA', 1);
+INSERT INTO tipos_ahorros (nombre, usuario_id) VALUES ('BONOS', 1);
+INSERT INTO tipos_ahorros (nombre, usuario_id) VALUES ('Acciones', 1);
+INSERT INTO tipos_ahorros (nombre, usuario_id) VALUES ('Programado', 1);
 
 INSERT INTO tipos_cobros (nombre, usuario_id) VALUES ('Mensual', 1);
 INSERT INTO tipos_cobros (nombre, usuario_id) VALUES ('Trimestral', 1);
 INSERT INTO tipos_cobros (nombre, usuario_id) VALUES ('Anual', 1);
 
-INSERT INTO tipos_pagos (nombre) VALUES ('Efectivo');
-INSERT INTO tipos_pagos (nombre) VALUES ('Tarjeta');
-INSERT INTO tipos_pagos (nombre) VALUES ('Cheque');
+INSERT INTO tipos_pagos (nombre, usuario_id) VALUES ('Efectivo', 1);
+INSERT INTO tipos_pagos (nombre, usuario_id) VALUES ('Tarjeta', 1);
+INSERT INTO tipos_pagos (nombre, usuario_id) VALUES ('Cheque', 1);
 
+INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO ITAU', 1);
+INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO BBVA', 1);
+INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('BANCO CONTINENTAL', 1);
+INSERT INTO entidades_financieras (nombre, usuario_id) VALUES ('FINANCIERA EL COMERCIO', 1);
 
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Luz', 'Egreso', 1, false, 'PS');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Agua', 'Egreso', 1, false, 'PS');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Escuela', 'Egreso', 1, false, 'PS');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Sueldo', 'Ingreso', 1, false, 'PS');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Pago de Prestamo', 'Egreso', 1, true, 'PP');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Pago de Ahorro', 'Egreso', 1, true, 'PA');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Cobro de Ahorro', 'Ingreso', 1, false, 'CA');
-INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Pago de Tarjeta', 'Egreso', 1, true, 'PT');
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Luz', 2, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Agua', 2, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Escuela', 2, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Sueldo', 1, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Pago de Prestamo', 2, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Pago de Ahorro', 2, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Cobro de Ahorro', 1, 1);
+INSERT INTO conceptos (nombre, tipo_concepto_id, usuario_id) VALUES ('Pago de Tarjeta', 2, 1);
 
 INSERT INTO prestamos (cantidad_cuotas, cantidad_cuotas_pagadas, destino_prestamo, estado, fecha_desembolso, fecha_vencimiento, interes, monto_cuota, monto_pagado, monto_prestamo, tasa, entidad_financiera_id, moneda_id, usuario_id) VALUES (12,0,'Construccion',true,'2019-06-10','2019-06-28',1,50000,0,500000,2,1,1,1);
 INSERT INTO prestamos (cantidad_cuotas, cantidad_cuotas_pagadas, destino_prestamo, estado, fecha_desembolso, fecha_vencimiento, interes, monto_cuota, monto_pagado, monto_prestamo, tasa, entidad_financiera_id, moneda_id, usuario_id) VALUES (12,0,'Construccion',true,'2019-06-10','2019-06-28',1,50000,0,500000,2,2,2,1);

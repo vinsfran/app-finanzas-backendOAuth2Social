@@ -69,7 +69,7 @@ public class DashboardResource {
             dashboardModel.setTotalIngresos(0.0);
             dashboardModel.setTotalEgresos(0.0);
             for (Movimiento movimiento : movimientoService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
-                if (movimiento.getConceptoId().getTipoConcepto().equals("Ingreso")) {
+                if (movimiento.getConceptoId().getTipoConceptoId().getSigno().equals("+")) {
                     dashboardModel.setTotalIngresos(dashboardModel.getTotalIngresos() + movimiento.getMontoPagado());
                 } else {
                     dashboardModel.setTotalEgresos(dashboardModel.getTotalEgresos() + movimiento.getMontoPagado());

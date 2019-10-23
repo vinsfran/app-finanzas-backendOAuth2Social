@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.resource.tipoCobro;
+package py.com.fuentepy.appfinanzasBackend.resource.tipoPago;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -15,13 +15,12 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import py.com.fuentepy.appfinanzasBackend.data.entity.TipoCobro;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
-import py.com.fuentepy.appfinanzasBackend.service.TipoCobroService;
+import py.com.fuentepy.appfinanzasBackend.service.TipoPagoService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -29,25 +28,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/api/tipo-cobro")
-public class TipoCobroResource {
+@RequestMapping("/api/tipo-pago")
+public class TipoPagoResource {
 
-    private static final Log LOG = LogFactory.getLog(TipoCobroResource.class);
+    private static final Log LOG = LogFactory.getLog(TipoPagoResource.class);
 
     @Autowired
-    private TipoCobroService tipoCobroService;
+    private TipoPagoService tipoPagoService;
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping()
-    public List<TipoCobroModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public List<TipoPagoModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         Long usuarioId = userPrincipal.getId();
-        return tipoCobroService.findByUsuarioId(usuarioId);
+        return tipoPagoService.findByUsuarioId(usuarioId);
     }
 
     @ApiImplicitParams(
@@ -57,21 +55,21 @@ public class TipoCobroResource {
     public ResponseEntity<?> index(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @ApiIgnore Pageable pageable) {
         Long usuarioId = userPrincipal.getId();
-        Page<TipoCobroModel> tipoCobroModels = null;
+        Page<TipoPagoModel> tipoPagoModels = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            tipoCobroModels = tipoCobroService.findByUsuarioId(usuarioId, pageable);
+            tipoPagoModels = tipoPagoService.findByUsuarioId(usuarioId, pageable);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (tipoCobroModels == null) {
+        if (tipoPagoModels == null) {
             response.put("mensaje", "No existen Tipos de Pagos en la base de datos!");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("page", tipoCobroModels);
+        response.put("page", tipoPagoModels);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -88,17 +86,17 @@ public class TipoCobroResource {
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            TipoCobroModel tipoCobroModel = tipoCobroService.findByIdAndUsuarioId(id, usuarioId);
-            if (tipoCobroModel == null) {
+            TipoPagoModel tipoPagoModel = tipoPagoService.findByIdAndUsuarioId(id, usuarioId);
+            if (tipoPagoModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: El Tipo Cobro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Tipo Pago Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
                 messages.add(message);
-                response = new TipoCobroResponse(httpStatus.value(), messages, tipoCobroModel);
+                response = new TipoPagoResponse(httpStatus.value(), messages, tipoPagoModel);
             }
         } catch (DataAccessException e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -117,7 +115,7 @@ public class TipoCobroResource {
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody TipoCobroRequestNew tipoCobroRequestNew,
+                                    @Valid @RequestBody TipoPagoRequestNew tipoPagoRequestNew,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -133,14 +131,14 @@ public class TipoCobroResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (tipoCobroService.create(tipoCobroRequestNew, usuarioId)) {
+                if (tipoPagoService.create(tipoPagoRequestNew, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "El Tipo Cobro ha sido creado con éxito!");
+                    message = new MessageResponse(StatusLevel.INFO, "El Tipo Pago ha sido creado con éxito!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 } else {
                     httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "El Tipo Cobro no se pudo crear!");
+                    message = new MessageResponse(StatusLevel.ERROR, "El Tipo Pago no se pudo crear!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
@@ -162,14 +160,14 @@ public class TipoCobroResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody TipoCobroRequestUpdate tipoCobroRequestUpdate,
+                                    @Valid @RequestBody TipoPagoRequestUpdate tipoPagoRequestUpdate,
                                     BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        Long id = tipoCobroRequestUpdate.getId();
+        Long id = tipoPagoRequestUpdate.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -178,21 +176,21 @@ public class TipoCobroResource {
             }
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (tipoCobroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            if (tipoPagoService.findByIdAndUsuarioId(id, usuarioId) == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
                 message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, El Tipo Cobro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (tipoCobroService.update(tipoCobroRequestUpdate, usuarioId)) {
+                    if (tipoPagoService.update(tipoPagoRequestUpdate, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "El Tipo Cobro ha sido actualizado con éxito!");
+                        message = new MessageResponse(StatusLevel.INFO, "El Tipo Pago ha sido actualizado con éxito!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     } else {
                         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "El Tipo Cobro no se pudo actualizar!");
+                        message = new MessageResponse(StatusLevel.ERROR, "El Tipo Pago no se pudo actualizar!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     }
@@ -215,9 +213,9 @@ public class TipoCobroResource {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            tipoCobroService.delete(id);
+            tipoPagoService.delete(id);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar el Tipo Cobro de la base de datos!");
+            response.put("mensaje", "Error al eliminar el Tipo Pago de la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -226,10 +224,10 @@ public class TipoCobroResource {
     }
 
 //    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @PostMapping("/tipoCobros/upload")
+//    @PostMapping("/tipoPagos/upload")
 
 //    @GetMapping("/uploads/img/{nombreFoto:.+}")
 
 //    @Secured({"ROLE_ADMIN"})
-//    @GetMapping("/tipoCobros/regiones")
+//    @GetMapping("/tipoPagos/regiones")
 }

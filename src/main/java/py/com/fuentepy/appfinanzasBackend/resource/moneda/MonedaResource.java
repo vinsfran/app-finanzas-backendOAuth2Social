@@ -1,5 +1,7 @@
-package py.com.fuentepy.appfinanzasBackend.resource;
+package py.com.fuentepy.appfinanzasBackend.resource.moneda;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -11,7 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.converter.MonedaConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
-import py.com.fuentepy.appfinanzasBackend.model.MonedaModel;
+import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
+import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -29,11 +32,17 @@ public class MonedaResource {
     @Autowired
     private MonedaService monedaService;
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @GetMapping()
     public List<MonedaModel> index() {
         return MonedaConverter.listEntitytoListModel(monedaService.findAll());
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @GetMapping("/page")
     public ResponseEntity<?> index(@ApiIgnore Pageable pageable) {
         Page<Moneda> monedas = null;
@@ -54,6 +63,9 @@ public class MonedaResource {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Integer id) {
@@ -76,6 +88,9 @@ public class MonedaResource {
         return new ResponseEntity<>(moneda, HttpStatus.OK);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @PostMapping()
     public ResponseEntity<?> create(@Valid @RequestBody MonedaModel monedaModel, BindingResult result) {
@@ -110,6 +125,9 @@ public class MonedaResource {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @PutMapping()
     public ResponseEntity<?> update(@Valid @RequestBody MonedaModel monedaModel, BindingResult result) {
@@ -148,6 +166,9 @@ public class MonedaResource {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

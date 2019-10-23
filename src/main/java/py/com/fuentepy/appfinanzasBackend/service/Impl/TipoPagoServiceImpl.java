@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TipoPagoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoPago;
-import py.com.fuentepy.appfinanzasBackend.model.TipoPagoModel;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TipoPagoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.TipoPagoService;
 
 import java.util.List;
@@ -21,22 +24,26 @@ public class TipoPagoServiceImpl implements TipoPagoService {
     private TipoPagoRepository tipoPagoRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<TipoPagoModel> findAll() {
-        return TipoPagoConverter.listEntitytoListModel(tipoPagoRepository.findAll());
+    public List<TipoPagoModel> findByUsuarioId(Long usuarioId) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        return TipoPagoConverter.listEntitytoListModel(tipoPagoRepository.findByUsuarioId(usuario));
+    }
+
+    @Override
+    public Page<TipoPagoModel> findByUsuarioId(Long usuarioId, Pageable pageable) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        return TipoPagoConverter.pageEntitytoPageModel(pageable, tipoPagoRepository.findByUsuarioId(usuario, pageable));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TipoPagoModel> findAll(Pageable pageable) {
-        return TipoPagoConverter.pageEntitytoPageModel(pageable, tipoPagoRepository.findAll(pageable));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public TipoPagoModel findById(Integer id) {
+    public TipoPagoModel findByIdAndUsuarioId(Long id, Long usuarioId) {
         TipoPagoModel model = null;
-        Optional<TipoPago> optional = tipoPagoRepository.findById(id);
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<TipoPago> optional = tipoPagoRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
             model = TipoPagoConverter.entityToModel(optional.get());
         }
@@ -45,14 +52,46 @@ public class TipoPagoServiceImpl implements TipoPagoService {
 
     @Override
     @Transactional
-    public TipoPagoModel save(TipoPagoModel model) {
-        TipoPago entity = TipoPagoConverter.modelToEntity(model);
-        return TipoPagoConverter.entityToModel(tipoPagoRepository.save(entity));
+    public boolean create(TipoPagoRequestNew request, Long usuarioId) {
+        TipoPago entity = tipoPagoRepository.save(TipoPagoConverter.tipoPagoRequestNewToTipoPagoEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+
+//        if(!entity.getEstado()){
+//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
+//
+//            Movimiento movimiento = new Movimiento();
+//            movimiento.setNumeroComprobante("");
+//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
+//            movimiento.setMontoPagado(entity.getMontoCapital());
+//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
+//            movimiento.setPrestamoId(null);
+//            movimiento.setAhorroId(entity);
+//            movimiento.setTarjetaId(null);
+//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
+//            movimiento.setConceptoId(concepto);
+//            movimiento.setMonedaId(entity.getMonedaId());
+////            movimiento.setTipoPagoId(entity.getTipoCobroId());
+//            movimiento.setUsuarioId(usuario);
+//            movimientoRepository.save(movimiento);
+//        }
     }
 
     @Override
     @Transactional
-    public void delete(Integer id) {
+    public boolean update(TipoPagoRequestUpdate request, Long usuarioId) {
+        TipoPago entity = tipoPagoRepository.save(TipoPagoConverter.tipoPagoRequestUpdateToPagoEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
         tipoPagoRepository.deleteById(id);
     }
 }
