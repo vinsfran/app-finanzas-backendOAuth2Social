@@ -101,6 +101,6 @@ public class AhorroRequestUpdate implements Serializable {
 
     @JsonProperty("tipo_cobro_id")
     @SerializedName("tipo_cobro_id")
-    private Integer tipoCobroId;
+    private Long tipoCobroId;
 
 }

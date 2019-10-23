@@ -14,8 +14,8 @@ import java.io.Serializable;
 @Data
 @CommonsLog
 @Entity
-@Table(name = "ahorros_tipos")
-public class AhorroTipo implements Serializable {
+@Table(name = "tipos_ahorros")
+public class TipoAhorro implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

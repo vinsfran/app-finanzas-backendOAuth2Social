@@ -1,4 +1,4 @@
-INSERT INTO usuarios (email, password, first_name, last_name, enabled, created_on, last_login, reset_token, email_verified, provider, provider_id, image_profile_name, image_profile_data) VALUES ('vinsfran@gmail.com', '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'Vicente', 'Insfran', true, '2019-06-10', '2019-06-10', null, true, 'local', '', null, null);
+INSERT INTO usuarios (email, password, first_name, last_name, enabled, created_on, last_login, reset_token, email_verified, provider, provider_id, image_profile_name, image_profile_data) VALUES ('vinsfran2@gmail.com', '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'Vicente', 'Insfran', true, '2019-06-10', '2019-06-10', null, true, 'local', '', null, null);
 
 INSERT INTO monedas (codigo, nombre) VALUES ('Gs.', 'Guarani');
 INSERT INTO monedas (codigo, nombre) VALUES ('Us.', 'Dolar');
@@ -14,13 +14,14 @@ INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('BONOS', 1);
 INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('Acciones', 1);
 INSERT INTO ahorros_tipos (nombre, usuario_id) VALUES ('Programado', 1);
 
+INSERT INTO tipos_cobros (nombre, usuario_id) VALUES ('Mensual', 1);
+INSERT INTO tipos_cobros (nombre, usuario_id) VALUES ('Trimestral', 1);
+INSERT INTO tipos_cobros (nombre, usuario_id) VALUES ('Anual', 1);
+
 INSERT INTO tipos_pagos (nombre) VALUES ('Efectivo');
 INSERT INTO tipos_pagos (nombre) VALUES ('Tarjeta');
 INSERT INTO tipos_pagos (nombre) VALUES ('Cheque');
 
-INSERT INTO tipos_cobros (nombre) VALUES ('Mensual');
-INSERT INTO tipos_cobros (nombre) VALUES ('Trimestral');
-INSERT INTO tipos_cobros (nombre) VALUES ('Anual');
 
 INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Luz', 'Egreso', 1, false, 'PS');
 INSERT INTO conceptos (nombre, tipo_concepto, usuario_id, global_enable, codigo_concepto) VALUES ('Agua', 'Egreso', 1, false, 'PS');

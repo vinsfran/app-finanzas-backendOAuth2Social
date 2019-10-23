@@ -69,7 +69,7 @@ public class Ahorro implements Serializable {
 
     @JoinColumn(name = "tipos_ahorros_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private AhorroTipo ahorroTipoId;
+    private TipoAhorro tipoAhorroId;
 
     @JoinColumn(name = "monedas_id", referencedColumnName = "id")
     @ManyToOne(optional = false)

@@ -5,14 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import py.com.fuentepy.appfinanzasBackend.converter.AhorroTipoConverter;
-import py.com.fuentepy.appfinanzasBackend.converter.EntidadFinancieraConverter;
-import py.com.fuentepy.appfinanzasBackend.data.entity.AhorroTipo;
+import py.com.fuentepy.appfinanzasBackend.converter.TipoAhorroConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoAhorro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TipoAhorroRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo.AhorroTipoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo.AhorroTipoRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo.AhorroTipoRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoAhorro.TipoAhorroModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoAhorro.TipoAhorroRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoAhorro.TipoAhorroRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.TipoAhorroService;
 
 import java.util.List;
@@ -25,49 +24,36 @@ public class TipoAhorroServiceImpl implements TipoAhorroService {
     private TipoAhorroRepository tipoAhorroRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<AhorroTipo> findAll() {
-        return (List<AhorroTipo>) tipoAhorroRepository.findAll();
-    }
-
-    @Override
-    public List<AhorroTipoModel> findByUsuarioId(Long usuarioId) {
+    public List<TipoAhorroModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return AhorroTipoConverter.listEntitytoListModel(tipoAhorroRepository.findByUsuarioId(usuario));
+        return TipoAhorroConverter.listEntitytoListModel(tipoAhorroRepository.findByUsuarioId(usuario));
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<AhorroTipo> findAll(Pageable pageable) {
-        return tipoAhorroRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<AhorroTipoModel> findByUsuarioId(Long usuarioId, Pageable pageable) {
+    public Page<TipoAhorroModel> findByUsuarioId(Long usuarioId, Pageable pageable) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return AhorroTipoConverter.pageEntitytoPageModel(pageable, tipoAhorroRepository.findByUsuarioId(usuario, pageable));
+        return TipoAhorroConverter.pageEntitytoPageModel(pageable, tipoAhorroRepository.findByUsuarioId(usuario, pageable));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AhorroTipoModel findByIdAndUsuarioId(Long id, Long usuarioId) {
-        AhorroTipoModel model = null;
+    public TipoAhorroModel findByIdAndUsuarioId(Long id, Long usuarioId) {
+        TipoAhorroModel model = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        Optional<AhorroTipo> optional = tipoAhorroRepository.findByIdAndUsuarioId(id, usuario);
+        Optional<TipoAhorro> optional = tipoAhorroRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
-            model = AhorroTipoConverter.entityToModel(optional.get());
+            model = TipoAhorroConverter.entityToModel(optional.get());
         }
         return model;
     }
 
-
     @Override
     @Transactional
-    public boolean create(AhorroTipoRequestNew request, Long usuarioId) {
-        AhorroTipo entity = tipoAhorroRepository.save(AhorroTipoConverter.ahorroTipoRequestNewToAhorroTipoEntity(request, usuarioId));
+    public boolean create(TipoAhorroRequestNew request, Long usuarioId) {
+        TipoAhorro entity = tipoAhorroRepository.save(TipoAhorroConverter.tipoAhorroRequestNewToTipoAhorroEntity(request, usuarioId));
         if (entity != null) {
             return true;
         }
@@ -95,8 +81,8 @@ public class TipoAhorroServiceImpl implements TipoAhorroService {
 
     @Override
     @Transactional
-    public boolean update(AhorroTipoRequestUpdate request, Long usuarioId) {
-        AhorroTipo entity = tipoAhorroRepository.save(AhorroTipoConverter.ahorroTipoRequestUpdateToAhorroEntity(request, usuarioId));
+    public boolean update(TipoAhorroRequestUpdate request, Long usuarioId) {
+        TipoAhorro entity = tipoAhorroRepository.save(TipoAhorroConverter.tipoAhorroRequestUpdateToAhorroEntity(request, usuarioId));
         if (entity != null) {
             return true;
         }
@@ -105,7 +91,7 @@ public class TipoAhorroServiceImpl implements TipoAhorroService {
 
     @Override
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Long id) {
         tipoAhorroRepository.deleteById(id);
     }
 }

@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.resource.ahorroTipo;
+package py.com.fuentepy.appfinanzasBackend.resource.tipoCobro;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
@@ -10,16 +10,16 @@ import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import java.util.List;
 
 @Data
-@ApiModel(value = "ahorroTipoResponse", description = "Response de Ahorro Tipo")
-public class AhorroTipoResponse extends BaseResponse {
+@ApiModel(value = "tipoCobroResponse", description = "Response de Tipo Cobro")
+public class TipoCobroResponse extends BaseResponse {
 
     @JsonProperty("data")
     @SerializedName("data")
-    private AhorroTipoModel ahorroTipoModel;
+    private TipoCobroModel tipoCobroModel;
 
-    AhorroTipoResponse(Integer status, List<MessageResponse> messages, AhorroTipoModel ahorroTipoModel) {
+    TipoCobroResponse(Integer status, List<MessageResponse> messages, TipoCobroModel tipoCobroModel) {
         super(status, messages);
-        this.ahorroTipoModel = ahorroTipoModel;
+        this.tipoCobroModel = tipoCobroModel;
     }
 
 }
