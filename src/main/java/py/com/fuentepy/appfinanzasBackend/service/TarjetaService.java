@@ -3,7 +3,9 @@ package py.com.fuentepy.appfinanzasBackend.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
-import py.com.fuentepy.appfinanzasBackend.model.TarjetaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
 
 import java.util.List;
 
@@ -17,9 +19,11 @@ public interface TarjetaService {
 
     Page<TarjetaModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    TarjetaModel findById(Long id);
+    TarjetaModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    TarjetaModel save(TarjetaModel TarjetaModel);
+    boolean create(TarjetaRequestNew request, Long usuarioId);
+
+    boolean update(TarjetaRequestUpdate request, Long usuarioId);
 
     void delete(Long id);
 

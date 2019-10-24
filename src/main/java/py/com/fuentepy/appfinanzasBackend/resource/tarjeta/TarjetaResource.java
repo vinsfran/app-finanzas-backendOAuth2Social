@@ -1,7 +1,9 @@
-package py.com.fuentepy.appfinanzasBackend.resource.moneda;
+package py.com.fuentepy.appfinanzasBackend.resource.tarjeta;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
-import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
+import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
+import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
+import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -27,40 +31,45 @@ import java.util.Map;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/api/monedas")
-public class MonedaResource {
+@RequestMapping("/api/tarjetas")
+public class TarjetaResource {
+
+    private static final Log LOG = LogFactory.getLog(TarjetaResource.class);
 
     @Autowired
-    private MonedaService monedaService;
+    private TarjetaService tarjetaService;
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping()
-    public List<MonedaModel> index() {
-        return monedaService.findAll();
+    public List<TarjetaModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+        Long usuarioId = userPrincipal.getId();
+        return tarjetaService.findByUsuarioId(usuarioId);
     }
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping("/page")
-    public ResponseEntity<?> index(@ApiIgnore Pageable pageable) {
-        Page<MonedaModel> monedas = null;
+    public ResponseEntity<?> getAllByPage(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                          @ApiIgnore Pageable pageable) {
+        Long usuarioId = userPrincipal.getId();
+        Page<TarjetaModel> tarjetas = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            monedas = monedaService.findAll(pageable);
+            tarjetas = tarjetaService.findByUsuarioId(usuarioId, pageable);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (monedas == null) {
-            response.put("mensaje", "No existen monedas en la base de datos!");
+        if (tarjetas == null) {
+            response.put("mensaje", "No existen tarjetas en la base de datos!");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("page", monedas);
+        response.put("page", tarjetas);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -69,23 +78,25 @@ public class MonedaResource {
     )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Integer id) {
+    public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                  @PathVariable Long id) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
         try {
-            MonedaModel monedaModel = monedaService.findById(id);
-            if (monedaModel == null) {
+            TarjetaModel tarjetaModel = tarjetaService.findByIdAndUsuarioId(id, usuarioId);
+            if (tarjetaModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: La Moneda Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: La Tarjeta Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
                 messages.add(message);
-                response = new MonedaResponse(httpStatus.value(), messages, monedaModel);
+                response = new TarjetaResponse(httpStatus.value(), messages, tarjetaModel);
             }
         } catch (DataAccessException e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -98,17 +109,20 @@ public class MonedaResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
+
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody MonedaRequestNew monedaRequestNew,
-                                    BindingResult result) {
+    public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @Valid @RequestBody TarjetaRequestNew tarjetaNew,
+                                    @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -118,14 +132,14 @@ public class MonedaResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (monedaService.create(monedaRequestNew)) {
+                if (tarjetaService.create(tarjetaNew, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "La Moneda ha sido creada con éxito!");
+                    message = new MessageResponse(StatusLevel.INFO, "El Tarjeta ha sido creado con éxito!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 } else {
                     httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "La Moneda no se pudo crear!");
+                    message = new MessageResponse(StatusLevel.ERROR, "El Tarjeta no se pudo crear!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
@@ -146,12 +160,15 @@ public class MonedaResource {
     )
     @Secured({"ROLE_ADMIN"})
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@Valid @RequestBody MonedaRequestUpdate monedaRequestUpdate, BindingResult result) {
+    public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @Valid @RequestBody TarjetaRequestUpdate tarjetaUpdate,
+                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
-        Integer id = monedaRequestUpdate.getId();
+        Long usuarioId = userPrincipal.getId();
+        Long id = tarjetaUpdate.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -160,21 +177,21 @@ public class MonedaResource {
             }
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (monedaService.findById(id) == null) {
+            if (tarjetaService.findByIdAndUsuarioId(id, usuarioId) == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, La Moneda Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, La Tarjeta Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (monedaService.update(monedaRequestUpdate)) {
+                    if (tarjetaService.update(tarjetaUpdate, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "La Moneda ha sido actualizada con éxito!");
+                        message = new MessageResponse(StatusLevel.INFO, "La Tarjeta ha sido actualizado con éxito!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     } else {
                         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "La Moneda no se pudo actualizar!");
+                        message = new MessageResponse(StatusLevel.ERROR, "La Tarjeta no se pudo actualizar!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     }
@@ -191,30 +208,19 @@ public class MonedaResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
-    )
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            monedaService.delete(id);
+            tarjetaService.delete(id);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar la moneda de la base de datos!");
+            response.put("mensaje", "Error al eliminar la Tarjeta de la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "La moneda eliminado con éxito!");
+        response.put("mensaje", "La Tarjeta eliminado con éxito!");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-//    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @PostMapping("/monedas/upload")
-
-//    @GetMapping("/uploads/img/{nombreFoto:.+}")
-
-//    @Secured({"ROLE_ADMIN"})
-//    @GetMapping("/monedas/regiones")
 }

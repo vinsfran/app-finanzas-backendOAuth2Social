@@ -9,9 +9,12 @@ import py.com.fuentepy.appfinanzasBackend.converter.MonedaConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MonedaRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MonedaServiceImpl implements MonedaService {
@@ -21,27 +24,64 @@ public class MonedaServiceImpl implements MonedaService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Moneda> findAll() {
-        return (List<Moneda>) monedaRepository.findAll();
+    public List<MonedaModel> findAll() {
+        return MonedaConverter.listEntitytoListModel(monedaRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Moneda> findAll(Pageable pageable) {
-        return monedaRepository.findAll(pageable);
+    public Page<MonedaModel> findAll(Pageable pageable) {
+        return MonedaConverter.pageEntitytoPageModel(pageable, monedaRepository.findAll(pageable));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Moneda findById(Integer id) {
-        return monedaRepository.findById(id).orElse(null);
+    public MonedaModel findById(Integer id) {
+        MonedaModel model = null;
+        Optional<Moneda> optional = monedaRepository.findById(id);
+        if (optional.isPresent()) {
+            model = MonedaConverter.entityToModel(optional.get());
+        }
+        return model;
     }
 
     @Override
     @Transactional
-    public MonedaModel save(MonedaModel monedaModel) {
-        Moneda moneda = MonedaConverter.modelToEntity(monedaModel);
-        return MonedaConverter.entityToModel(monedaRepository.save(moneda));
+    public boolean create(MonedaRequestNew request) {
+        Moneda entity = monedaRepository.save(MonedaConverter.monedaRequestNewToMonedaEntity(request));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+
+//        if(!entity.getEstado()){
+//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
+//
+//            Movimiento movimiento = new Movimiento();
+//            movimiento.setNumeroComprobante("");
+//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
+//            movimiento.setMontoPagado(entity.getMontoCapital());
+//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
+//            movimiento.setPrestamoId(null);
+//            movimiento.setAhorroId(entity);
+//            movimiento.setTarjetaId(null);
+//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
+//            movimiento.setConceptoId(concepto);
+//            movimiento.setMonedaId(entity.getMonedaId());
+////            movimiento.setTipoPagoId(entity.getTipoCobroId());
+//            movimiento.setUsuarioId(usuario);
+//            movimientoRepository.save(movimiento);
+//        }
+    }
+
+    @Override
+    @Transactional
+    public boolean update(MonedaRequestUpdate request) {
+        Moneda entity = monedaRepository.save(MonedaConverter.monedaRequestUpdateToMonedaEntity(request));
+        if (entity != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override

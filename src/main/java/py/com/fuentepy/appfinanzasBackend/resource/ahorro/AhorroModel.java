@@ -59,7 +59,7 @@ public class AhorroModel implements Serializable {
     @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date fechaInicio;
 
-    @ApiModelProperty(value = "Fecha de Inicio", required = false, example = "AAAA-MM-DD")
+    @ApiModelProperty(value = "Fecha de Vencimiento", required = false, example = "AAAA-MM-DD")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("fecha_vencimiento")
     @SerializedName("fecha_vencimiento")
@@ -103,8 +103,8 @@ public class AhorroModel implements Serializable {
     @SerializedName("tipo_cobro_id")
     private Long tipoCobroId;
 
-    @JsonProperty("entidad_financiera_nombre2")
-    @SerializedName("entidad_financiera_nombre2")
+    @JsonProperty("entidad_financiera_nombre")
+    @SerializedName("entidad_financiera_nombre")
     private String entidadFinancieraNombre;
 
     @JsonProperty("moneda_nombre")

@@ -2,20 +2,23 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaRequestUpdate;
 
 import java.util.List;
 
 public interface MonedaService {
 
-    List<Moneda> findAll();
+    List<MonedaModel> findAll();
 
-    Page<Moneda> findAll(Pageable pageable);
+    Page<MonedaModel> findAll(Pageable pageable);
 
-    Moneda findById(Integer id);
+    MonedaModel findById(Integer id);
 
-    MonedaModel save(MonedaModel monedaModel);
+    boolean create(MonedaRequestNew request);
+
+    boolean update(MonedaRequestUpdate request);
 
     void delete(Integer id);
 }

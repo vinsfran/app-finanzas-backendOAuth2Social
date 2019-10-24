@@ -6,12 +6,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoConcepto.TipoConceptoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoConcepto.TipoConceptoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tipoConcepto.TipoConceptoRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("tipoConceptoConverter")
 public class TipoConceptoConverter {
+
+    public static TipoConcepto tipoConceptoRequestNewToTipoConceptoEntity(TipoConceptoRequestNew request) {
+        TipoConcepto entity = new TipoConcepto();
+        entity.setNombre(request.getNombre());
+        entity.setSigno(request.getSigno());
+        return entity;
+    }
+
+    public static TipoConcepto tipoConceptoRequestUpdateToTipoConceptoEntity(TipoConceptoRequestUpdate request) {
+        TipoConcepto entity = new TipoConcepto();
+        entity.setId(request.getId());
+        entity.setNombre(request.getNombre());
+        entity.setSigno(request.getSigno());
+        return entity;
+    }
 
     public static TipoConcepto modelToEntity(TipoConceptoModel model) {
         TipoConcepto entity = new TipoConcepto();

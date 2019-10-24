@@ -25,7 +25,7 @@ public class TipoAhorroConverter {
         return entity;
     }
 
-    public static TipoAhorro tipoAhorroRequestUpdateToAhorroEntity(TipoAhorroRequestUpdate request, Long usuarioId) {
+    public static TipoAhorro tipoAhorroRequestUpdateToTipoAhorroEntity(TipoAhorroRequestUpdate request, Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         TipoAhorro entity = new TipoAhorro();

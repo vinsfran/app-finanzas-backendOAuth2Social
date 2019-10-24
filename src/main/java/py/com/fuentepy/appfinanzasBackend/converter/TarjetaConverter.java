@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.TarjetaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,40 @@ import java.util.List;
 public class TarjetaConverter {
 
     private static final Log LOG = LogFactory.getLog(TarjetaConverter.class);
+
+
+    public static Tarjeta tarjetaNewToTarjetaEntity(TarjetaRequestNew request, Long usuarioId) {
+        EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Tarjeta entity = new Tarjeta();
+        entity.setNumeroTarjeta(request.getNumeroTarjeta());
+        entity.setMarca(request.getMarca());
+        entity.setLineaCredito(request.getLineaCredito());
+        entity.setFechaVencimiento(request.getFechaVencimiento());
+        entity.setEstado(request.getEstado());
+        entity.setEntidadFinancieraId(entidadFinanciera);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+    public static Tarjeta tarjetaUpdateToTarjetaEntity(TarjetaRequestUpdate request, Long usuarioId) {
+        EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Tarjeta entity = new Tarjeta();
+        entity.setId(request.getId());
+        entity.setNumeroTarjeta(request.getNumeroTarjeta());
+        entity.setMarca(request.getMarca());
+        entity.setLineaCredito(request.getLineaCredito());
+        entity.setFechaVencimiento(request.getFechaVencimiento());
+        entity.setEstado(request.getEstado());
+        entity.setEntidadFinancieraId(entidadFinanciera);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
 
     public static Tarjeta modelToEntity(TarjetaModel model) {
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();

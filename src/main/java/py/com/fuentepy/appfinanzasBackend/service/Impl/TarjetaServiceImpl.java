@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TarjetaConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.TarjetaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TarjetaRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
 
 import java.util.List;
@@ -23,12 +25,12 @@ public class TarjetaServiceImpl implements TarjetaService {
     private static final Log LOG = LogFactory.getLog(TarjetaServiceImpl.class);
 
     @Autowired
-    private TarjetaRepository TarjetaRepository;
+    private TarjetaRepository tarjetaRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<TarjetaModel> findAll() {
-        return TarjetaConverter.listEntitytoListModel(TarjetaRepository.findAll());
+        return TarjetaConverter.listEntitytoListModel(tarjetaRepository.findAll());
     }
 
     @Override
@@ -36,13 +38,13 @@ public class TarjetaServiceImpl implements TarjetaService {
     public List<TarjetaModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return TarjetaConverter.listEntitytoListModel(TarjetaRepository.findByUsuarioId(usuario));
+        return TarjetaConverter.listEntitytoListModel(tarjetaRepository.findByUsuarioId(usuario));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TarjetaModel> findAll(Pageable pageable) {
-        return TarjetaConverter.pageEntitytoPageModel(pageable, TarjetaRepository.findAll(pageable));
+        return TarjetaConverter.pageEntitytoPageModel(pageable, tarjetaRepository.findAll(pageable));
     }
 
     @Override
@@ -50,14 +52,16 @@ public class TarjetaServiceImpl implements TarjetaService {
     public Page<TarjetaModel> findByUsuarioId(Long usuarioId, Pageable pageable) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return TarjetaConverter.pageEntitytoPageModel(pageable, TarjetaRepository.findByUsuarioId(usuario, pageable));
+        return TarjetaConverter.pageEntitytoPageModel(pageable, tarjetaRepository.findByUsuarioId(usuario, pageable));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TarjetaModel findById(Long id) {
+    public TarjetaModel findByIdAndUsuarioId(Long id, Long usuarioId) {
         TarjetaModel model = null;
-        Optional<Tarjeta> optional = TarjetaRepository.findById(id);
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Tarjeta> optional = tarjetaRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
             model = TarjetaConverter.entityToModel(optional.get());
         }
@@ -66,15 +70,47 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     @Override
     @Transactional
-    public TarjetaModel save(TarjetaModel TarjetaModel) {
-        Tarjeta entity = TarjetaConverter.modelToEntity(TarjetaModel);
-        return TarjetaConverter.entityToModel(TarjetaRepository.save(entity));
+    public boolean create(TarjetaRequestNew request, Long usuarioId) {
+        Tarjeta entity = tarjetaRepository.save(TarjetaConverter.tarjetaNewToTarjetaEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+
+//        if(!entity.getEstado()){
+//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
+//
+//            Movimiento movimiento = new Movimiento();
+//            movimiento.setNumeroComprobante("");
+//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
+//            movimiento.setMontoPagado(entity.getMontoCapital());
+//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
+//            movimiento.setPrestamoId(null);
+//            movimiento.setTarjetaId(entity);
+//            movimiento.setTarjetaId(null);
+//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
+//            movimiento.setConceptoId(concepto);
+//            movimiento.setMonedaId(entity.getMonedaId());
+////            movimiento.setTipoPagoId(entity.getTipoCobroId());
+//            movimiento.setUsuarioId(usuario);
+//            movimientoRepository.save(movimiento);
+//        }
+    }
+
+    @Override
+    @Transactional
+    public boolean update(TarjetaRequestUpdate request, Long usuarioId) {
+        Tarjeta entity = tarjetaRepository.save(TarjetaConverter.tarjetaUpdateToTarjetaEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        TarjetaRepository.deleteById(id);
+        tarjetaRepository.deleteById(id);
     }
 
     @Override
@@ -82,7 +118,7 @@ public class TarjetaServiceImpl implements TarjetaService {
     public Long countByTenantName(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return TarjetaRepository.countByUsuarioId(usuario);
+        return tarjetaRepository.countByUsuarioId(usuario);
     }
 
 
@@ -91,7 +127,7 @@ public class TarjetaServiceImpl implements TarjetaService {
     public List<Tarjeta> findByUsuarioIdLista(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return TarjetaRepository.findByUsuarioId(usuario);
+        return tarjetaRepository.findByUsuarioId(usuario);
     }
 
 }

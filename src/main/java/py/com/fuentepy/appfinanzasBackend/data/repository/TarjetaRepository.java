@@ -11,11 +11,14 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TarjetaRepository extends JpaRepository<Tarjeta, Long> {
 
     List<Tarjeta> findByUsuarioId(Usuario usuario);
+
+    Optional<Tarjeta> findByIdAndUsuarioId(Long id, Usuario usuario);
 
     Page<Tarjeta> findByUsuarioId(Usuario usuario, Pageable pageable);
 

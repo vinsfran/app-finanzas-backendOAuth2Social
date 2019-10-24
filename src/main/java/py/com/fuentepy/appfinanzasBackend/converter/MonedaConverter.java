@@ -6,12 +6,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("monedaConverter")
 public class MonedaConverter {
+
+    public static Moneda monedaRequestNewToMonedaEntity(MonedaRequestNew request) {
+        Moneda entity = new Moneda();
+        entity.setNombre(request.getNombre());
+        entity.setCodigo(request.getCodigo());
+        return entity;
+    }
+
+    public static Moneda monedaRequestUpdateToMonedaEntity(MonedaRequestUpdate request) {
+        Moneda entity = new Moneda();
+        entity.setId(request.getId());
+        entity.setNombre(request.getNombre());
+        entity.setCodigo(request.getCodigo());
+        return entity;
+    }
 
     public static Moneda modelToEntity(MonedaModel model) {
         Moneda entity = new Moneda();
