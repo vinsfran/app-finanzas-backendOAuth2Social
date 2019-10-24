@@ -2,7 +2,9 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.model.PresupuestoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestUpdate;
 
 import java.util.List;
 
@@ -16,9 +18,11 @@ public interface PresupuestoService {
 
     Page<PresupuestoModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    PresupuestoModel findById(Long id);
+    PresupuestoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    PresupuestoModel save(PresupuestoModel presupuestoModel);
+    boolean create(PresupuestoRequestNew request, Long usuarioId);
+
+    boolean update(PresupuestoRequestUpdate request, Long usuarioId);
 
     void delete(Long id);
 }

@@ -42,7 +42,7 @@ public class Presupuesto implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "porcentajeAlerta")
+    @Column(name = "porcentaje_alerta")
     private Integer porcentajeAlerta;
 
     @JoinColumn(name = "mes_id", referencedColumnName = "id")

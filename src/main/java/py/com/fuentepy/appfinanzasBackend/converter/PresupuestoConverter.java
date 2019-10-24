@@ -11,7 +11,9 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Presupuesto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.PresupuestoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,43 @@ import java.util.List;
 public class PresupuestoConverter {
 
     private static final Log LOG = LogFactory.getLog(PresupuestoConverter.class);
+
+    public static Presupuesto presupuestoNewToPresupuestoEntity(PresupuestoRequestNew request, Long usuarioId) {
+        Mes mes = new Mes();
+        mes.setId(request.getMesId());
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Presupuesto entity = new Presupuesto();
+        entity.setFechaAlta(request.getFechaAlta());
+        entity.setMonto(request.getMonto());
+        entity.setAnio(request.getAnio());
+        entity.setPorcentajeAlerta(request.getPorcentajeAlerta());
+        entity.setMesId(mes);
+        entity.setMonedaId(moneda);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
+
+    public static Presupuesto presupuestoUpdateToPresupuestoEntity(PresupuestoRequestUpdate request, Long usuarioId) {
+        Mes mes = new Mes();
+        mes.setId(request.getMesId());
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Presupuesto entity = new Presupuesto();
+        entity.setId(request.getId());
+        entity.setFechaAlta(request.getFechaAlta());
+        entity.setMonto(request.getMonto());
+        entity.setAnio(request.getAnio());
+        entity.setPorcentajeAlerta(request.getPorcentajeAlerta());
+        entity.setMesId(mes);
+        entity.setMonedaId(moneda);
+        entity.setUsuarioId(usuario);
+        return entity;
+    }
 
     public static Presupuesto modelToEntity(PresupuestoModel model) {
         Mes mes = new Mes();
@@ -33,7 +72,6 @@ public class PresupuestoConverter {
         moneda.setCodigo(model.getMonedaCodigo());
         Usuario usuario = new Usuario();
         usuario.setId(model.getUsuarioId());
-
         Presupuesto entity = new Presupuesto();
         entity.setId(model.getId());
         entity.setFechaAlta(model.getFechaAlta());

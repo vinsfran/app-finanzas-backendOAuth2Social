@@ -31,15 +31,6 @@ public class AhorroServiceImpl implements AhorroService {
     @Autowired
     private AhorroRepository ahorroRepository;
 
-    @Autowired
-    private MovimientoRepository movimientoRepository;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private ConceptoRepository conceptoRepository;
-
     @Override
     @Transactional(readOnly = true)
     public List<AhorroModel> findAll() {

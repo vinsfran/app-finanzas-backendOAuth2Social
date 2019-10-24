@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PresupuestoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Presupuesto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.model.PresupuestoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PresupuestoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.PresupuestoService;
 
 import java.util.List;
@@ -55,9 +57,11 @@ public class PresupuestoServiceImpl implements PresupuestoService {
 
     @Override
     @Transactional(readOnly = true)
-    public PresupuestoModel findById(Long id) {
+    public PresupuestoModel findByIdAndUsuarioId(Long id, Long usuarioId) {
         PresupuestoModel model = null;
-        Optional<Presupuesto> optional = presupuestoRepository.findById(id);
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Presupuesto> optional = presupuestoRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
             model = PresupuestoConverter.entityToModel(optional.get());
         }
@@ -66,9 +70,41 @@ public class PresupuestoServiceImpl implements PresupuestoService {
 
     @Override
     @Transactional
-    public PresupuestoModel save(PresupuestoModel presupuestoModel) {
-        Presupuesto entity = PresupuestoConverter.modelToEntity(presupuestoModel);
-        return PresupuestoConverter.entityToModel(presupuestoRepository.save(entity));
+    public boolean create(PresupuestoRequestNew request, Long usuarioId) {
+        Presupuesto entity = presupuestoRepository.save(PresupuestoConverter.presupuestoNewToPresupuestoEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
+
+//        if(!entity.getEstado()){
+//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
+//
+//            Movimiento movimiento = new Movimiento();
+//            movimiento.setNumeroComprobante("");
+//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
+//            movimiento.setMontoPagado(entity.getMontoCapital());
+//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
+//            movimiento.setPrestamoId(null);
+//            movimiento.setPresupuestoId(entity);
+//            movimiento.setTarjetaId(null);
+//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
+//            movimiento.setConceptoId(concepto);
+//            movimiento.setMonedaId(entity.getMonedaId());
+////            movimiento.setTipoPagoId(entity.getTipoCobroId());
+//            movimiento.setUsuarioId(usuario);
+//            movimientoRepository.save(movimiento);
+//        }
+    }
+
+    @Override
+    @Transactional
+    public boolean update(PresupuestoRequestUpdate request, Long usuarioId) {
+        Presupuesto entity = presupuestoRepository.save(PresupuestoConverter.presupuestoUpdateToPresupuestoEntity(request, usuarioId));
+        if (entity != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override
