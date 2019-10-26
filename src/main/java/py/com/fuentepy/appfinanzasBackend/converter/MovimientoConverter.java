@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.*;
-import py.com.fuentepy.appfinanzasBackend.model.MovimientoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 
 import java.util.ArrayList;
 import java.util.List;

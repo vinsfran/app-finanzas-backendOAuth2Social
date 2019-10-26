@@ -18,7 +18,7 @@ import java.util.Date;
  * @author vinsfran
  */
 @Data
-@ApiModel(value = "presupuestoModel", description = "Ejemplo de para un nuevo Presupuesto")
+@ApiModel(value = "presupuestoRequestNew", description = "Ejemplo de para un nuevo Presupuesto")
 public class PresupuestoRequestNew implements Serializable {
 
     @ApiModelProperty(value = "Fecha de Alta", required = false, example = "AAAA-MM-DD")

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.MovimientoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.*;
-import py.com.fuentepy.appfinanzasBackend.model.MovimientoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.*;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 

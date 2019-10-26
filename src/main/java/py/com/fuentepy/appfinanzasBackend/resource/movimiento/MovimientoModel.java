@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.model;
+package py.com.fuentepy.appfinanzasBackend.resource.movimiento;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;

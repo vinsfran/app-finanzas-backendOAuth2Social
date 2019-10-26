@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.resource;
+package py.com.fuentepy.appfinanzasBackend.resource.movimiento;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import py.com.fuentepy.appfinanzasBackend.model.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
