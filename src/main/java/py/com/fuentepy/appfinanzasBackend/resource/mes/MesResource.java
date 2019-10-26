@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.resource.moneda;
+package py.com.fuentepy.appfinanzasBackend.resource.mes;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,10 +13,12 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import py.com.fuentepy.appfinanzasBackend.converter.MesConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
-import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
+import py.com.fuentepy.appfinanzasBackend.service.MesService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -24,21 +26,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
-@RequestMapping("/api/monedas")
-public class MonedaResource {
+@RequestMapping("/api/meses")
+public class MesResource {
 
     @Autowired
-    private MonedaService monedaService;
+    private MesService mesService;
 
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @GetMapping()
-    public List<MonedaModel> index() {
-        return monedaService.findAll();
+    public List<MesModel> index() {
+        return mesService.findAll();
     }
 
     @ApiImplicitParams(
@@ -46,21 +49,21 @@ public class MonedaResource {
     )
     @GetMapping("/page")
     public ResponseEntity<?> index(@ApiIgnore Pageable pageable) {
-        Page<MonedaModel> monedas = null;
+        Page<MesModel> mess = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            monedas = monedaService.findAll(pageable);
+            mess = mesService.findAll(pageable);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (monedas == null) {
-            response.put("mensaje", "No existen monedas en la base de datos!");
+        if (mess == null) {
+            response.put("mensaje", "No existen mess en la base de datos!");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-        response.put("page", monedas);
+        response.put("page", mess);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -75,17 +78,17 @@ public class MonedaResource {
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         try {
-            MonedaModel monedaModel = monedaService.findById(id);
-            if (monedaModel == null) {
+            MesModel mesModel = mesService.findById(id);
+            if (mesModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: La Moneda Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: La Mes Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
                 messages.add(message);
-                response = new MonedaResponse(httpStatus.value(), messages, monedaModel);
+                response = new MesResponse(httpStatus.value(), messages, mesModel);
             }
         } catch (DataAccessException e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -103,7 +106,7 @@ public class MonedaResource {
     )
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody MonedaRequestNew monedaRequestNew,
+    public ResponseEntity<?> create(@Valid @RequestBody MesRequestNew mesRequestNew,
                                     BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -118,14 +121,14 @@ public class MonedaResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (monedaService.create(monedaRequestNew)) {
+                if (mesService.create(mesRequestNew)) {
                     httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "La Moneda ha sido creada con éxito!");
+                    message = new MessageResponse(StatusLevel.INFO, "El Mes ha sido creada con éxito!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 } else {
                     httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "La Moneda no se pudo crear!");
+                    message = new MessageResponse(StatusLevel.ERROR, "El Mes no se pudo crear!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
@@ -146,12 +149,12 @@ public class MonedaResource {
     )
     @Secured({"ROLE_ADMIN"})
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@Valid @RequestBody MonedaRequestUpdate monedaRequestUpdate, BindingResult result) {
+    public ResponseEntity<?> update(@Valid @RequestBody MesRequestUpdate mesRequestUpdate, BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
-        Integer id = monedaRequestUpdate.getId();
+        Integer id = mesRequestUpdate.getId();
         if (result.hasErrors()) {
             httpStatus = HttpStatus.BAD_REQUEST;
             for (FieldError err : result.getFieldErrors()) {
@@ -160,21 +163,21 @@ public class MonedaResource {
             }
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (monedaService.findById(id) == null) {
+            if (mesService.findById(id) == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, La Moneda Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, El Mes Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (monedaService.update(monedaRequestUpdate)) {
+                    if (mesService.update(mesRequestUpdate)) {
                         httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "La Moneda ha sido actualizada con éxito!");
+                        message = new MessageResponse(StatusLevel.INFO, "EL Mes ha sido actualizada con éxito!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     } else {
                         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "La Moneda no se pudo actualizar!");
+                        message = new MessageResponse(StatusLevel.ERROR, "El Mes no se pudo actualizar!");
                         messages.add(message);
                         response = new BaseResponse(httpStatus.value(), messages);
                     }
@@ -200,21 +203,21 @@ public class MonedaResource {
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         Map<String, Object> response = new HashMap<>();
         try {
-            monedaService.delete(id);
+            mesService.delete(id);
         } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar la moneda de la base de datos!");
+            response.put("mensaje", "Error al eliminar el mes de la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("mensaje", "La moneda eliminado con éxito!");
+        response.put("mensaje", "Mes eliminado con éxito!");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 //    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-//    @PostMapping("/monedas/upload")
+//    @PostMapping("/mess/upload")
 
 //    @GetMapping("/uploads/img/{nombreFoto:.+}")
 
 //    @Secured({"ROLE_ADMIN"})
-//    @GetMapping("/monedas/regiones")
+//    @GetMapping("/mess/regiones")
 }

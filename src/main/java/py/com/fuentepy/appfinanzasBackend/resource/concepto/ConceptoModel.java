@@ -1,4 +1,4 @@
-package py.com.fuentepy.appfinanzasBackend.model;
+package py.com.fuentepy.appfinanzasBackend.resource.concepto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
@@ -14,7 +14,7 @@ public class ConceptoModel implements Serializable {
 
     @JsonProperty("id")
     @SerializedName("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("nombre")
     @SerializedName("nombre")
@@ -32,8 +32,8 @@ public class ConceptoModel implements Serializable {
     @SerializedName("tipo_concepto_signo")
     private String tipoConceptoSigno;
 
-    @JsonProperty("usuarioId")
-    @SerializedName("usuarioId")
+    @JsonProperty("usuario_id")
+    @SerializedName("usuario_id")
     private Long usuarioId;
 
 }

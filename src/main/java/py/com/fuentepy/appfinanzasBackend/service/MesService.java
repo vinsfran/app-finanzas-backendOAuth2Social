@@ -2,20 +2,23 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
-import py.com.fuentepy.appfinanzasBackend.model.MesModel;
+import py.com.fuentepy.appfinanzasBackend.resource.mes.MesModel;
+import py.com.fuentepy.appfinanzasBackend.resource.mes.MesRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.mes.MesRequestUpdate;
 
 import java.util.List;
 
 public interface MesService {
 
-    List<Mes> findAll();
+    List<MesModel> findAll();
 
-    Page<Mes> findAll(Pageable pageable);
+    Page<MesModel> findAll(Pageable pageable);
 
-    Mes findById(Integer id);
+    MesModel findById(Integer id);
 
-    MesModel save(MesModel mesModel);
+    boolean create(MesRequestNew request);
+
+    boolean update(MesRequestUpdate request);
 
     void delete(Integer id);
 }

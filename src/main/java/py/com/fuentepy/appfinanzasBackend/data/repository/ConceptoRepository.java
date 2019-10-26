@@ -8,11 +8,14 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ConceptoRepository extends JpaRepository<Concepto, Integer> {
+public interface ConceptoRepository extends JpaRepository<Concepto, Long> {
 
     List<Concepto> findByUsuarioId(Usuario usuario);
+
+    Optional<Concepto> findByIdAndUsuarioId(Long id, Usuario usuario);
 
     Page<Concepto> findByUsuarioId(Usuario usuario, Pageable pageable);
 

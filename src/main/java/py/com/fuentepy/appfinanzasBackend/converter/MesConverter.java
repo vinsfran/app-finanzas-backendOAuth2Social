@@ -5,13 +5,30 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
-import py.com.fuentepy.appfinanzasBackend.model.MesModel;
+import py.com.fuentepy.appfinanzasBackend.resource.mes.MesModel;
+import py.com.fuentepy.appfinanzasBackend.resource.mes.MesRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.mes.MesRequestUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("mesConverter")
 public class MesConverter {
+
+    public static Mes mesRequestNewToMesEntity(MesRequestNew request) {
+        Mes entity = new Mes();
+        entity.setNombre(request.getNombre());
+        entity.setNumero(request.getNumero());
+        return entity;
+    }
+
+    public static Mes mesRequestUpdateToMesEntity(MesRequestUpdate request) {
+        Mes entity = new Mes();
+        entity.setId(request.getId());
+        entity.setNombre(request.getNombre());
+        entity.setNumero(request.getNumero());
+        return entity;
+    }
 
     public static Mes modelToEntity(MesModel model) {
         Mes entity = new Mes();

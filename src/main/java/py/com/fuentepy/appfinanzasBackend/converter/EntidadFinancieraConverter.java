@@ -35,7 +35,6 @@ public class EntidadFinancieraConverter {
         return entity;
     }
 
-
     public static EntidadFinanciera modelToEntity(EntidadFinancieraModel model) {
         EntidadFinanciera entity = new EntidadFinanciera();
         entity.setNombre(model.getNombre());

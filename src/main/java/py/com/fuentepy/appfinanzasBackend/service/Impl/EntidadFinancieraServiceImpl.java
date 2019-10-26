@@ -28,9 +28,6 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
     @Autowired
     private EntidadFinancieraRepository entidadFinancieraRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
     @Override
     @Transactional(readOnly = true)
     public List<EntidadFinancieraModel> findAll() {
