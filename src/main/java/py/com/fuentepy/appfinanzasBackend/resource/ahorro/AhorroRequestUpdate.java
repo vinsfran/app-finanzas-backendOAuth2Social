@@ -18,7 +18,7 @@ import java.util.Date;
  * @author vinsfran
  */
 @Data
-@ApiModel(value = "ahorroUpdate", description = "Ejemplo de para un Ahorro a modificar")
+@ApiModel(value = "ahorroRequestUpdate", description = "Ejemplo de para un Ahorro a modificar")
 public class AhorroRequestUpdate implements Serializable {
 
     @ApiModelProperty(value = "Identificador Unico del Ahorro", required = true)
@@ -29,7 +29,7 @@ public class AhorroRequestUpdate implements Serializable {
     @ApiModelProperty(value = "Cantidad de Cobro", required = true)
     @JsonProperty("cantidad_cobro")
     @SerializedName("cantidad_cobro")
-    private Long cantidadCobro;
+    private Double cantidadCobro;
 
     @ApiModelProperty(value = "Cantidad de Cuotas", required = true)
     @JsonProperty("cantidad_cuotas")

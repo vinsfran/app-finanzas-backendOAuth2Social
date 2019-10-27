@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author vinsfran
  */
 @Data
@@ -26,50 +25,45 @@ public class Movimiento implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @NotNull
     @Column(name = "numero_comprobante")
     private String numeroComprobante;
 
-    @Column(name = "fecha_movimiento")
+    @NotNull
     @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_movimiento")
     private Date fechaMovimiento;
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "monto_pagado")
-    private Long montoPagado;
-
-    @Column(name = "nombre_entidad")
-    private String nombreEntidad;
+    @Column(name = "monto")
+    private Double monto;
 
     @Column(name = "numero_cuota")
     private Long numeroCuota;
 
-    @JoinColumn(name = "prestamo_id", referencedColumnName = "id")
-    @ManyToOne(optional = true)
-    private Prestamo prestamoId;
+    @NotNull
+    @Column(name = "signo")
+    private String signo;
 
-    @JoinColumn(name = "ahorro_id", referencedColumnName = "id")
-    @ManyToOne(optional = true)
-    private Ahorro ahorroId;
+    @NotNull
+    @Column(name = "detalle")
+    private String detalle;
 
-    @JoinColumn(name = "tarjeta_id", referencedColumnName = "id")
-    @ManyToOne(optional = true)
-    private Tarjeta tarjetaId;
+    @NotNull
+    @Column(name = "tabla_id")
+    private Long tablaId;
 
-    @JoinColumn(name = "concepto_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Concepto conceptoId;
+    @NotNull
+    @Column(name = "tabla_name")
+    private String tablaName;
 
     @JoinColumn(name = "moneda_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Moneda monedaId;
 
-    @JoinColumn(name = "tipo_pago_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private TipoPago tipoPagoId;
-
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Usuario usuarioId;
-    
+
 }

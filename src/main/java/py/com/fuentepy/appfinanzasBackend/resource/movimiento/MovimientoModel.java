@@ -1,8 +1,14 @@
 package py.com.fuentepy.appfinanzasBackend.resource.movimiento;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,80 +23,52 @@ public class MovimientoModel implements Serializable {
     @SerializedName("id")
     private Long id;
 
-    @JsonProperty("numeroComprobante")
-    @SerializedName("numeroComprobante")
+    @JsonProperty("numero_comprobante")
+    @SerializedName("fecha_movimiento")
     private String numeroComprobante;
 
-    @JsonProperty("fechaMovimiento")
-    @SerializedName("fechaMovimiento")
+    @ApiModelProperty(value = "Fecha de Movimiento", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("fecha_movimiento")
+    @SerializedName("fecha_movimiento")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date fechaMovimiento;
 
-    @JsonProperty("montoPagado")
-    @SerializedName("montoPagado")
-    private Long montoPagado;
+    @JsonProperty("monto")
+    @SerializedName("monto")
+    private Double monto;
 
-    @JsonProperty("nombreEntidad")
-    @SerializedName("nombreEntidad")
-    private String nombreEntidad;
-
-    @JsonProperty("prestamoId")
-    @SerializedName("prestamoId")
-    private Long prestamoId;
-
-    @JsonProperty("ahorroId")
-    @SerializedName("ahorroId")
-    private Long ahorroId;
-
-    @JsonProperty("tarjetaId")
-    @SerializedName("tarjetaId")
-    private Long tarjetaId;
-
-    @JsonProperty("numeroCuota")
-    @SerializedName("numeroCuota")
+    @JsonProperty("numero_cuota")
+    @SerializedName("numero_cuota")
     private Long numeroCuota;
 
-    @JsonProperty("conceptoId")
-    @SerializedName("conceptoId")
-    private Long conceptoId;
+    @JsonProperty("signo")
+    @SerializedName("signo")
+    private String signo;
 
-    @JsonProperty("conceptoNombre")
-    @SerializedName("conceptoNombre")
-    private String conceptoNombre;
+    @JsonProperty("detalle")
+    @SerializedName("detalle")
+    private String detalle;
 
-    @JsonProperty("tipo_concepto_id")
-    @SerializedName("tipo_concepto_id")
-    private Integer tipoConceptoId;
+    @JsonProperty("tabla_id")
+    @SerializedName("tabla_id")
+    private Long tablaId;
 
-    @JsonProperty("tipo_concepto_nombre")
-    @SerializedName("tipo_concepto_nombre")
-    private String tipoConceptoNombre;
+    @JsonProperty("tabla_name")
+    @SerializedName("tabla_name")
+    private String tablaName;
 
-    @JsonProperty("tipo_concepto_signo")
-    @SerializedName("tipo_concepto_signo")
-    private String tipoConceptoSigno;
-
-    @JsonProperty("monedaId")
-    @SerializedName("monedaId")
+    @JsonProperty("moneda_id")
+    @SerializedName("moneda_id")
     private Integer monedaId;
 
-    @JsonProperty("monedaNombre")
-    @SerializedName("monedaNombre")
+    @JsonProperty("moneda_nombre")
+    @SerializedName("moneda_nombre")
     private String monedaNombre;
 
-    @JsonProperty("monedaCodigo")
-    @SerializedName("monedaCodigo")
-    private String monedaCodigo;
-
-    @JsonProperty("tipoPagoId")
-    @SerializedName("tipoPagoId")
-    private Long tipoPagoId;
-
-    @JsonProperty("tipoPagoNombre")
-    @SerializedName("tipoPagoNombre")
-    private String tipoPagoNombre;
-
-    @JsonProperty("usuarioId")
-    @SerializedName("usuarioId")
+    @JsonProperty("usuario_id")
+    @SerializedName("usuario_id")
     private Long usuarioId;
 
 }

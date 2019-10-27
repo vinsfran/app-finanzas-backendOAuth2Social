@@ -15,13 +15,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "ahorroNew", description = "Ejemplo de para un nuevo Ahorro")
+@ApiModel(value = "ahorroRequestNew", description = "Ejemplo de para un nuevo Ahorro")
 public class AhorroRequestNew implements Serializable {
 
     @ApiModelProperty(value = "Cantidad de Cobro", required = true)
     @JsonProperty("cantidad_cobro")
     @SerializedName("cantidad_cobro")
-    private Long cantidadCobro;
+    private Double cantidadCobro;
 
     @ApiModelProperty(value = "Cantidad de Cuotas", required = true)
     @JsonProperty("cantidad_cuotas")

@@ -208,6 +208,112 @@ public class AhorroResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_ADMIN"})
+    @PutMapping(value = "/pago", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> pago(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                 @Valid @RequestBody AhorroRequestPago ahorroRequestPago,
+                                 BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        Long id = ahorroRequestPago.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                try {
+                    if (ahorroService.pay(ahorroRequestPago, usuarioId)) {
+                        httpStatus = HttpStatus.CREATED;
+                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido pagado con éxito!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    } else {
+                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo pagar!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    }
+                } catch (DataAccessException e) {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+                    messages.add(message);
+                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            }
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_ADMIN"})
+    @PutMapping(value = "/cobro", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro,
+                                    BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        Long id = ahorroRequestCobro.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo cobrar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                try {
+                    if (ahorroService.charge(ahorroRequestCobro, usuarioId)) {
+                        httpStatus = HttpStatus.CREATED;
+                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido cobrado con éxito!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    } else {
+                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo cobrar!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    }
+                } catch (DataAccessException e) {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+                    messages.add(message);
+                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            }
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

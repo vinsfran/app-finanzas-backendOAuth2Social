@@ -29,7 +29,7 @@ public class AhorroModel implements Serializable {
     @ApiModelProperty(value = "Cantidad de Cobro", required = true)
     @JsonProperty("cantidad_cobro")
     @SerializedName("cantidad_cobro")
-    private Long cantidadCobro;
+    private Double cantidadCobro;
 
     @ApiModelProperty(value = "Cantidad de Cuotas", required = true)
     @JsonProperty("cantidad_cuotas")

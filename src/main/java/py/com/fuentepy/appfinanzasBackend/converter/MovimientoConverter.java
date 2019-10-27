@@ -7,7 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.data.entity.*;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 
 import java.util.ArrayList;
@@ -20,40 +22,23 @@ public class MovimientoConverter {
     private static final Log LOG = LogFactory.getLog(MovimientoConverter.class);
 
     public static Movimiento modelToEntity(MovimientoModel model) {
-        Prestamo prestamo = new Prestamo();
-        prestamo.setId(model.getPrestamoId());
-        Ahorro ahorro = new Ahorro();
-        ahorro.setId(model.getAhorroId());
-        Tarjeta tarjeta = new Tarjeta();
-        tarjeta.setId(model.getTarjetaId());
-        TipoConcepto tipoConcepto = new TipoConcepto();
-        tipoConcepto.setId(model.getTipoConceptoId());
-        Concepto concepto = new Concepto();
-        concepto.setId(model.getConceptoId());
-        concepto.setNombre(model.getConceptoNombre());
-        concepto.setTipoConceptoId(tipoConcepto);
         Moneda moneda = new Moneda();
         moneda.setId(model.getMonedaId());
         moneda.setNombre(model.getMonedaNombre());
-        moneda.setCodigo(model.getMonedaCodigo());
-        TipoPago tipoPago = new TipoPago();
-        tipoPago.setId(model.getTipoPagoId());
-        tipoPago.setNombre(model.getTipoPagoNombre());
         Usuario usuario = new Usuario();
         usuario.setId(model.getUsuarioId());
         Movimiento entity = new Movimiento();
         entity.setId(model.getId());
         entity.setNumeroComprobante(model.getNumeroComprobante());
         entity.setFechaMovimiento(model.getFechaMovimiento());
-        entity.setMontoPagado(model.getMontoPagado());
-        entity.setNombreEntidad(model.getNombreEntidad());
-        entity.setPrestamoId(prestamo);
-        entity.setAhorroId(ahorro);
-        entity.setTarjetaId(tarjeta);
+        entity.setMonto(model.getMonto());
         entity.setNumeroCuota(model.getNumeroCuota());
-        entity.setConceptoId(concepto);
+        entity.setSigno(model.getSigno());
+        entity.setDetalle(model.getDetalle());
+        entity.setNumeroCuota(model.getNumeroCuota());
+        entity.setTablaId(model.getTablaId());
+        entity.setTablaName(model.getTablaName());
         entity.setMonedaId(moneda);
-        entity.setTipoPagoId(tipoPago);
         entity.setUsuarioId(usuario);
         return entity;
     }
@@ -63,28 +48,14 @@ public class MovimientoConverter {
         model.setId(entity.getId());
         model.setNumeroComprobante(entity.getNumeroComprobante());
         model.setFechaMovimiento(entity.getFechaMovimiento());
-        model.setMontoPagado(entity.getMontoPagado());
-        model.setNombreEntidad(entity.getNombreEntidad());
-        if (entity.getPrestamoId() != null) {
-            model.setPrestamoId(entity.getPrestamoId().getId());
-        }
-        if (entity.getAhorroId() != null) {
-            model.setAhorroId(entity.getAhorroId().getId());
-        }
-        if (entity.getTarjetaId() != null) {
-            model.setTarjetaId(entity.getTarjetaId().getId());
-        }
+        model.setMonto(entity.getMonto());
         model.setNumeroCuota(entity.getNumeroCuota());
-        model.setConceptoId(entity.getConceptoId().getId());
-        model.setConceptoNombre(entity.getConceptoId().getNombre());
-        model.setTipoConceptoId(entity.getConceptoId().getTipoConceptoId().getId());
-        model.setTipoConceptoNombre(entity.getConceptoId().getTipoConceptoId().getNombre());
-        model.setTipoConceptoSigno(entity.getConceptoId().getTipoConceptoId().getSigno());
+        model.setSigno(entity.getSigno());
+        model.setDetalle(entity.getDetalle());
+        model.setNumeroCuota(entity.getNumeroCuota());
+        model.setTablaId(entity.getTablaId());
+        model.setTablaName(entity.getTablaName());
         model.setMonedaId(entity.getMonedaId().getId());
-        model.setMonedaNombre(entity.getMonedaId().getNombre());
-        model.setMonedaCodigo(entity.getMonedaId().getCodigo());
-        model.setTipoPagoId(entity.getTipoPagoId().getId());
-        model.setTipoPagoNombre(entity.getTipoPagoId().getNombre());
         model.setUsuarioId(entity.getUsuarioId().getId());
         return model;
     }

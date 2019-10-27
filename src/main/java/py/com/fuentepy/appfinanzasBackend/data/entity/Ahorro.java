@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author vinsfran
  */
 @Data
@@ -29,6 +28,10 @@ public class Ahorro implements Serializable {
     @Column(name = "fecha_inicio")
     @Temporal(TemporalType.DATE)
     private Date fechaInicio;
+
+    @Column(name = "fecha_fin")
+    @Temporal(TemporalType.DATE)
+    private Date fechaFin;
 
     @Column(name = "fecha_vencimiento")
     @Temporal(TemporalType.DATE)
@@ -56,13 +59,13 @@ public class Ahorro implements Serializable {
     private Double montoInteresCuota;
 
     @Column(name = "cantidad_cobro")
-    private Long cantidadCobro;
+    private Double cantidadCobro;
 
     @Column(name = "monto_pagado")
-    private Long montoPagado;
+    private Double montoPagado;
 
     @Column(name = "monto_ultimo_pago")
-    private Long montoUltimoPago;
+    private Double montoUltimoPago;
 
     @Column(name = "estado")
     private Boolean estado;
@@ -86,5 +89,5 @@ public class Ahorro implements Serializable {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Usuario usuarioId;
-    
+
 }

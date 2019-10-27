@@ -9,14 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.AhorroConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.AhorroRepository;
-import py.com.fuentepy.appfinanzasBackend.data.repository.ConceptoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
-import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.*;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
 
 import java.util.Date;
@@ -30,6 +27,9 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Autowired
     private AhorroRepository ahorroRepository;
+
+    @Autowired
+    private MovimientoRepository movimientoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -80,25 +80,6 @@ public class AhorroServiceImpl implements AhorroService {
             return true;
         }
         return false;
-
-//        if(!entity.getEstado()){
-//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-//
-//            Movimiento movimiento = new Movimiento();
-//            movimiento.setNumeroComprobante("");
-//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-//            movimiento.setMontoPagado(entity.getMontoCapital());
-//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-//            movimiento.setPrestamoId(null);
-//            movimiento.setAhorroId(entity);
-//            movimiento.setTarjetaId(null);
-//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-//            movimiento.setConceptoId(concepto);
-//            movimiento.setMonedaId(entity.getMonedaId());
-////            movimiento.setTipoPagoId(entity.getTipoCobroId());
-//            movimiento.setUsuarioId(usuario);
-//            movimientoRepository.save(movimiento);
-//        }
     }
 
     @Override
@@ -109,6 +90,69 @@ public class AhorroServiceImpl implements AhorroService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean pay(AhorroRequestPago request, Long usuarioId) {
+        boolean retorno = false;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(request.getId(), usuario);
+        if (optional.isPresent()) {
+            Ahorro entity = optional.get();
+            if (entity.getEstado()) {
+                entity.setCantidadCuotasPagadas(request.getNumeroCuota());
+                entity.setMontoUltimoPago(request.getMontoPagado());
+                entity.setMontoPagado(entity.getMontoPagado() + entity.getMontoUltimoPago());
+                ahorroRepository.save(entity);
+                Movimiento movimiento = new Movimiento();
+                movimiento.setNumeroComprobante(request.getNumeroComprobante());
+                movimiento.setFechaMovimiento(new Date());
+                movimiento.setMonto(request.getMontoPagado());
+                movimiento.setNumeroCuota(request.getNumeroCuota());
+                movimiento.setSigno("-");
+                movimiento.setDetalle("Pago: Ahorro, Cuota: " + entity.getCantidadCuotasPagadas() + " - " + entity.getEntidadFinancieraId().getNombre());
+                movimiento.setTablaId(entity.getId());
+                movimiento.setTablaName("ahorros");
+                movimiento.setMonedaId(entity.getMonedaId());
+                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimientoRepository.save(movimiento);
+                retorno = true;
+            }
+        }
+        return retorno;
+    }
+
+    @Override
+    @Transactional
+    public boolean charge(AhorroRequestCobro request, Long usuarioId) {
+        boolean retorno = false;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(request.getId(), usuario);
+        if (optional.isPresent()) {
+            Ahorro entity = optional.get();
+            if (entity.getEstado()) {
+                entity.setCantidadCobro(request.getMontoCobrado());
+                entity.setEstado(false);
+                entity.setFechaFin(new Date());
+                ahorroRepository.save(entity);
+                Movimiento movimiento = new Movimiento();
+                movimiento.setNumeroComprobante(request.getNumeroComprobante());
+                movimiento.setFechaMovimiento(new Date());
+                movimiento.setMonto(request.getMontoCobrado());
+                movimiento.setSigno("+");
+                movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId() + " - " + entity.getEntidadFinancieraId().getNombre());
+                movimiento.setTablaId(entity.getId());
+                movimiento.setTablaName("ahorros");
+                movimiento.setMonedaId(entity.getMonedaId());
+                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimientoRepository.save(movimiento);
+                retorno = true;
+            }
+        }
+        return retorno;
     }
 
     @Override
@@ -135,7 +179,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Ahorro> findByUsuarioAndEstado(Long usuarioId, boolean estado){
+    public List<Ahorro> findByUsuarioAndEstado(Long usuarioId, boolean estado) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return ahorroRepository.findByUsuarioIdAndEstado(usuario, estado);

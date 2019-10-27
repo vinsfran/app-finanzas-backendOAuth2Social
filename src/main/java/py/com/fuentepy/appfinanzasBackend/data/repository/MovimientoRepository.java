@@ -21,9 +21,4 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     @Query(value = "select u from Movimiento u where u.usuarioId = :usuario and u.fechaMovimiento BETWEEN :startDate and :endDate")
     List<Movimiento> findByUsuarioIdRangoFecha(@Param("usuario") Usuario usuario, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    Page<Movimiento> findByPrestamoId(Prestamo prestamoId, Pageable pageable);
-
-    Page<Movimiento> findByAhorroId(Ahorro ahorroId, Pageable pageable);
-
-    Page<Movimiento> findByTarjetaId(Tarjeta tarjetaId, Pageable pageable);
 }

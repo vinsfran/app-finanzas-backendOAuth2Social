@@ -3,9 +3,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroModel;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.*;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +23,10 @@ public interface AhorroService {
     boolean create(AhorroRequestNew request, Long usuarioId);
 
     boolean update(AhorroRequestUpdate request, Long usuarioId);
+
+    boolean pay(AhorroRequestPago request, Long usuarioId);
+
+    boolean charge(AhorroRequestCobro request, Long usuarioId);
 
     void delete(Long id);
 
