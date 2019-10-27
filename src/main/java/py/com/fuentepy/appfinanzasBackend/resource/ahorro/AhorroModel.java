@@ -26,6 +26,10 @@ public class AhorroModel implements Serializable {
     @SerializedName("id")
     private Long id;
 
+    @JsonProperty("numero_comprobante")
+    @SerializedName("numero_comprobante")
+    private String numeroComprobante;
+
     @ApiModelProperty(value = "Cantidad de Cobro", required = true)
     @JsonProperty("cantidad_cobro")
     @SerializedName("cantidad_cobro")

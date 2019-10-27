@@ -21,6 +21,10 @@ import java.util.Date;
 @ApiModel(value = "prestamoNew", description = "Ejemplo de para un nuevo Prestamo")
 public class PrestamoRequestNew implements Serializable {
 
+    @JsonProperty("numero_comprobante")
+    @SerializedName("numero_comprobante")
+    private String numeroComprobante;
+
     @ApiModelProperty(value = "Monto del Prestamo", required = true)
     @JsonProperty("monto_prestamo")
     @SerializedName("monto_prestamo")

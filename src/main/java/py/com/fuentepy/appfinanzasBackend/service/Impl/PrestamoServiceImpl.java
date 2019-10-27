@@ -8,11 +8,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.EntidadFinancieraRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestPago;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
 
@@ -27,6 +32,12 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Autowired
     private PrestamoRepository prestamoRepository;
+
+    @Autowired
+    private MovimientoRepository movimientoRepository;
+
+    @Autowired
+    private EntidadFinancieraRepository entidadFinancieraRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,11 +83,23 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     @Transactional
     public boolean create(PrestamoRequestNew request, Long usuarioId) {
+        boolean retorno = false;
         Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoNewToAhorroEntity(request, usuarioId));
         if (entity != null) {
-            return true;
+            Movimiento movimiento = new Movimiento();
+            movimiento.setNumeroComprobante(entity.getNumeroComprobante());
+            movimiento.setFechaMovimiento(new Date());
+            movimiento.setMonto(entity.getMontoPrestamo());
+            movimiento.setSigno("+");
+            movimiento.setDetalle("Cobro: Prestamo: " + entity.getDestinoPrestamo() + " - " + entidadFinancieraRepository.findById(entity.getEntidadFinancieraId().getId()).get().getNombre());
+            movimiento.setTablaId(entity.getId());
+            movimiento.setTablaName("prestamos");
+            movimiento.setMonedaId(entity.getMonedaId());
+            movimiento.setUsuarioId(entity.getUsuarioId());
+            movimientoRepository.save(movimiento);
+            retorno = true;
         }
-        return false;
+        return retorno;
     }
 
     @Override
@@ -87,6 +110,38 @@ public class PrestamoServiceImpl implements PrestamoService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean pagar(PrestamoRequestPago request, Long usuarioId) {
+        boolean retorno = false;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Prestamo> optional = prestamoRepository.findByIdAndUsuarioId(request.getId(), usuario);
+        if (optional.isPresent()) {
+            Prestamo entity = optional.get();
+            if (entity.getEstado()) {
+                entity.setCantidadCuotasPagadas(request.getNumeroCuota());
+                entity.setMontoUltimoPago(request.getMontoPagado());
+                entity.setMontoPagado(entity.getMontoPagado() + entity.getMontoUltimoPago());
+                prestamoRepository.save(entity);
+                Movimiento movimiento = new Movimiento();
+                movimiento.setNumeroComprobante(request.getNumeroComprobante());
+                movimiento.setFechaMovimiento(new Date());
+                movimiento.setMonto(request.getMontoPagado());
+                movimiento.setNumeroCuota(request.getNumeroCuota());
+                movimiento.setSigno("-");
+                movimiento.setDetalle("Pago: Prestamo: " + entity.getDestinoPrestamo() + ", Cuota: " + entity.getCantidadCuotasPagadas() + " - " + entity.getEntidadFinancieraId().getNombre());
+                movimiento.setTablaId(entity.getId());
+                movimiento.setTablaName("prestamos");
+                movimiento.setMonedaId(entity.getMonedaId());
+                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimientoRepository.save(movimiento);
+                retorno = true;
+            }
+        }
+        return retorno;
     }
 
     @Override

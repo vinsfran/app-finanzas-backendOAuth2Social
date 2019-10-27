@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestPago;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
 
 import java.util.Date;
@@ -26,6 +27,8 @@ public interface PrestamoService {
 
     boolean update(PrestamoRequestUpdate request, Long usuarioId);
 
+    boolean pagar(PrestamoRequestPago prestamoRequestPago, Long usuarioId);
+
     PrestamoModel save(PrestamoModel prestamoModel);
 
     void delete(Long id);
@@ -33,4 +36,5 @@ public interface PrestamoService {
     Long countByTenantName(Long usuarioId);
 
     List<Prestamo> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
+
 }

@@ -32,6 +32,7 @@ public class PrestamoConverter {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Prestamo entity = new Prestamo();
+        entity.setNumeroComprobante(request.getNumeroComprobante());
         entity.setMontoPrestamo(request.getMontoPrestamo());
         entity.setFechaDesembolso(request.getFechaDesembolso());
         entity.setFechaVencimiento(request.getFechaVencimiento());
@@ -58,6 +59,7 @@ public class PrestamoConverter {
         usuario.setId(usuarioId);
         Prestamo entity = new Prestamo();
         entity.setId(request.getId());
+        entity.setNumeroComprobante(request.getNumeroComprobante());
         entity.setMontoPrestamo(request.getMontoPrestamo());
         entity.setFechaDesembolso(request.getFechaDesembolso());
         entity.setFechaVencimiento(request.getFechaVencimiento());
@@ -85,6 +87,7 @@ public class PrestamoConverter {
         entidadFinanciera.setNombre(model.getEntidadFinancieraNombre());
         Prestamo entity = new Prestamo();
         entity.setId(model.getId());
+        entity.setNumeroComprobante(model.getNumeroComprobante());
         entity.setMontoPrestamo(model.getMontoPrestamo());
         entity.setFechaDesembolso(model.getFechaDesembolso());
         entity.setFechaVencimiento(model.getFechaVencimiento());
@@ -104,6 +107,7 @@ public class PrestamoConverter {
     public static PrestamoModel entityToModel(Prestamo entity) {
         PrestamoModel model = new PrestamoModel();
         model.setId(entity.getId());
+        model.setNumeroComprobante(entity.getNumeroComprobante());
         model.setMontoPrestamo(entity.getMontoPrestamo());
         model.setFechaDesembolso(entity.getFechaDesembolso());
         model.setFechaVencimiento(entity.getFechaVencimiento());

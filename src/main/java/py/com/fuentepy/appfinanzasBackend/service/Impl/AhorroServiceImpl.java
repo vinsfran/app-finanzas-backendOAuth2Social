@@ -94,7 +94,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean pay(AhorroRequestPago request, Long usuarioId) {
+    public boolean pagar(AhorroRequestPago request, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -126,7 +126,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean charge(AhorroRequestCobro request, Long usuarioId) {
+    public boolean cobrar(AhorroRequestCobro request, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);

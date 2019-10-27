@@ -21,6 +21,10 @@ import java.util.Date;
 @ApiModel(value = "prestamoUpdate", description = "Ejemplo de para un Prestamo a modificar")
 public class PrestamoRequestUpdate implements Serializable {
 
+    @JsonProperty("numero_comprobante")
+    @SerializedName("numero_comprobante")
+    private String numeroComprobante;
+
     @ApiModelProperty(value = "Identificador Unico del Prestamo", required = true)
     @JsonProperty("id")
     @SerializedName("id")

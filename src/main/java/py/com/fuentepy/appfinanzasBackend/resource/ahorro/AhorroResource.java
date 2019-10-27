@@ -212,8 +212,8 @@ public class AhorroResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
-    @PutMapping(value = "/pago", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> pago(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+    @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                  @Valid @RequestBody AhorroRequestPago ahorroRequestPago,
                                  BindingResult result) {
         HttpStatus httpStatus;
@@ -237,7 +237,7 @@ public class AhorroResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (ahorroService.pay(ahorroRequestPago, usuarioId)) {
+                    if (ahorroService.pagar(ahorroRequestPago, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido pagado con éxito!");
                         messages.add(message);
@@ -290,7 +290,7 @@ public class AhorroResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (ahorroService.charge(ahorroRequestCobro, usuarioId)) {
+                    if (ahorroService.cobrar(ahorroRequestCobro, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido cobrado con éxito!");
                         messages.add(message);

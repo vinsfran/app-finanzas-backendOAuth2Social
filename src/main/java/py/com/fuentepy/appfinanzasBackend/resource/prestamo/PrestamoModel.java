@@ -17,6 +17,10 @@ public class PrestamoModel implements Serializable {
     @SerializedName("id")
     private Long id;
 
+    @JsonProperty("numero_comprobante")
+    @SerializedName("numero_comprobante")
+    private String numeroComprobante;
+
     @JsonProperty("monto_prestamo")
     @SerializedName("monto_prestamo")
     private Double montoPrestamo;

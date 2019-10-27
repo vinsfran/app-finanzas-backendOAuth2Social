@@ -22,6 +22,9 @@ public class Ahorro implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "numero_comprobante")
+    private String numeroComprobante;
+
     @Column(name = "monto_capital")
     private Double montoCapital;
 

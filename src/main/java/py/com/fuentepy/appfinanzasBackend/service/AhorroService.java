@@ -24,9 +24,9 @@ public interface AhorroService {
 
     boolean update(AhorroRequestUpdate request, Long usuarioId);
 
-    boolean pay(AhorroRequestPago request, Long usuarioId);
+    boolean pagar(AhorroRequestPago request, Long usuarioId);
 
-    boolean charge(AhorroRequestCobro request, Long usuarioId);
+    boolean cobrar(AhorroRequestCobro request, Long usuarioId);
 
     void delete(Long id);
 

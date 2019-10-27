@@ -33,6 +33,7 @@ public class AhorroConverter {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
+        entity.setNumeroComprobante(request.getNumeroComprobante());
         entity.setMontoCapital(request.getMontoCapital());
         entity.setFechaInicio(request.getFechaInicio());
         entity.setFechaVencimiento(request.getFechaVencimiento());
@@ -66,6 +67,7 @@ public class AhorroConverter {
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
         entity.setId(request.getId());
+        entity.setNumeroComprobante(request.getNumeroComprobante());
         entity.setMontoCapital(request.getMontoCapital());
         entity.setFechaInicio(request.getFechaInicio());
         entity.setFechaVencimiento(request.getFechaVencimiento());
@@ -102,6 +104,7 @@ public class AhorroConverter {
         tipoCobro.setNombre(model.getTipoAhorroNombre());
         Ahorro entity = new Ahorro();
         entity.setId(model.getId());
+        entity.setNumeroComprobante(model.getNumeroComprobante());
         entity.setMontoCapital(model.getMontoCapital());
         entity.setFechaInicio(model.getFechaInicio());
         entity.setFechaVencimiento(model.getFechaVencimiento());
@@ -124,6 +127,7 @@ public class AhorroConverter {
     public static AhorroModel entityToModel(Ahorro entity) {
         AhorroModel model = new AhorroModel();
         model.setId(entity.getId());
+        model.setNumeroComprobante(entity.getNumeroComprobante());
         model.setMontoCapital(entity.getMontoCapital());
         model.setFechaInicio(entity.getFechaInicio());
         model.setFechaVencimiento(entity.getFechaVencimiento());

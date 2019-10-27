@@ -23,6 +23,9 @@ public class Prestamo implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "numero_comprobante")
+    private String numeroComprobante;
+
     @Column(name = "monto_prestamo")
     private Double montoPrestamo;
 
@@ -53,7 +56,7 @@ public class Prestamo implements Serializable {
     private Double montoPagado;
 
     @Column(name = "monto_ultimo_pago")
-    private Long montoUltimoPago;
+    private Double montoUltimoPago;
 
     @Size(max = 255)
     @Column(name = "destino_prestamo")
