@@ -15,7 +15,7 @@ public interface UsuarioService {
 
     Optional<Usuario> findUserByResetToken(String resetToken);
 
-    public void save(Usuario user);
+    void save(Usuario user);
 
-    UsuarioModel uploadImage(byte[] imageBase64, String imageName, Long id);
+    UsuarioModel uploadImage(byte[] imageBase64, String imageName, String mediaType, Long id);
 }

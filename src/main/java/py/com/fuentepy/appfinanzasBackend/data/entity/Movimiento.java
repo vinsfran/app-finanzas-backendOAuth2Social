@@ -55,8 +55,8 @@ public class Movimiento implements Serializable {
     private Long tablaId;
 
     @NotNull
-    @Column(name = "tabla_name")
-    private String tablaName;
+    @Column(name = "tabla_nombre")
+    private String tablaNombre;
 
     @JoinColumn(name = "moneda_id", referencedColumnName = "id")
     @ManyToOne(optional = false)

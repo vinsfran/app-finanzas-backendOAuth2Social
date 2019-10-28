@@ -114,7 +114,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago: Ahorro, Cuota: " + entity.getCantidadCuotasPagadas() + " - " + entity.getEntidadFinancieraId().getNombre());
                 movimiento.setTablaId(entity.getId());
-                movimiento.setTablaName("ahorros");
+                movimiento.setTablaNombre("ahorros");
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
                 movimientoRepository.save(movimiento);
@@ -145,7 +145,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId() + " - " + entity.getEntidadFinancieraId().getNombre());
                 movimiento.setTablaId(entity.getId());
-                movimiento.setTablaName("ahorros");
+                movimiento.setTablaNombre("ahorros");
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
                 movimientoRepository.save(movimiento);

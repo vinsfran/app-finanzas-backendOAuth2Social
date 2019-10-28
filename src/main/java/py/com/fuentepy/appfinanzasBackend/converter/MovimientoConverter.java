@@ -37,7 +37,7 @@ public class MovimientoConverter {
         entity.setDetalle(model.getDetalle());
         entity.setNumeroCuota(model.getNumeroCuota());
         entity.setTablaId(model.getTablaId());
-        entity.setTablaName(model.getTablaName());
+        entity.setTablaNombre(model.getTablaName());
         entity.setMonedaId(moneda);
         entity.setUsuarioId(usuario);
         return entity;
@@ -54,7 +54,7 @@ public class MovimientoConverter {
         model.setDetalle(entity.getDetalle());
         model.setNumeroCuota(entity.getNumeroCuota());
         model.setTablaId(entity.getTablaId());
-        model.setTablaName(entity.getTablaName());
+        model.setTablaName(entity.getTablaNombre());
         model.setMonedaId(entity.getMonedaId().getId());
         model.setUsuarioId(entity.getUsuarioId().getId());
         return model;

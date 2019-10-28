@@ -1,4 +1,4 @@
-INSERT INTO usuarios (email, password, first_name, last_name, enabled, created_on, last_login, reset_token, email_verified, provider, provider_id, image_profile_name, image_profile_data) VALUES ('vinsfran2@gmail.com', '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'Vicente', 'Insfran', true, '2019-06-10', '2019-06-10', null, true, 'local', '', null, null);
+INSERT INTO usuarios (email, password, first_name, last_name, enabled, created_on, last_login, reset_token, email_verified, provider, provider_id) VALUES ('vinsfran2@gmail.com', '$2a$10$pQG5o8CbpWe8g9zqzimGT.m3qmM//WysZX8tN1pnAmuR6HdEoKtte', 'Vicente', 'Insfran', true, '2019-06-10', '2019-06-10', null, true, 'local', '');
 
 INSERT INTO monedas (codigo, nombre) VALUES ('Gs.', 'Guarani');
 INSERT INTO monedas (codigo, nombre) VALUES ('Us.', 'Dolar');

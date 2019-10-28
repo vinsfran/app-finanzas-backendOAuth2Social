@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
@@ -31,6 +32,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ArchivoServiceImpl archivoService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -38,14 +42,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         UsuarioModel usuarioModel = null;
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
+            Archivo archivo = archivoService.findFotoPerfil(id);
+            if (archivo == null) {
+                archivo = new Archivo();
+            }
             Usuario usuario = optional.get();
             usuarioModel = new UsuarioModel();
             usuarioModel.setId(usuario.getId());
             usuarioModel.setName(usuario.getFirstName());
             usuarioModel.setLastName(usuario.getLastName());
             usuarioModel.setEmail(usuario.getEmail());
-            usuarioModel.setImageProfileBase64(Base64.encodeBase64String(usuario.getImageProfileData()));
-            usuarioModel.setImageProfileName(usuario.getImageProfileName());
+            usuarioModel.setImageProfileBase64(Base64.encodeBase64String(archivo.getDato()));
+            usuarioModel.setImageProfileName(archivo.getNombre());
         }
         return usuarioModel;
     }
@@ -94,21 +102,33 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioModel uploadImage(byte[] imageBase64, String imageName, Long id) {
+    public UsuarioModel uploadImage(byte[] imageBase64, String imageName, String contentType, Long id) {
         UsuarioModel usuarioModel = null;
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
-            usuario.setImageProfileData(imageBase64);
-            usuario.setImageProfileName(imageName);
-            usuario = usuarioRepository.save(usuario);
-            usuarioModel = new UsuarioModel();
-            usuarioModel.setId(usuario.getId());
-            usuarioModel.setName(usuario.getFirstName());
-            usuarioModel.setLastName(usuario.getLastName());
-            usuarioModel.setEmail(usuario.getEmail());
-            usuarioModel.setImageProfileBase64(Base64.encodeBase64String(usuario.getImageProfileData()));
-            usuarioModel.setImageProfileName(usuario.getImageProfileName());
+            Archivo archivo = archivoService.findFotoPerfil(id);
+            if (archivo == null) {
+                archivo = new Archivo();
+            }
+            archivo.setTablaId(id);
+            archivo.setTablaNombre("usuarios");
+            archivo.setContentType(contentType);
+            archivo.setNombre(imageName);
+            archivo.setDato(imageBase64);
+            archivo.setUsuarioId(usuario);
+            try {
+                archivoService.save(archivo);
+                usuarioModel = new UsuarioModel();
+                usuarioModel.setId(usuario.getId());
+                usuarioModel.setName(usuario.getFirstName());
+                usuarioModel.setLastName(usuario.getLastName());
+                usuarioModel.setEmail(usuario.getEmail());
+                usuarioModel.setImageProfileBase64(Base64.encodeBase64String(archivo.getDato()));
+                usuarioModel.setImageProfileName(archivo.getNombre());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return usuarioModel;
     }

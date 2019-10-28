@@ -142,7 +142,7 @@ public class UsuarioResource {
         Long usuarioId = userPrincipal.getId();
         try {
             if (!imageProfile.isEmpty()) {
-                UsuarioModel usuarioModel = usuarioService.uploadImage(imageProfile.getBytes(), imageProfile.getOriginalFilename(), usuarioId);
+                UsuarioModel usuarioModel = usuarioService.uploadImage(imageProfile.getBytes(), imageProfile.getOriginalFilename(), imageProfile.getContentType(), usuarioId);
                 if (usuarioModel == null) {
                     httpStatus = HttpStatus.NOT_FOUND;
                     message = new MessageResponse(StatusLevel.WARNING, "Error: El Usuario Nro: ".concat(usuarioId.toString()).concat(" no existe en la base de datos!"));
@@ -192,7 +192,7 @@ public class UsuarioResource {
         Long usuarioId = userPrincipal.getId();
         try {
             if (usuarioImageRequest != null) {
-                UsuarioModel usuarioModel = usuarioService.uploadImage(Base64.decodeBase64(usuarioImageRequest.getImageProfileData()), usuarioImageRequest.getImageProfileName(), usuarioId);
+                UsuarioModel usuarioModel = usuarioService.uploadImage(Base64.decodeBase64(usuarioImageRequest.getImageProfileData()), usuarioImageRequest.getImageProfileName(), usuarioImageRequest.getContentType(), usuarioId);
                 if (usuarioModel == null) {
                     httpStatus = HttpStatus.NOT_FOUND;
                     message = new MessageResponse(StatusLevel.WARNING, "Error: El Usuario Nro: ".concat(usuarioId.toString()).concat(" no existe en la base de datos!"));

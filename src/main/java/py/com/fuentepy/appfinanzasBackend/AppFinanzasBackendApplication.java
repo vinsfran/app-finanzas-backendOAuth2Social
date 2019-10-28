@@ -8,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import py.com.fuentepy.appfinanzasBackend.config.AppProperties;
-import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.service.Impl.UsuarioServiceImpl;
 
 @SpringBootApplication
@@ -28,8 +27,7 @@ public class AppFinanzasBackendApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         String imageProfileName = "imagen1.jpg";
-        usuarioService.uploadImage(Base64.decodeBase64(imageProfileData), imageProfileName, 1L);
-
+        usuarioService.uploadImage(Base64.decodeBase64(imageProfileData), imageProfileName, "image/jpg", 1L);
     }
 
 }

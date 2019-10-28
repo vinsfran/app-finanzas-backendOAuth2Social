@@ -64,12 +64,4 @@ public class Usuario implements Serializable {
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column(name = "image_profile_name")
-    private String imageProfileName;
-
-    //    @Lob
-    @Column(name = "image_profile_data", nullable = true)
-    @Basic(optional = true, fetch = FetchType.EAGER)
-    private byte[] imageProfileData;
-
 }

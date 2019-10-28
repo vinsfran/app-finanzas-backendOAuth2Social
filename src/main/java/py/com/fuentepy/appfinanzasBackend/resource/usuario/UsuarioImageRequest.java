@@ -15,14 +15,14 @@ import java.io.Serializable;
 @ApiModel(value = "UsuarioImageRequest", description = "Ejemplo de para Imagen de Usuario")
 public class UsuarioImageRequest implements Serializable {
 
-//    @NotBlank
-//    @NonNull
     @JsonProperty("image_profile_name")
     @SerializedName("image_profile_name")
     private String imageProfileName;
 
-//    @NotBlank
-//    @NonNull
+    @JsonProperty("content_type")
+    @SerializedName("content_type")
+    private String contentType;
+
     @JsonProperty("image_profile_data")
     @SerializedName("image_profile_data")
     private String imageProfileData;
