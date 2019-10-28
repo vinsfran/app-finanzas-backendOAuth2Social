@@ -14,6 +14,7 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.EntidadFinancieraRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestPago;
@@ -37,6 +38,9 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Autowired
     private EntidadFinancieraRepository entidadFinancieraRepository;
+
+    @Autowired
+    private ArchivoServiceImpl archivoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -83,19 +87,24 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Transactional
     public boolean create(PrestamoRequestNew request, Long usuarioId) {
         boolean retorno = false;
-        Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoNewToAhorroEntity(request, usuarioId));
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Prestamo entity = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToAhorroEntity(request, usuarioId));
         if (entity != null) {
             Movimiento movimiento = new Movimiento();
             movimiento.setNumeroComprobante(entity.getNumeroComprobante());
             movimiento.setFechaMovimiento(new Date());
             movimiento.setMonto(entity.getMontoPrestamo());
             movimiento.setSigno("+");
-            movimiento.setDetalle("Cobro: Prestamo: " + entity.getDestinoPrestamo() + " - " + entidadFinancieraRepository.findById(entity.getEntidadFinancieraId().getId()).get().getNombre());
+            movimiento.setDetalle("Cobro: Prestamo: " + entity.getDestinoPrestamo() + " - " + entity.getEntidadFinancieraId().getNombre());
             movimiento.setTablaId(entity.getId());
             movimiento.setTablaNombre("prestamos");
             movimiento.setMonedaId(entity.getMonedaId());
             movimiento.setUsuarioId(entity.getUsuarioId());
-            movimientoRepository.save(movimiento);
+            movimiento = movimientoRepository.saveAndFlush(movimiento);
+            if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+            }
             retorno = true;
         }
         return retorno;
@@ -136,7 +145,10 @@ public class PrestamoServiceImpl implements PrestamoService {
                 movimiento.setTablaNombre("prestamos");
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoRepository.save(movimiento);
+                movimiento = movimientoRepository.saveAndFlush(movimiento);
+                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+                }
                 retorno = true;
             }
         }
@@ -169,5 +181,13 @@ public class PrestamoServiceImpl implements PrestamoService {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return prestamoRepository.findByUsuarioIdRangoFecha(usuario, fechaInicio, fechaFin);
+    }
+
+    private void guardarArchivos(List<ArchivoModel> archivos, Long tablaId, Usuario usuario) {
+        try {
+            archivoService.saveList(archivos, tablaId, "prestamos", usuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

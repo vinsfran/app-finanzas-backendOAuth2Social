@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.AhorroConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.AhorroRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.*;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
 
 import java.util.Date;
@@ -30,6 +33,10 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Autowired
     private MovimientoRepository movimientoRepository;
+
+    @Autowired
+    private ArchivoServiceImpl archivoService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -117,7 +124,10 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setTablaNombre("ahorros");
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoRepository.save(movimiento);
+                movimiento = movimientoRepository.saveAndFlush(movimiento);
+                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+                }
                 retorno = true;
             }
         }
@@ -148,7 +158,10 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setTablaNombre("ahorros");
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoRepository.save(movimiento);
+                movimiento = movimientoRepository.saveAndFlush(movimiento);
+                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+                }
                 retorno = true;
             }
         }
@@ -183,5 +196,13 @@ public class AhorroServiceImpl implements AhorroService {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return ahorroRepository.findByUsuarioIdAndEstado(usuario, estado);
+    }
+
+    private void guardarArchivos(List<ArchivoModel> archivos, Long tablaId, Usuario usuario) {
+        try {
+            archivoService.saveList(archivos, tablaId, "movimientos", usuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

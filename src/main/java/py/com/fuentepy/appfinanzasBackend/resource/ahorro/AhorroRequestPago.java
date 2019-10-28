@@ -10,9 +10,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author vinsfran
@@ -37,5 +39,9 @@ public class AhorroRequestPago implements Serializable {
     @JsonProperty("numero_cuota")
     @SerializedName("numero_cuota")
     private Long numeroCuota;
+
+    @JsonProperty("archivos")
+    @SerializedName("archivos")
+    List<ArchivoModel> archivoModels;
 
 }

@@ -10,9 +10,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author vinsfran
@@ -95,5 +97,9 @@ public class PrestamoRequestNew implements Serializable {
     @JsonProperty("entidad_financiera_id")
     @SerializedName("entidad_financiera_id")
     private Long entidadFinancieraId;
+
+    @JsonProperty("archivos")
+    @SerializedName("archivos")
+    List<ArchivoModel> archivoModels;
 
 }
