@@ -8,14 +8,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TarjetaConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TarjetaRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestPago;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +31,12 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     @Autowired
     private TarjetaRepository tarjetaRepository;
+
+    @Autowired
+    private MovimientoRepository movimientoRepository;
+
+    @Autowired
+    private ArchivoServiceImpl archivoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -76,25 +87,6 @@ public class TarjetaServiceImpl implements TarjetaService {
             return true;
         }
         return false;
-
-//        if(!entity.getEstado()){
-//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-//
-//            Movimiento movimiento = new Movimiento();
-//            movimiento.setNumeroComprobante("");
-//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-//            movimiento.setMontoPagado(entity.getMontoCapital());
-//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-//            movimiento.setPrestamoId(null);
-//            movimiento.setTarjetaId(entity);
-//            movimiento.setTarjetaId(null);
-//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-//            movimiento.setConceptoId(concepto);
-//            movimiento.setMonedaId(entity.getMonedaId());
-////            movimiento.setTipoPagoId(entity.getTipoCobroId());
-//            movimiento.setUsuarioId(usuario);
-//            movimientoRepository.save(movimiento);
-//        }
     }
 
     @Override
@@ -105,6 +97,39 @@ public class TarjetaServiceImpl implements TarjetaService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean pagar(TarjetaRequestPago request, Long usuarioId) {
+        boolean retorno = false;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Tarjeta> optional = tarjetaRepository.findByIdAndUsuarioId(request.getId(), usuario);
+        if (optional.isPresent()) {
+            Tarjeta entity = optional.get();
+            if (entity.getEstado()) {
+                entity.setMontoUltimoPago(request.getMontoPagado());
+                entity.setMontoDisponible(entity.getMontoDisponible() + entity.getMontoUltimoPago());
+                tarjetaRepository.save(entity);
+                Movimiento movimiento = new Movimiento();
+                movimiento.setNumeroComprobante(request.getNumeroComprobante());
+                movimiento.setFechaMovimiento(new Date());
+                movimiento.setMonto(request.getMontoPagado());
+                movimiento.setSigno("-");
+                movimiento.setDetalle("Pago: Tarjeta: " + entity.getMarca() + " / " + entity.getNumeroTarjeta() + " - " + entity.getEntidadFinancieraId().getNombre());
+                movimiento.setTablaId(entity.getId());
+                movimiento.setTablaNombre("tarjetas");
+                movimiento.setMonedaId(entity.getMonedaId());
+                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimiento = movimientoRepository.saveAndFlush(movimiento);
+                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+                }
+                retorno = true;
+            }
+        }
+        return retorno;
     }
 
     @Override
@@ -121,13 +146,20 @@ public class TarjetaServiceImpl implements TarjetaService {
         return tarjetaRepository.countByUsuarioId(usuario);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<Tarjeta> findByUsuarioIdLista(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return tarjetaRepository.findByUsuarioId(usuario);
+    }
+
+    private void guardarArchivos(List<ArchivoModel> archivos, Long tablaId, Usuario usuario) {
+        try {
+            archivoService.saveList(archivos, tablaId, "tarjetas", usuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

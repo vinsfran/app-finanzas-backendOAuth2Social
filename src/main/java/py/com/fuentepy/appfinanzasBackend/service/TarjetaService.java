@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestPago;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public interface TarjetaService {
     boolean create(TarjetaRequestNew request, Long usuarioId);
 
     boolean update(TarjetaRequestUpdate request, Long usuarioId);
+
+    boolean pagar(TarjetaRequestPago request, Long usuarioId);
 
     void delete(Long id);
 

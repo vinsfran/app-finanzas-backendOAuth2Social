@@ -37,7 +37,6 @@ public class AhorroServiceImpl implements AhorroService {
     @Autowired
     private ArchivoServiceImpl archivoService;
 
-
     @Override
     @Transactional(readOnly = true)
     public List<AhorroModel> findAll() {

@@ -33,7 +33,11 @@ public class TarjetaModel implements Serializable {
 
     @JsonProperty("linea_credito")
     @SerializedName("linea_credito")
-    private Long lineaCredito;
+    private Double lineaCredito;
+
+    @JsonProperty("monto_disponible")
+    @SerializedName("monto_disponible")
+    private Double montoDisponible;
 
     @ApiModelProperty(value = "Fecha de Vencimiento", required = false, example = "AAAA-MM-DD")
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -46,6 +50,18 @@ public class TarjetaModel implements Serializable {
     @JsonProperty("estado")
     @SerializedName("estado")
     private Boolean estado;
+
+    @JsonProperty("moneda_id")
+    @SerializedName("moneda_id")
+    private Integer monedaId;
+
+    @JsonProperty("moneda_nombre")
+    @SerializedName("moneda_nombre")
+    private String monedaNombre;
+
+    @JsonProperty("moneda_codigo")
+    @SerializedName("moneda_codigo")
+    private String monedaCodigo;
 
     @JsonProperty("entidad_financiera_id")
     @SerializedName("entidad_financiera_id")

@@ -29,13 +29,13 @@ public class Tarjeta implements Serializable {
     private String marca;
 
     @Column(name = "linea_credito")
-    private Long lineaCredito;
+    private Double lineaCredito;
 
-    @Column(name = "monto_pagado")
-    private Long montoPagado;
+    @Column(name = "monto_disponible")
+    private Double montoDisponible;
 
     @Column(name = "monto_ultimo_pago")
-    private Long montoUltimoPago;
+    private Double montoUltimoPago;
 
     @Column(name = "fecha_vencimiento")
     @Temporal(TemporalType.DATE)
@@ -43,6 +43,10 @@ public class Tarjeta implements Serializable {
 
     @Column(name = "estado")
     private Boolean estado;
+
+    @JoinColumn(name = "monedas_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Moneda monedaId;
 
     @JoinColumn(name = "entidades_financieras_id", referencedColumnName = "id")
     @ManyToOne(optional = false)

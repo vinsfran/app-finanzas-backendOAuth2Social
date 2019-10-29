@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
@@ -25,39 +26,49 @@ public class TarjetaConverter {
 
 
     public static Tarjeta tarjetaNewToTarjetaEntity(TarjetaRequestNew request, Long usuarioId) {
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
         entidadFinanciera.setId(request.getEntidadFinancieraId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Tarjeta entity = new Tarjeta();
+        entity.setMontoDisponible(request.getMontoDisponible());
         entity.setNumeroTarjeta(request.getNumeroTarjeta());
         entity.setMarca(request.getMarca());
         entity.setLineaCredito(request.getLineaCredito());
         entity.setFechaVencimiento(request.getFechaVencimiento());
         entity.setEstado(request.getEstado());
+        entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setUsuarioId(usuario);
         return entity;
     }
 
     public static Tarjeta tarjetaUpdateToTarjetaEntity(TarjetaRequestUpdate request, Long usuarioId) {
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
         entidadFinanciera.setId(request.getEntidadFinancieraId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Tarjeta entity = new Tarjeta();
         entity.setId(request.getId());
+        entity.setMontoDisponible(request.getMontoDisponible());
         entity.setNumeroTarjeta(request.getNumeroTarjeta());
         entity.setMarca(request.getMarca());
         entity.setLineaCredito(request.getLineaCredito());
         entity.setFechaVencimiento(request.getFechaVencimiento());
         entity.setEstado(request.getEstado());
+        entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setUsuarioId(usuario);
         return entity;
     }
 
     public static Tarjeta modelToEntity(TarjetaModel model) {
+        Moneda moneda = new Moneda();
+        moneda.setId(model.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
         entidadFinanciera.setId(model.getEntidadFinancieraId());
         entidadFinanciera.setNombre(model.getEntidadFinancieraNombre());
@@ -65,11 +76,13 @@ public class TarjetaConverter {
         usuario.setId(model.getUsuarioId());
         Tarjeta entity = new Tarjeta();
         entity.setId(model.getId());
+        entity.setMontoDisponible(model.getMontoDisponible());
         entity.setNumeroTarjeta(model.getNumeroTarjeta());
         entity.setMarca(model.getMarca());
         entity.setLineaCredito(model.getLineaCredito());
         entity.setFechaVencimiento(model.getFechaVencimiento());
         entity.setEstado(model.getEstado());
+        entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setUsuarioId(usuario);
         return entity;
@@ -81,8 +94,12 @@ public class TarjetaConverter {
         model.setNumeroTarjeta(entity.getNumeroTarjeta());
         model.setMarca(entity.getMarca());
         model.setLineaCredito(entity.getLineaCredito());
+        model.setMontoDisponible(entity.getMontoDisponible());
         model.setFechaVencimiento(entity.getFechaVencimiento());
         model.setEstado(entity.getEstado());
+        model.setMonedaId(entity.getMonedaId().getId());
+        model.setMonedaNombre(entity.getMonedaId().getNombre());
+        model.setMonedaCodigo(entity.getMonedaId().getCodigo());
         model.setEntidadFinancieraId(entity.getEntidadFinancieraId().getId());
         model.setEntidadFinancieraNombre(entity.getEntidadFinancieraId().getNombre());
         model.setUsuarioId(entity.getUsuarioId().getId());
