@@ -29,15 +29,6 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private PrestamoRepository prestamoRepository;
-
-    @Autowired
-    private AhorroRepository ahorroRepository;
-
-    @Autowired
-    private TarjetaRepository tarjetaRepository;
-
     @Override
     @Transactional(readOnly = true)
     public List<MovimientoModel> findAll() {
@@ -68,9 +59,11 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     @Transactional(readOnly = true)
-    public MovimientoModel findById(Long id) {
+    public MovimientoModel findByIdAndUsuarioId(Long id, Long usuarioId) {
         MovimientoModel model = null;
-        Optional<Movimiento> optional = movimientoRepository.findById(id);
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Movimiento> optional = movimientoRepository.findByIdAndUsuarioId(id, usuario);
         if (optional.isPresent()) {
             model = MovimientoConverter.entityToModel(optional.get());
         }

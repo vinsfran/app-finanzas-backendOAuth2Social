@@ -10,11 +10,14 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     List<Movimiento> findByUsuarioId(Usuario usuario);
+
+    Optional<Movimiento> findByIdAndUsuarioId(Long id, Usuario usuario);
 
     Page<Movimiento> findByUsuarioId(Usuario usuario, Pageable pageable);
 

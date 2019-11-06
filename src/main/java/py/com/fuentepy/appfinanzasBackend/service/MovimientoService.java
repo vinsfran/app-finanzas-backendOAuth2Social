@@ -18,7 +18,7 @@ public interface MovimientoService {
 
     Page<MovimientoModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    MovimientoModel findById(Long id);
+    MovimientoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
     MovimientoModel save(MovimientoModel movimientoModel, String action);
 
