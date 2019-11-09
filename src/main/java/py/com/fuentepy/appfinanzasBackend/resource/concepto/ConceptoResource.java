@@ -260,6 +260,59 @@ public class ConceptoResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_ADMIN"})
+    @PutMapping(value = "/cobro", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                   @Valid @RequestBody ConceptoRequestCobro conceptoRequestCobro,
+                                   BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        Long id = conceptoRequestCobro.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            if (conceptoService.findByIdAndUsuarioId(id, usuarioId) == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo cobrar, el Concepto Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                try {
+                    if (conceptoService.cobrar(conceptoRequestCobro, usuarioId)) {
+                        httpStatus = HttpStatus.CREATED;
+                        message = new MessageResponse(StatusLevel.INFO, "El Concepto ha sido cobrado con éxito!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    } else {
+                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                        message = new MessageResponse(StatusLevel.ERROR, "El Concepto no se pudo cobrar!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    }
+                } catch (DataAccessException e) {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+                    messages.add(message);
+                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            }
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

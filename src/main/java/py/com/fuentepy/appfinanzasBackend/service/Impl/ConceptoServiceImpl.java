@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.ConceptoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.ConceptoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
@@ -113,21 +114,23 @@ public class ConceptoServiceImpl implements ConceptoService {
         Optional<Concepto> optional = conceptoRepository.findByIdAndUsuarioId(request.getId(), usuario);
         if (optional.isPresent()) {
             Concepto entity = optional.get();
-            Movimiento movimiento = new Movimiento();
-            movimiento.setNumeroComprobante(request.getNumeroComprobante());
-            movimiento.setFechaMovimiento(new Date());
-            movimiento.setMonto(request.getMontoPagado());
-            movimiento.setSigno("-");
-            movimiento.setDetalle("Pago: " + entity.getNombre());
-            movimiento.setTablaId(entity.getId());
-            movimiento.setTablaNombre("conceptos");
-            movimiento.setMonedaId(entity.getMonedaId());
-            movimiento.setUsuarioId(entity.getUsuarioId());
-            movimiento = movimientoRepository.saveAndFlush(movimiento);
-            if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+            if (TipoConcepto.egreso.toString().equals(entity.getTipoConcepto().name())) {
+                Movimiento movimiento = new Movimiento();
+                movimiento.setNumeroComprobante(request.getNumeroComprobante());
+                movimiento.setFechaMovimiento(new Date());
+                movimiento.setMonto(request.getMontoPagado());
+                movimiento.setSigno("-");
+                movimiento.setDetalle("Pago: " + entity.getNombre());
+                movimiento.setTablaId(entity.getId());
+                movimiento.setTablaNombre("conceptos");
+                movimiento.setMonedaId(entity.getMonedaId());
+                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimiento = movimientoRepository.saveAndFlush(movimiento);
+                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+                }
+                retorno = true;
             }
-            retorno = true;
         }
         return retorno;
     }
@@ -140,21 +143,23 @@ public class ConceptoServiceImpl implements ConceptoService {
         Optional<Concepto> optional = conceptoRepository.findByIdAndUsuarioId(request.getId(), usuario);
         if (optional.isPresent()) {
             Concepto entity = optional.get();
-            Movimiento movimiento = new Movimiento();
-            movimiento.setNumeroComprobante(request.getNumeroComprobante());
-            movimiento.setFechaMovimiento(new Date());
-            movimiento.setMonto(request.getMontoCobrado());
-            movimiento.setSigno("+");
-            movimiento.setDetalle("Cobro: " + entity.getNombre());
-            movimiento.setTablaId(entity.getId());
-            movimiento.setTablaNombre("conceptos");
-            movimiento.setMonedaId(entity.getMonedaId());
-            movimiento.setUsuarioId(entity.getUsuarioId());
-            movimiento = movimientoRepository.saveAndFlush(movimiento);
-            if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+            if (TipoConcepto.ingreso.toString().equals(entity.getTipoConcepto().name())) {
+                Movimiento movimiento = new Movimiento();
+                movimiento.setNumeroComprobante(request.getNumeroComprobante());
+                movimiento.setFechaMovimiento(new Date());
+                movimiento.setMonto(request.getMontoCobrado());
+                movimiento.setSigno("+");
+                movimiento.setDetalle("Cobro: " + entity.getNombre());
+                movimiento.setTablaId(entity.getId());
+                movimiento.setTablaNombre("conceptos");
+                movimiento.setMonedaId(entity.getMonedaId());
+                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimiento = movimientoRepository.saveAndFlush(movimiento);
+                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
+                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
+                }
+                retorno = true;
             }
-            retorno = true;
         }
         return retorno;
     }
