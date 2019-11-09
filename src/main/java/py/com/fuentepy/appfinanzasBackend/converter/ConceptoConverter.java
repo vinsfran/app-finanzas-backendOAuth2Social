@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoModel;
@@ -18,26 +19,29 @@ import java.util.List;
 public class ConceptoConverter {
 
     public static Concepto conceptoRequestNewToConceptoEntity(ConceptoRequestNew request, Long usuarioId) {
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        TipoConcepto tipoConcepto = new TipoConcepto();
-        tipoConcepto.setId(request.getTipoConceptoId());
         Concepto entity = new Concepto();
         entity.setNombre(request.getNombre());
-        entity.setTipoConceptoId(tipoConcepto);
+        System.out.println(request.getTipoConcepto());
+        entity.setTipoConcepto(TipoConcepto.valueOf(request.getTipoConcepto().toLowerCase()));
+        entity.setMonedaId(moneda);
         entity.setUsuarioId(usuario);
         return entity;
     }
 
-    public static Concepto conceptoRequestUpdateToAhorroEntity(ConceptoRequestUpdate request, Long usuarioId) {
+    public static Concepto conceptoRequestUpdateToConceptoEntity(ConceptoRequestUpdate request, Long usuarioId) {
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        TipoConcepto tipoConcepto = new TipoConcepto();
-        tipoConcepto.setId(request.getTipoConceptoId());
         Concepto entity = new Concepto();
         entity.setId(request.getId());
         entity.setNombre(request.getNombre());
-        entity.setTipoConceptoId(tipoConcepto);
+        entity.setTipoConcepto(TipoConcepto.valueOf(request.getTipoConcepto().toLowerCase()));
+        entity.setMonedaId(moneda);
         entity.setUsuarioId(usuario);
         return entity;
     }
@@ -45,8 +49,6 @@ public class ConceptoConverter {
     public static Concepto modelToEntity(ConceptoModel model) {
         Usuario usuario = new Usuario();
         usuario.setId(model.getUsuarioId());
-        TipoConcepto tipoConcepto = new TipoConcepto();
-        tipoConcepto.setId(model.getTipoConceptoId());
         Concepto entity = new Concepto();
         entity.setId(model.getId());
         entity.setNombre(model.getNombre());
@@ -58,9 +60,7 @@ public class ConceptoConverter {
         ConceptoModel model = new ConceptoModel();
         model.setId(entity.getId());
         model.setNombre(entity.getNombre());
-        model.setTipoConceptoId(entity.getTipoConceptoId().getId());
-        model.setTipoConceptoNombre(entity.getTipoConceptoId().getNombre());
-        model.setTipoConceptoSigno(entity.getTipoConceptoId().getSigno());
+        model.setTipoConcepto(entity.getTipoConcepto().name());
         model.setUsuarioId(entity.getUsuarioId().getId());
         return model;
     }

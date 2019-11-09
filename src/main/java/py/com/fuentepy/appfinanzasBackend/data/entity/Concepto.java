@@ -31,12 +31,16 @@ public class Concepto implements Serializable {
     @Column(name = "nombre")
     private String nombre;
 
-    @JoinColumn(name = "tipo_concepto_id", referencedColumnName = "id")
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_concepto")
+    private TipoConcepto tipoConcepto;
+
+    @JoinColumn(name = "monedas_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private TipoConcepto tipoConceptoId;
+    private Moneda monedaId;
 
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Usuario usuarioId;
-
 }

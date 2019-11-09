@@ -20,17 +20,9 @@ public class ConceptoModel implements Serializable {
     @SerializedName("nombre")
     private String nombre;
 
-    @JsonProperty("tipo_concepto_id")
-    @SerializedName("tipo_concepto_id")
-    private Integer tipoConceptoId;
-
-    @JsonProperty("tipo_concepto_nombre")
-    @SerializedName("tipo_concepto_nombre")
-    private String tipoConceptoNombre;
-
-    @JsonProperty("tipo_concepto_signo")
-    @SerializedName("tipo_concepto_signo")
-    private String tipoConceptoSigno;
+    @JsonProperty("tipo_concepto")
+    @SerializedName("tipo_concepto")
+    private String tipoConcepto;
 
     @JsonProperty("usuario_id")
     @SerializedName("usuario_id")

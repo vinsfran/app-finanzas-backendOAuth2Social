@@ -2,9 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.concepto.*;
 
 import java.util.List;
 
@@ -25,6 +23,10 @@ public interface ConceptoService {
     boolean create(ConceptoRequestNew request, Long usuarioId);
 
     boolean update(ConceptoRequestUpdate request, Long usuarioId);
+
+    boolean pagar(ConceptoRequestPago request, Long usuarioId);
+
+    boolean cobrar(ConceptoRequestCobro request, Long usuarioId);
 
     void delete(Long id);
 }

@@ -22,8 +22,12 @@ public class ConceptoRequestUpdate implements Serializable {
     @SerializedName("nombre")
     private String nombre;
 
-    @JsonProperty("tipo_concepto_id")
-    @SerializedName("tipo_concepto_id")
-    private Integer tipoConceptoId;
+    @JsonProperty("tipo_concepto")
+    @SerializedName("tipo_concepto")
+    private String tipoConcepto;
+
+    @JsonProperty("moneda_id")
+    @SerializedName("moneda_id")
+    private Integer monedaId;
 
 }
