@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.data.entity;
 
 import lombok.Data;
 import lombok.extern.apachecommons.CommonsLog;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import java.util.Date;
 @Data
 @CommonsLog
 @Entity
-@Table(name = "presupuestos")
+@Table(name = ConstantUtil.PRESUPUESTOS)
 public class Presupuesto implements Serializable {
 
     private static final long serialVersionUID = 1L;

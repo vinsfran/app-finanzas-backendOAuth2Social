@@ -1,6 +1,7 @@
 package py.com.fuentepy.appfinanzasBackend.data.entity;
 
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-@Table(name = "entidades_financieras")
+@Table(name = ConstantUtil.ENTIDADES_FINANCIERAS)
 public class EntidadFinanciera implements Serializable {
 
     private static final long serialVersionUID = 1L;

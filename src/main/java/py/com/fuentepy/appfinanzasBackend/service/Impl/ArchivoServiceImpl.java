@@ -46,7 +46,9 @@ public class ArchivoServiceImpl implements ArchivoService {
     }
 
     @Override
-    public boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Usuario usuario) throws Exception {
+    public boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Long usuarioId) throws Exception {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
         for (ArchivoModel archivoModel : archivos) {
             Archivo archivo = new Archivo();
             archivo.setTablaId(tablaId);

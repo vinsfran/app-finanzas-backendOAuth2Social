@@ -11,15 +11,11 @@ import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.data.repository.EntidadFinancieraRepository;
-import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestPago;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.*;
+import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -34,13 +30,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     private PrestamoRepository prestamoRepository;
 
     @Autowired
-    private MovimientoRepository movimientoRepository;
-
-    @Autowired
-    private EntidadFinancieraRepository entidadFinancieraRepository;
-
-    @Autowired
-    private ArchivoServiceImpl archivoService;
+    private MovimientoService movimientoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -89,7 +79,7 @@ public class PrestamoServiceImpl implements PrestamoService {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        Prestamo entity = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToAhorroEntity(request, usuarioId));
+        Prestamo entity = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToPrestamoEntity(request, usuarioId));
         if (entity != null) {
             Movimiento movimiento = new Movimiento();
             movimiento.setNumeroComprobante(entity.getNumeroComprobante());
@@ -98,13 +88,10 @@ public class PrestamoServiceImpl implements PrestamoService {
             movimiento.setSigno("+");
             movimiento.setDetalle("Cobro: Prestamo: " + entity.getDestinoPrestamo() + " - " + entity.getEntidadFinancieraId().getNombre());
             movimiento.setTablaId(entity.getId());
-            movimiento.setTablaNombre("prestamos");
+            movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
             movimiento.setMonedaId(entity.getMonedaId());
             movimiento.setUsuarioId(entity.getUsuarioId());
-            movimiento = movimientoRepository.saveAndFlush(movimiento);
-            if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
-            }
+            movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
             retorno = true;
         }
         return retorno;
@@ -113,7 +100,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     @Transactional
     public boolean update(PrestamoRequestUpdate request, Long usuarioId) {
-        Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoUpdateToAhorroEntity(request, usuarioId));
+        Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoUpdateToPrestamoEntity(request, usuarioId));
         if (entity != null) {
             return true;
         }
@@ -142,13 +129,10 @@ public class PrestamoServiceImpl implements PrestamoService {
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago: Prestamo: " + entity.getDestinoPrestamo() + ", Cuota: " + entity.getCantidadCuotasPagadas() + " - " + entity.getEntidadFinancieraId().getNombre());
                 movimiento.setTablaId(entity.getId());
-                movimiento.setTablaNombre("prestamos");
+                movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimiento = movimientoRepository.saveAndFlush(movimiento);
-                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
-                }
+                movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
                 retorno = true;
             }
         }
@@ -183,11 +167,8 @@ public class PrestamoServiceImpl implements PrestamoService {
         return prestamoRepository.findByUsuarioIdRangoFecha(usuario, fechaInicio, fechaFin);
     }
 
-    private void guardarArchivos(List<ArchivoModel> archivos, Long tablaId, Usuario usuario) {
-        try {
-            archivoService.saveList(archivos, tablaId, "prestamos", usuario);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public List<PrestamoMovimientoModel> findByUsuarioAndPrestamoId(Long usuarioId, Long prestamoId) {
+        return PrestamoConverter.listMovimientosToListPrestamoMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, prestamoId, ConstantUtil.PRESTAMOS));
     }
 }

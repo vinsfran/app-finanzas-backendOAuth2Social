@@ -76,6 +76,31 @@ public class PrestamoResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
+    @GetMapping("/movimientos/{id}")
+    public ResponseEntity<?> getMovimientos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                            @PathVariable Long id) {
+        Long usuarioId = userPrincipal.getId();
+        List<PrestamoMovimientoModel> movimientos = null;
+        Map<String, Object> response = new HashMap<>();
+        try {
+            movimientos = prestamoService.findByUsuarioAndPrestamoId(usuarioId, id);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al realizar la consulta en la base de datos!");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (movimientos == null) {
+            response.put("mensaje", "No existen movimientos en la base de datos!");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.put("movimientos", movimientos);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
@@ -213,8 +238,8 @@ public class PrestamoResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                  @Valid @RequestBody PrestamoRequestPago prestamoRequestPago,
-                                  BindingResult result) {
+                                   @Valid @RequestBody PrestamoRequestPago prestamoRequestPago,
+                                   BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;

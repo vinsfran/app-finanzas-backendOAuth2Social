@@ -7,11 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoMovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
 
@@ -24,7 +22,30 @@ public class PrestamoConverter {
 
     private static final Log LOG = LogFactory.getLog(PrestamoConverter.class);
 
-    public static Prestamo prestamoNewToAhorroEntity(PrestamoRequestNew request, Long usuarioId) {
+    public static PrestamoMovimientoModel movimientoToPrestamoMovimientoModel(Movimiento movimiento) {
+        PrestamoMovimientoModel prestamoMovimientoModel = new PrestamoMovimientoModel();
+        prestamoMovimientoModel.setMovimientoId(movimiento.getId());
+        prestamoMovimientoModel.setNumeroComprobante(movimiento.getNumeroComprobante());
+        prestamoMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
+        prestamoMovimientoModel.setMonto(movimiento.getMonto());
+        prestamoMovimientoModel.setNumeroCuota(movimiento.getNumeroCuota());
+        prestamoMovimientoModel.setTipoMovimiento("INGRESO");
+        if (movimiento.getSigno().equals("-")) {
+            prestamoMovimientoModel.setTipoMovimiento("EGRESO");
+        }
+        prestamoMovimientoModel.setMoneda(movimiento.getMonedaId().getNombre());
+        return prestamoMovimientoModel;
+    }
+
+    public static List<PrestamoMovimientoModel> listMovimientosToListPrestamoMovimientoModel(List<Movimiento> listEntity) {
+        List<PrestamoMovimientoModel> listModel = new ArrayList<>();
+        for (Movimiento entity : listEntity) {
+            listModel.add(movimientoToPrestamoMovimientoModel(entity));
+        }
+        return listModel;
+    }
+
+    public static Prestamo prestamoNewToPrestamoEntity(PrestamoRequestNew request, Long usuarioId) {
         Moneda moneda = new Moneda();
         moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
@@ -50,7 +71,7 @@ public class PrestamoConverter {
         return entity;
     }
 
-    public static Prestamo prestamoUpdateToAhorroEntity(PrestamoRequestUpdate request, Long usuarioId) {
+    public static Prestamo prestamoUpdateToPrestamoEntity(PrestamoRequestUpdate request, Long usuarioId) {
         Moneda moneda = new Moneda();
         moneda.setId(request.getMonedaId());
         EntidadFinanciera entidadFinanciera = new EntidadFinanciera();

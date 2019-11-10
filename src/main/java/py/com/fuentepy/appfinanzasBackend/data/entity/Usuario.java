@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -15,7 +16,7 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "usuarios")
+@Table(name = ConstantUtil.USUARIOS)
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;

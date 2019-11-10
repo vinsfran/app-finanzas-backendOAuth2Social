@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -70,6 +71,31 @@ public class AhorroResource {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
         response.put("page", ahorros);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @GetMapping("/movimientos/{id}")
+    public ResponseEntity<?> getMovimientos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                          @PathVariable Long id) {
+        Long usuarioId = userPrincipal.getId();
+        List<AhorroMovimientoModel> movimientos = null;
+        Map<String, Object> response = new HashMap<>();
+        try {
+            movimientos = ahorroService.findByUsuarioAndAhorroId(usuarioId, id);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al realizar la consulta en la base de datos!");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (movimientos == null) {
+            response.put("mensaje", "No existen movimientos en la base de datos!");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.put("movimientos", movimientos);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -214,8 +240,8 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                 @Valid @RequestBody AhorroRequestPago ahorroRequestPago,
-                                 BindingResult result) {
+                                   @Valid @RequestBody AhorroRequestPago ahorroRequestPago,
+                                   BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
@@ -267,8 +293,8 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/cobro", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro,
-                                    BindingResult result) {
+                                   @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro,
+                                   BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;

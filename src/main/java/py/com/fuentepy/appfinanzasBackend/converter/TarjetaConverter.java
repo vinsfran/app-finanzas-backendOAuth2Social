@@ -7,11 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaMovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
 
@@ -24,6 +22,27 @@ public class TarjetaConverter {
 
     private static final Log LOG = LogFactory.getLog(TarjetaConverter.class);
 
+    public static TarjetaMovimientoModel movimientoToTarjetaMovimientoModel(Movimiento movimiento) {
+        TarjetaMovimientoModel tarjetaMovimientoModel = new TarjetaMovimientoModel();
+        tarjetaMovimientoModel.setMovimientoId(movimiento.getId());
+        tarjetaMovimientoModel.setNumeroComprobante(movimiento.getNumeroComprobante());
+        tarjetaMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
+        tarjetaMovimientoModel.setMonto(movimiento.getMonto());
+        tarjetaMovimientoModel.setTipoMovimiento("INGRESO");
+        if (movimiento.getSigno().equals("-")) {
+            tarjetaMovimientoModel.setTipoMovimiento("EGRESO");
+        }
+        tarjetaMovimientoModel.setMoneda(movimiento.getMonedaId().getNombre());
+        return tarjetaMovimientoModel;
+    }
+
+    public static List<TarjetaMovimientoModel> listMovimientosToListTarjetaMovimientoModel(List<Movimiento> listEntity) {
+        List<TarjetaMovimientoModel> listModel = new ArrayList<>();
+        for (Movimiento entity : listEntity) {
+            listModel.add(movimientoToTarjetaMovimientoModel(entity));
+        }
+        return listModel;
+    }
 
     public static Tarjeta tarjetaNewToTarjetaEntity(TarjetaRequestNew request, Long usuarioId) {
         Moneda moneda = new Moneda();

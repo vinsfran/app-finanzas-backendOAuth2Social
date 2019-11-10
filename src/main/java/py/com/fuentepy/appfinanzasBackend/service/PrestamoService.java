@@ -3,10 +3,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestPago;
-import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.prestamo.*;
 
 import java.util.Date;
 import java.util.List;
@@ -36,5 +33,7 @@ public interface PrestamoService {
     Long countByTenantName(Long usuarioId);
 
     List<Prestamo> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
+
+    List<PrestamoMovimientoModel> findByUsuarioAndPrestamoId(Long usuarioId, Long prestamoId);
 
 }

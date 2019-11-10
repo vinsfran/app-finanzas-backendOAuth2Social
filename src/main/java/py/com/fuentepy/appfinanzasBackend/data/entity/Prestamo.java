@@ -1,6 +1,7 @@
 package py.com.fuentepy.appfinanzasBackend.data.entity;
 
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "prestamos")
+@Table(name = ConstantUtil.PRESTAMOS)
 public class Prestamo implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -11,8 +11,10 @@ import py.com.fuentepy.appfinanzasBackend.converter.MovimientoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.*;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -28,6 +30,9 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ArchivoServiceImpl archivoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,14 +77,16 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     @Transactional
-    public MovimientoModel save(MovimientoModel movimientoModel, String action) {
-
-        Usuario usuario = usuarioRepository.findById2(movimientoModel.getUsuarioId());
-
-        Movimiento entity = MovimientoConverter.modelToEntity(movimientoModel);
-        entity.setUsuarioId(usuario);
-
-        return MovimientoConverter.entityToModel(movimientoRepository.save(entity));
+    public Movimiento registrarMovimiento(Movimiento movimiento, List<ArchivoModel> archivoModels) {
+        movimiento = movimientoRepository.saveAndFlush(movimiento);
+        if (archivoModels != null && !archivoModels.isEmpty()) {
+            try {
+                archivoService.saveList(archivoModels, movimiento.getId(), ConstantUtil.MOVIMIENTOS, movimiento.getUsuarioId().getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return movimiento;
     }
 
     @Override
@@ -93,5 +100,12 @@ public class MovimientoServiceImpl implements MovimientoService {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return movimientoRepository.findByUsuarioIdRangoFecha(usuario, fechaInicio, fechaFin);
+    }
+
+    @Override
+    public List<Movimiento> findByUsuarioIdAndTablaIdAndTablaNombre(Long usuarioId, Long tablaId, String tablaNombre) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        return movimientoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
     }
 }

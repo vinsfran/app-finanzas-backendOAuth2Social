@@ -12,5 +12,5 @@ public interface ArchivoService {
 
     boolean save(Archivo archivo) throws Exception;
 
-    boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Usuario usuario) throws Exception;
+    boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 }

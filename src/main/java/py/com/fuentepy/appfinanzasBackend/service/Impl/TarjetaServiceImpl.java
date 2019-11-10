@@ -11,14 +11,11 @@ import py.com.fuentepy.appfinanzasBackend.converter.TarjetaConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TarjetaRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestNew;
-import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestPago;
-import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.TarjetaRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.*;
+import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -33,10 +30,7 @@ public class TarjetaServiceImpl implements TarjetaService {
     private TarjetaRepository tarjetaRepository;
 
     @Autowired
-    private MovimientoRepository movimientoRepository;
-
-    @Autowired
-    private ArchivoServiceImpl archivoService;
+    private MovimientoService movimientoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -119,13 +113,10 @@ public class TarjetaServiceImpl implements TarjetaService {
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago: Tarjeta: " + entity.getMarca() + " / " + entity.getNumeroTarjeta() + " - " + entity.getEntidadFinancieraId().getNombre());
                 movimiento.setTablaId(entity.getId());
-                movimiento.setTablaNombre("tarjetas");
+                movimiento.setTablaNombre(ConstantUtil.TARJETAS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimiento = movimientoRepository.saveAndFlush(movimiento);
-                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
-                }
+                movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
                 retorno = true;
             }
         }
@@ -154,12 +145,9 @@ public class TarjetaServiceImpl implements TarjetaService {
         return tarjetaRepository.findByUsuarioId(usuario);
     }
 
-    private void guardarArchivos(List<ArchivoModel> archivos, Long tablaId, Usuario usuario) {
-        try {
-            archivoService.saveList(archivos, tablaId, "tarjetas", usuario);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public List<TarjetaMovimientoModel> findByUsuarioAndTarjetaId(Long usuarioId, Long tarjetaId) {
+        return TarjetaConverter.listMovimientosToListTarjetaMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, tarjetaId, ConstantUtil.TARJETAS));
     }
 
 }

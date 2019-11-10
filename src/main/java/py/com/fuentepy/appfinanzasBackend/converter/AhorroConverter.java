@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroModel;
+import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroMovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.AhorroRequestUpdate;
 
@@ -20,6 +21,29 @@ import java.util.List;
 public class AhorroConverter {
 
     private static final Log LOG = LogFactory.getLog(AhorroConverter.class);
+
+    public static AhorroMovimientoModel movimientoToAhorroMovimientoModel(Movimiento movimiento) {
+        AhorroMovimientoModel ahorroMovimientoModel = new AhorroMovimientoModel();
+        ahorroMovimientoModel.setMovimientoId(movimiento.getId());
+        ahorroMovimientoModel.setNumeroComprobante(movimiento.getNumeroComprobante());
+        ahorroMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
+        ahorroMovimientoModel.setMonto(movimiento.getMonto());
+        ahorroMovimientoModel.setNumeroCuota(movimiento.getNumeroCuota());
+        ahorroMovimientoModel.setTipoMovimiento("INGRESO");
+        if (movimiento.getSigno().equals("-")) {
+            ahorroMovimientoModel.setTipoMovimiento("EGRESO");
+        }
+        ahorroMovimientoModel.setMoneda(movimiento.getMonedaId().getNombre());
+        return ahorroMovimientoModel;
+    }
+
+    public static List<AhorroMovimientoModel> listMovimientosToListAhorroMovimientoModel(List<Movimiento> listEntity) {
+        List<AhorroMovimientoModel> listModel = new ArrayList<>();
+        for (Movimiento entity : listEntity) {
+            listModel.add(movimientoToAhorroMovimientoModel(entity));
+        }
+        return listModel;
+    }
 
     public static Ahorro ahorroNewToAhorroEntity(AhorroRequestNew request, Long usuarioId) {
         TipoAhorro tipoAhorro = new TipoAhorro();
@@ -152,7 +176,7 @@ public class AhorroConverter {
         return model;
     }
 
-    public static List<AhorroModel> listEntitytoListModel(List<Ahorro> listEntity) {
+    public static List<AhorroModel> listEntityToListModel(List<Ahorro> listEntity) {
         List<AhorroModel> listModel = new ArrayList<>();
         for (Ahorro entity : listEntity) {
             listModel.add(entityToModel(entity));
@@ -166,7 +190,7 @@ public class AhorroConverter {
         return dtos;
     }
 
-    public static Page<AhorroModel> pageEntitytoPageModel(Pageable pageable, Page<Ahorro> pageEntity) {
+    public static Page<AhorroModel> pageEntityToPageModel(Pageable pageable, Page<Ahorro> pageEntity) {
         List<AhorroModel> models = mapEntitiesIntoDTOs(pageEntity.getContent());
         return new PageImpl<>(models, pageable, pageEntity.getTotalElements());
     }

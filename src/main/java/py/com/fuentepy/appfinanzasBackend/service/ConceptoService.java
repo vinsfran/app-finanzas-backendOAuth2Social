@@ -29,4 +29,6 @@ public interface ConceptoService {
     boolean cobrar(ConceptoRequestCobro request, Long usuarioId);
 
     void delete(Long id);
+
+    List<ConceptoMovimientoModel> findByUsuarioAndConceptoId(Long usuarioId, Long ahorroId);
 }

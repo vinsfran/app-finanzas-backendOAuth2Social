@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.data.entity;
 
 import lombok.Data;
 import lombok.extern.apachecommons.CommonsLog;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import java.io.Serializable;
 @Data
 @CommonsLog
 @Entity
-@Table(name = "monedas")
+@Table(name = ConstantUtil.MONEDAS)
 public class Moneda implements Serializable {
 
     private static final long serialVersionUID = 1L;

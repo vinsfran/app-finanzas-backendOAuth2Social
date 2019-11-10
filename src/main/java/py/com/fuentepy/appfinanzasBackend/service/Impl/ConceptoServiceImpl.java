@@ -13,10 +13,10 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.ConceptoRepository;
-import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.*;
 import py.com.fuentepy.appfinanzasBackend.service.ConceptoService;
+import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -31,10 +31,7 @@ public class ConceptoServiceImpl implements ConceptoService {
     private ConceptoRepository conceptoRepository;
 
     @Autowired
-    private MovimientoRepository movimientoRepository;
-
-    @Autowired
-    private ArchivoServiceImpl archivoService;
+    private MovimientoService movimientoService;
 
     @Override
     @Transactional(readOnly = true)
@@ -122,13 +119,10 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago: " + entity.getNombre());
                 movimiento.setTablaId(entity.getId());
-                movimiento.setTablaNombre("conceptos");
+                movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimiento = movimientoRepository.saveAndFlush(movimiento);
-                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
-                }
+                movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
                 retorno = true;
             }
         }
@@ -151,13 +145,10 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: " + entity.getNombre());
                 movimiento.setTablaId(entity.getId());
-                movimiento.setTablaNombre("conceptos");
+                movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimiento = movimientoRepository.saveAndFlush(movimiento);
-                if (request.getArchivoModels() != null && !request.getArchivoModels().isEmpty()) {
-                    guardarArchivos(request.getArchivoModels(), movimiento.getId(), usuario);
-                }
+                movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
                 retorno = true;
             }
         }
@@ -170,11 +161,8 @@ public class ConceptoServiceImpl implements ConceptoService {
         conceptoRepository.deleteById(id);
     }
 
-    private void guardarArchivos(List<ArchivoModel> archivos, Long tablaId, Usuario usuario) {
-        try {
-            archivoService.saveList(archivos, tablaId, "movimientos", usuario);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public List<ConceptoMovimientoModel> findByUsuarioAndConceptoId(Long usuarioId, Long conceptoId) {
+        return ConceptoConverter.listMovimientosToListConceptoMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, conceptoId, ConstantUtil.CONCEPTOS));
     }
 }

@@ -1,14 +1,14 @@
 package py.com.fuentepy.appfinanzasBackend.converter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Moneda;
-import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoMovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.ConceptoRequestUpdate;
 
@@ -17,6 +17,30 @@ import java.util.List;
 
 @Component("conceptoConverter")
 public class ConceptoConverter {
+
+    private static final Log LOG = LogFactory.getLog(ConceptoConverter.class);
+
+    public static ConceptoMovimientoModel movimientoToConceptoMovimientoModel(Movimiento movimiento) {
+        ConceptoMovimientoModel conceptoMovimientoModel = new ConceptoMovimientoModel();
+        conceptoMovimientoModel.setMovimientoId(movimiento.getId());
+        conceptoMovimientoModel.setNumeroComprobante(movimiento.getNumeroComprobante());
+        conceptoMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
+        conceptoMovimientoModel.setMonto(movimiento.getMonto());
+        conceptoMovimientoModel.setTipoMovimiento("INGRESO");
+        if (movimiento.getSigno().equals("-")) {
+            conceptoMovimientoModel.setTipoMovimiento("EGRESO");
+        }
+        conceptoMovimientoModel.setMoneda(movimiento.getMonedaId().getNombre());
+        return conceptoMovimientoModel;
+    }
+
+    public static List<ConceptoMovimientoModel> listMovimientosToListConceptoMovimientoModel(List<Movimiento> listEntity) {
+        List<ConceptoMovimientoModel> listModel = new ArrayList<>();
+        for (Movimiento entity : listEntity) {
+            listModel.add(movimientoToConceptoMovimientoModel(entity));
+        }
+        return listModel;
+    }
 
     public static Concepto conceptoRequestNewToConceptoEntity(ConceptoRequestNew request, Long usuarioId) {
         Moneda moneda = new Moneda();

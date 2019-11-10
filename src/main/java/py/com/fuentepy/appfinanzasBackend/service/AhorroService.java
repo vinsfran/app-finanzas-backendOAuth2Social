@@ -3,6 +3,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.*;
 
 import java.util.Date;
@@ -35,4 +36,6 @@ public interface AhorroService {
     List<Ahorro> findByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 
     List<Ahorro> findByUsuarioAndEstado(Long usuarioId, boolean estado);
+
+    List<AhorroMovimientoModel> findByUsuarioAndAhorroId(Long usuarioId, Long ahorroId);
 }
