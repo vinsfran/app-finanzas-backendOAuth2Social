@@ -158,12 +158,6 @@ public class AhorroServiceImpl implements AhorroService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        ahorroRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Long countByTenantName(Long usuarioId) {
         Usuario usuario = new Usuario();
@@ -190,6 +184,17 @@ public class AhorroServiceImpl implements AhorroService {
     @Override
     public List<AhorroMovimientoModel> findByUsuarioAndAhorroId(Long usuarioId, Long ahorroId) {
         return AhorroConverter.listMovimientosToListAhorroMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, ahorroId, ConstantUtil.AHORROS));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long usuarioId, Long AhorroId) throws Exception {
+        try {
+            movimientoService.deleteMovimientos(AhorroId, ConstantUtil.AHORROS, usuarioId);
+            ahorroRepository.deleteById(AhorroId);
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Ahorro! " + e.getMessage());
+        }
     }
 
 }

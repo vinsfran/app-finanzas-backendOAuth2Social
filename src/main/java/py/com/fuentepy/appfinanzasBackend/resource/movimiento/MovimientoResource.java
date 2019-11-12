@@ -11,10 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -78,7 +77,6 @@ public class MovimientoResource {
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                   @PathVariable Long id) {
-
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
@@ -104,6 +102,53 @@ public class MovimientoResource {
             message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<?> delete(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @PathVariable Long id,
+                                    BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            if (movimientoService.findByIdAndUsuarioId(id, usuarioId) == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo borrar, el Movimiento Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                try {
+                    movimientoService.deleteMovimiento(usuarioId, id);
+                    httpStatus = HttpStatus.OK;
+                    message = new MessageResponse(StatusLevel.INFO, "El Movimiento ha sido borrado con éxito!");
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                } catch (Exception e) {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el delete en la base de datos!");
+                    messages.add(message);
+                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMessage()));
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            }
         }
         return new ResponseEntity<>(response, httpStatus);
     }

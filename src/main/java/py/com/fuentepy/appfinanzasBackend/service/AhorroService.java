@@ -29,8 +29,6 @@ public interface AhorroService {
 
     boolean cobrar(AhorroRequestCobro request, Long usuarioId);
 
-    void delete(Long id);
-
     Long countByTenantName(Long usuarioId);
 
     List<Ahorro> findByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
@@ -38,4 +36,6 @@ public interface AhorroService {
     List<Ahorro> findByUsuarioAndEstado(Long usuarioId, boolean estado);
 
     List<AhorroMovimientoModel> findByUsuarioAndAhorroId(Long usuarioId, Long ahorroId);
+
+    void delete(Long usuarioId, Long AhorroId) throws Exception;
 }

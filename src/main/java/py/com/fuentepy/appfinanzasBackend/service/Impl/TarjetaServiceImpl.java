@@ -124,12 +124,6 @@ public class TarjetaServiceImpl implements TarjetaService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        tarjetaRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Long countByTenantName(Long usuarioId) {
         Usuario usuario = new Usuario();
@@ -148,6 +142,17 @@ public class TarjetaServiceImpl implements TarjetaService {
     @Override
     public List<TarjetaMovimientoModel> findByUsuarioAndTarjetaId(Long usuarioId, Long tarjetaId) {
         return TarjetaConverter.listMovimientosToListTarjetaMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, tarjetaId, ConstantUtil.TARJETAS));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long usuarioId, Long tarjetaId) throws Exception {
+        try {
+            movimientoService.deleteMovimientos(tarjetaId, ConstantUtil.TARJETAS, usuarioId);
+            tarjetaRepository.deleteById(tarjetaId);
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar la Tarjeta! " + e.getMessage());
+        }
     }
 
 }

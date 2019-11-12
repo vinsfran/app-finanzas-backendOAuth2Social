@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.MovimientoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.data.repository.*;
+import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
@@ -27,9 +27,6 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Autowired
     private MovimientoRepository movimientoRepository;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private ArchivoServiceImpl archivoService;
@@ -90,12 +87,6 @@ public class MovimientoServiceImpl implements MovimientoService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        movimientoRepository.deleteById(id);
-    }
-
-    @Override
     public List<Movimiento> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -107,5 +98,31 @@ public class MovimientoServiceImpl implements MovimientoService {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return movimientoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMovimiento(Long usuarioId, Long movimientoId) throws Exception {
+        try {
+            archivoService.deleteFiles(movimientoId, ConstantUtil.MOVIMIENTOS, usuarioId);
+            movimientoRepository.deleteById(movimientoId);
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Movimientos! " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteMovimientos(Long tablaId, String tablaNombre, Long usuarioId) throws Exception {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        List<Long> movimientosIds = movimientoRepository.listMovimientoIdByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
+        try {
+            for (Long movimientoId : movimientosIds) {
+                deleteMovimiento(usuarioId, movimientoId);
+            }
+        } catch (Exception e) {
+            throw new Exception("No se pudieron eliminar los Movimientos! " + e.getMessage());
+        }
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -79,7 +78,7 @@ public class AhorroResource {
     )
     @GetMapping("/movimientos/{id}")
     public ResponseEntity<?> getMovimientos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                          @PathVariable Long id) {
+                                            @PathVariable Long id) {
         Long usuarioId = userPrincipal.getId();
         List<AhorroMovimientoModel> movimientos = null;
         Map<String, Object> response = new HashMap<>();
@@ -340,20 +339,41 @@ public class AhorroResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            ahorroService.delete(id);
-        } catch (DataAccessException e) {
-            response.put("mensaje", "Error al eliminar el Ahorro de la base de datos!");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<?> delete(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @PathVariable Long id) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            httpStatus = HttpStatus.NOT_FOUND;
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo borrar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            try {
+                ahorroService.delete(usuarioId, id);
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido borrado con éxito!");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } catch (Exception e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el delete en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMessage()));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            }
         }
-        response.put("mensaje", "El Ahorro eliminado con éxito!");
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, httpStatus);
     }
 
 }

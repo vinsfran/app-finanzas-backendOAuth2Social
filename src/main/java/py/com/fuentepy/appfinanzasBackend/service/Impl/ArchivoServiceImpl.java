@@ -66,4 +66,19 @@ public class ArchivoServiceImpl implements ArchivoService {
         return true;
     }
 
+    @Override
+    @Transactional
+    public void deleteFiles(Long tablaId, String tablaNombre, Long usuarioId) throws Exception {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        List<Long> archivosIds = archivoRepository.listArchivoIdByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
+        try {
+            for (Long archivosId : archivosIds) {
+                archivoRepository.deleteById(archivosId);
+            }
+        } catch (Exception e) {
+            throw new Exception("No se pudieron eliminar los Archivos! " + e.getMessage());
+        }
+    }
+
 }

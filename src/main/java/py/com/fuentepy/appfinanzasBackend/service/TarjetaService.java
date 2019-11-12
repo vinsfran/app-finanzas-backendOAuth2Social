@@ -25,11 +25,11 @@ public interface TarjetaService {
 
     boolean pagar(TarjetaRequestPago request, Long usuarioId);
 
-    void delete(Long id);
-
     Long countByTenantName(Long usuarioId);
 
     List<Tarjeta> findByUsuarioIdLista(Long usuarioId);
 
     List<TarjetaMovimientoModel> findByUsuarioAndTarjetaId(Long usuarioId, Long tarjetaId);
+
+    void delete(Long usuarioId, Long tarjetaId) throws Exception;
 }

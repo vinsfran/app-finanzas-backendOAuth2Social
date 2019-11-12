@@ -24,10 +24,12 @@ public interface MovimientoService {
 
     Movimiento registrarMovimiento(Movimiento movimiento, List<ArchivoModel> archivoModels);
 
-    void delete(Long id);
-
     List<Movimiento> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 
     List<Movimiento> findByUsuarioIdAndTablaIdAndTablaNombre(Long usuarioId, Long tablaId, String tablaNombre);
+
+    void deleteMovimiento(Long usuarioId, Long id) throws Exception;
+
+    void deleteMovimientos(Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 
 }

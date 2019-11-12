@@ -156,13 +156,18 @@ public class ConceptoServiceImpl implements ConceptoService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        conceptoRepository.deleteById(id);
+    public List<ConceptoMovimientoModel> findByUsuarioAndConceptoId(Long usuarioId, Long conceptoId) {
+        return ConceptoConverter.listMovimientosToListConceptoMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, conceptoId, ConstantUtil.CONCEPTOS));
     }
 
     @Override
-    public List<ConceptoMovimientoModel> findByUsuarioAndConceptoId(Long usuarioId, Long conceptoId) {
-        return ConceptoConverter.listMovimientosToListConceptoMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, conceptoId, ConstantUtil.CONCEPTOS));
+    @Transactional
+    public void delete(Long usuarioId, Long ConceptoId) throws Exception {
+        try {
+            movimientoService.deleteMovimientos(ConceptoId, ConstantUtil.CONCEPTOS, usuarioId);
+            conceptoRepository.deleteById(ConceptoId);
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Concepto! " + e.getMessage());
+        }
     }
 }

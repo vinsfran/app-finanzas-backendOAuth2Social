@@ -28,12 +28,12 @@ public interface PrestamoService {
 
     PrestamoModel save(PrestamoModel prestamoModel);
 
-    void delete(Long id);
-
     Long countByTenantName(Long usuarioId);
 
     List<Prestamo> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 
     List<PrestamoMovimientoModel> findByUsuarioAndPrestamoId(Long usuarioId, Long prestamoId);
+
+    void delete(Long usuarioId, Long PrestamoId) throws Exception;
 
 }

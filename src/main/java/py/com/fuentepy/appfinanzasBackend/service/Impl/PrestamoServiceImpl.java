@@ -147,12 +147,6 @@ public class PrestamoServiceImpl implements PrestamoService {
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        prestamoRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public Long countByTenantName(Long usuarioId) {
         Usuario usuario = new Usuario();
@@ -170,5 +164,16 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     public List<PrestamoMovimientoModel> findByUsuarioAndPrestamoId(Long usuarioId, Long prestamoId) {
         return PrestamoConverter.listMovimientosToListPrestamoMovimientoModel(movimientoService.findByUsuarioIdAndTablaIdAndTablaNombre(usuarioId, prestamoId, ConstantUtil.PRESTAMOS));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long usuarioId, Long PrestamoId) throws Exception {
+        try {
+            movimientoService.deleteMovimientos(PrestamoId, ConstantUtil.PRESTAMOS, usuarioId);
+            prestamoRepository.deleteById(PrestamoId);
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Prestamo! " + e.getMessage());
+        }
     }
 }
