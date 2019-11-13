@@ -18,7 +18,7 @@ import java.util.Date;
  * @author vinsfran
  */
 @Data
-@ApiModel(value = "ahorroRequestUpdate", description = "Ejemplo de para un Ahorro a modificar")
+@ApiModel(value = "ahorroRequestUpdate", description = "Ejemplo para modificar un Ahorro")
 public class AhorroRequestUpdate implements Serializable {
 
     @ApiModelProperty(value = "Identificador Unico del Ahorro", required = true)

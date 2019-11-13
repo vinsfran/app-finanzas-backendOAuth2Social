@@ -2,12 +2,15 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
+import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
 
 import java.util.Optional;
 
 public interface UsuarioService {
 
     UsuarioModel findById(Long id);
+
+    boolean update(UsuarioRequestUpdate request, Long usuarioId);
 
     boolean changePassword(Long id, String passwordOld, String passwordNew) throws Exception;
 

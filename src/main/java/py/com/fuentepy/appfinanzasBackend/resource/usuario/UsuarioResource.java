@@ -34,16 +34,6 @@ public class UsuarioResource {
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
-//    @Autowired
-//    private UsuarioRepository usuarioRepository;
-
-//    @GetMapping("/me")
-//    @PreAuthorize("hasRole('USER')")
-//    public Usuario getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-//        return usuarioRepository.findById(userPrincipal.getId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", userPrincipal.getId()));
-//    }
-
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
@@ -76,6 +66,58 @@ public class UsuarioResource {
             message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_ADMIN"})
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> update(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                    @Valid @RequestBody UsuarioRequestUpdate usuarioRequestUpdate,
+                                    BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            if (usuarioService.findById(usuarioId) == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, el Usuario Nro: ".concat(usuarioId.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                try {
+                    if (usuarioService.update(usuarioRequestUpdate, usuarioId)) {
+                        httpStatus = HttpStatus.CREATED;
+                        message = new MessageResponse(StatusLevel.INFO, "El Usuario ha sido actualizado con éxito!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    } else {
+                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                        message = new MessageResponse(StatusLevel.ERROR, "El Usuario no se pudo actualizar!");
+                        messages.add(message);
+                        response = new BaseResponse(httpStatus.value(), messages);
+                    }
+                } catch (DataAccessException e) {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+                    messages.add(message);
+                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    messages.add(message);
+                    response = new BaseResponse(httpStatus.value(), messages);
+                }
+            }
         }
         return new ResponseEntity<>(response, httpStatus);
     }
@@ -215,6 +257,5 @@ public class UsuarioResource {
             response = new BaseResponse(httpStatus.value(), messages);
         }
         return new ResponseEntity<>(response, httpStatus);
-
     }
 }

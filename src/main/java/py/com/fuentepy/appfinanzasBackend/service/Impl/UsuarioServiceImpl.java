@@ -6,7 +6,6 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,7 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
+import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 
 import java.util.Optional;
@@ -49,13 +49,29 @@ public class UsuarioServiceImpl implements UsuarioService {
             Usuario usuario = optional.get();
             usuarioModel = new UsuarioModel();
             usuarioModel.setId(usuario.getId());
-            usuarioModel.setName(usuario.getFirstName());
+            usuarioModel.setFirstName(usuario.getFirstName());
             usuarioModel.setLastName(usuario.getLastName());
             usuarioModel.setEmail(usuario.getEmail());
             usuarioModel.setImageProfileBase64(Base64.encodeBase64String(archivo.getDato()));
             usuarioModel.setImageProfileName(archivo.getNombre());
         }
         return usuarioModel;
+    }
+
+    @Override
+    @Transactional
+    public boolean update(UsuarioRequestUpdate request, Long usuarioId) {
+        Optional<Usuario> optional = usuarioRepository.findById(usuarioId);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            usuario.setFirstName(request.getFirstName());
+            usuario.setLastName(request.getLastName());
+            usuario = usuarioRepository.save(usuario);
+            if (usuario != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -121,7 +137,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 archivoService.save(archivo);
                 usuarioModel = new UsuarioModel();
                 usuarioModel.setId(usuario.getId());
-                usuarioModel.setName(usuario.getFirstName());
+                usuarioModel.setFirstName(usuario.getFirstName());
                 usuarioModel.setLastName(usuario.getLastName());
                 usuarioModel.setEmail(usuario.getEmail());
                 usuarioModel.setImageProfileBase64(Base64.encodeBase64String(archivo.getDato()));
