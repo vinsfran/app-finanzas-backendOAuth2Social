@@ -75,6 +75,7 @@ public class AhorroConverter {
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setTipoCobroId(tipoCobro);
         entity.setUsuarioId(usuario);
+        entity.setMontoPagado(0.0);
         return entity;
     }
 
