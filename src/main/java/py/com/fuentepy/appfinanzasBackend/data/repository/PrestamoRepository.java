@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
 
-    List<Prestamo> findByUsuarioId(Usuario usuario);
+    List<Prestamo> findByUsuarioIdOrderByIdDesc(Usuario usuario);
 
     Optional<Prestamo> findByIdAndUsuarioId(Long id, Usuario usuario);
 

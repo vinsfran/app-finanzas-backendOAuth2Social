@@ -38,7 +38,7 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     public List<PresupuestoModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return PresupuestoConverter.listEntitytoListModel(presupuestoRepository.findByUsuarioId(usuario));
+        return PresupuestoConverter.listEntitytoListModel(presupuestoRepository.findByUsuarioIdOrderByIdDesc(usuario));
     }
 
     @Override

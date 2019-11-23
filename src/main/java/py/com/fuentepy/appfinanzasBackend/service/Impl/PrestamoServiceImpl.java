@@ -43,7 +43,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     public List<PrestamoModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return PrestamoConverter.listEntitytoListModel(prestamoRepository.findByUsuarioId(usuario));
+        return PrestamoConverter.listEntitytoListModel(prestamoRepository.findByUsuarioIdOrderByIdDesc(usuario));
     }
 
     @Override

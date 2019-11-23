@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> {
 
-    List<Presupuesto> findByUsuarioId(Usuario usuario);
+    List<Presupuesto> findByUsuarioIdOrderByIdDesc(Usuario usuario);
 
     Optional<Presupuesto> findByIdAndUsuarioId(Long id, Usuario usuario);
 

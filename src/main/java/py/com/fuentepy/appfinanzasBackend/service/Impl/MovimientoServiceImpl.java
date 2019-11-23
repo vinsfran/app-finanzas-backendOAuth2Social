@@ -42,7 +42,7 @@ public class MovimientoServiceImpl implements MovimientoService {
     public List<MovimientoModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return MovimientoConverter.listEntitytoListModel(movimientoRepository.findByUsuarioId(usuario));
+        return MovimientoConverter.listEntitytoListModel(movimientoRepository.findByUsuarioIdOrderByIdDesc(usuario));
     }
 
     @Override

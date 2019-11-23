@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface TarjetaRepository extends JpaRepository<Tarjeta, Long> {
 
-    List<Tarjeta> findByUsuarioId(Usuario usuario);
+    List<Tarjeta> findByUsuarioIdOrderByIdDesc(Usuario usuario);
 
     Optional<Tarjeta> findByIdAndUsuarioId(Long id, Usuario usuario);
 

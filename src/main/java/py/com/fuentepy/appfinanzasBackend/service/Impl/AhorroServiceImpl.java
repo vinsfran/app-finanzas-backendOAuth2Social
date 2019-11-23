@@ -44,7 +44,7 @@ public class AhorroServiceImpl implements AhorroService {
     public List<AhorroModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return AhorroConverter.listEntityToListModel(ahorroRepository.findByUsuarioId(usuario));
+        return AhorroConverter.listEntityToListModel(ahorroRepository.findByUsuarioIdOrderByIdDesc(usuario));
     }
 
     @Override

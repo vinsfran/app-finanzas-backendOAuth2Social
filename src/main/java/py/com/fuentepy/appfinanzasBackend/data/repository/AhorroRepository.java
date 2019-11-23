@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface AhorroRepository extends JpaRepository<Ahorro, Long> {
 
-    List<Ahorro> findByUsuarioId(Usuario usuario);
+    List<Ahorro> findByUsuarioIdOrderByIdDesc(Usuario usuario);
 
     Optional<Ahorro> findByIdAndUsuarioId(Long id, Usuario usuario);
 

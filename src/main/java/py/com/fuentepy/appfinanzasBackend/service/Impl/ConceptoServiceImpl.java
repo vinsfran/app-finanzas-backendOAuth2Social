@@ -43,7 +43,7 @@ public class ConceptoServiceImpl implements ConceptoService {
     public List<ConceptoModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return ConceptoConverter.listEntitytoListModel(conceptoRepository.findByUsuarioId(usuario));
+        return ConceptoConverter.listEntitytoListModel(conceptoRepository.findByUsuarioIdOrderByIdDesc(usuario));
     }
 
     @Override

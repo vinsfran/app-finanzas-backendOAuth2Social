@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ConceptoRepository extends JpaRepository<Concepto, Long> {
 
-    List<Concepto> findByUsuarioId(Usuario usuario);
+    List<Concepto> findByUsuarioIdOrderByIdDesc(Usuario usuario);
 
     Optional<Concepto> findByIdAndUsuarioId(Long id, Usuario usuario);
 

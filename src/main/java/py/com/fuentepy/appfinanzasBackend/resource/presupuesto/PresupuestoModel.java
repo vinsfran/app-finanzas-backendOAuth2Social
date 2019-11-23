@@ -35,7 +35,7 @@ public class PresupuestoModel implements Serializable {
 
     @JsonProperty("monto")
     @SerializedName("monto")
-    private Long monto;
+    private Double monto;
 
     @JsonProperty("anio")
     @SerializedName("anio")

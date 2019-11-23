@@ -34,7 +34,7 @@ public class Presupuesto implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "monto")
-    private Long monto;
+    private Double monto;
 
     @Basic(optional = false)
     @NotNull

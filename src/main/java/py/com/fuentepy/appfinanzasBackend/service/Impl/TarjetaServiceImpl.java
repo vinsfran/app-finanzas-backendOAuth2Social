@@ -43,7 +43,7 @@ public class TarjetaServiceImpl implements TarjetaService {
     public List<TarjetaModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return TarjetaConverter.listEntitytoListModel(tarjetaRepository.findByUsuarioId(usuario));
+        return TarjetaConverter.listEntitytoListModel(tarjetaRepository.findByUsuarioIdOrderByIdDesc(usuario));
     }
 
     @Override
@@ -136,7 +136,7 @@ public class TarjetaServiceImpl implements TarjetaService {
     public List<Tarjeta> findByUsuarioIdLista(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return tarjetaRepository.findByUsuarioId(usuario);
+        return tarjetaRepository.findByUsuarioIdOrderByIdDesc(usuario);
     }
 
     @Override
