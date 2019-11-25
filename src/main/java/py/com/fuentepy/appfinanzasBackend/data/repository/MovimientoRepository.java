@@ -17,6 +17,16 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     List<Movimiento> findByUsuarioIdOrderByIdDesc(Usuario usuario);
 
+    @Query("select u from Movimiento u " +
+            "where u.usuarioId = :usuario " +
+            "and (lower(u.numeroComprobante) LIKE lower(CONCAT('%', :parent, '%')) " +
+            "or lower(u.detalle) LIKE lower(CONCAT('%', :parent, '%')) " +
+            "or TO_CHAR(u.fechaMovimiento, 'YYYY-MM-DD') LIKE lower(CONCAT('%', :parent, '%')) " +
+            "or CAST(u.monto AS text) LIKE lower(CONCAT('%', :parent, '%')) " +
+            ") " +
+            "order by  u.id desc")
+    List<Movimiento> findByUsuarioIdAndParent(Usuario usuario, @Param("parent") String parent);
+
     Optional<Movimiento> findByIdAndUsuarioId(Long id, Usuario usuario);
 
     Page<Movimiento> findByUsuarioId(Usuario usuario, Pageable pageable);

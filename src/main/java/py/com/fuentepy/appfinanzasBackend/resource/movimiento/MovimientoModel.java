@@ -24,7 +24,7 @@ public class MovimientoModel implements Serializable {
     private Long id;
 
     @JsonProperty("numero_comprobante")
-    @SerializedName("fecha_movimiento")
+    @SerializedName("numero_comprobante")
     private String numeroComprobante;
 
     @ApiModelProperty(value = "Fecha de Movimiento", required = false, example = "AAAA-MM-DD")

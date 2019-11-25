@@ -39,10 +39,16 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MovimientoModel> findByUsuarioId(Long usuarioId) {
+    public List<MovimientoModel> findByUsuarioIdAndParent(Long usuarioId, String parent) {
+        List<Movimiento> movimientos = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return MovimientoConverter.listEntitytoListModel(movimientoRepository.findByUsuarioIdOrderByIdDesc(usuario));
+        if (parent.isEmpty()) {
+            movimientos = movimientoRepository.findByUsuarioIdOrderByIdDesc(usuario);
+        } else {
+            movimientos = movimientoRepository.findByUsuarioIdAndParent(usuario, parent);
+        }
+        return MovimientoConverter.listEntitytoListModel(movimientos);
     }
 
     @Override

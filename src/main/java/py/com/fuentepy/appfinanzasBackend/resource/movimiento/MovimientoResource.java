@@ -36,13 +36,15 @@ public class MovimientoResource {
     @Autowired
     private MovimientoService movimientoService;
 
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
-    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = ""),
+            @ApiImplicitParam(name = "parent", value = "parent Header", required = false, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    })
     @GetMapping()
-    public List<MovimientoModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public List<MovimientoModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                        @RequestHeader(value = "parent", required = false) String parent) {
         Long usuarioId = userPrincipal.getId();
-        return movimientoService.findByUsuarioId(usuarioId);
+        return movimientoService.findByUsuarioIdAndParent(usuarioId, parent);
     }
 
     @ApiImplicitParams(
