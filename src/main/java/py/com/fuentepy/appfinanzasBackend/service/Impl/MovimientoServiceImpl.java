@@ -43,7 +43,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         List<Movimiento> movimientos = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        if (parent.isEmpty()) {
+        if (parent == null || parent.isEmpty()) {
             movimientos = movimientoRepository.findByUsuarioIdOrderByIdDesc(usuario);
         } else {
             movimientos = movimientoRepository.findByUsuarioIdAndParent(usuario, parent);
