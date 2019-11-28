@@ -6,11 +6,13 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import py.com.fuentepy.appfinanzasBackend.converter.ArchivoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.ArchivoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.List;
 
@@ -24,11 +26,19 @@ public class ArchivoServiceImpl implements ArchivoService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ArchivoModel> getArchivos(Long usuarioId, Long tablaId, String tablaNombre) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        return ArchivoConverter.listEntitytoListModel(archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Archivo findFotoPerfil(Long usuarioId) {
         Archivo archivo = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        List<Archivo> archivos = archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, usuarioId, "usuarios");
+        List<Archivo> archivos = archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, usuarioId, ConstantUtil.USUARIOS);
         if (archivos != null && !archivos.isEmpty()) {
             archivo = archivos.get(0);
         }

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ArchivoService {
 
+    List<ArchivoModel> getArchivos(Long usuarioId, Long tablaId, String tablaNombre);
+
     Archivo findFotoPerfil(Long usuarioId);
 
     boolean save(Archivo archivo) throws Exception;

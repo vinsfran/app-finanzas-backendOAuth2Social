@@ -14,12 +14,16 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
+import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
@@ -35,6 +39,45 @@ public class MovimientoResource {
 
     @Autowired
     private MovimientoService movimientoService;
+
+    @Autowired
+    private ArchivoService archivoService;
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/archivos/{id}")
+    public ResponseEntity<?> getArchivos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                  @PathVariable Long id) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        try {
+            List<ArchivoModel> archivoModelList = archivoService.getArchivos(usuarioId, id, ConstantUtil.MOVIMIENTOS);
+            if (archivoModelList == null) {
+                httpStatus = HttpStatus.NOT_FOUND;
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Movimiento Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } else {
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
+                messages.add(message);
+                response = new ArchivoResponse(httpStatus.value(), messages, archivoModelList);
+            }
+        } catch (DataAccessException e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = new MessageResponse(StatusLevel.INFO, "Error al realizar la consulta en la base de datos!");
+            messages.add(message);
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = ""),

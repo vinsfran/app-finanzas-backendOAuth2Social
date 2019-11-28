@@ -9,9 +9,12 @@ import lombok.RequiredArgsConstructor;
 import java.io.Serializable;
 
 @Data
-@RequiredArgsConstructor
 @ApiModel(value = "archivoModel", description = "Ejemplo de para Achivo")
 public class ArchivoModel implements Serializable {
+
+    @JsonProperty("id")
+    @SerializedName("id")
+    private Long id;
 
     @JsonProperty("nombre")
     @SerializedName("nombre")
