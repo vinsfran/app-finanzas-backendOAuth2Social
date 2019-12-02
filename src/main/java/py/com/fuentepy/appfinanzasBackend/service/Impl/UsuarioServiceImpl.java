@@ -9,13 +9,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @Service
@@ -118,32 +123,31 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioModel uploadImage(byte[] imageBase64, String imageName, String contentType, Long id) {
+    public UsuarioModel uploadImage(MultipartFile multipartFile, Long id) throws Exception {
         UsuarioModel usuarioModel = null;
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
-            Archivo archivo = archivoService.findFotoPerfil(id);
-            if (archivo == null) {
-                archivo = new Archivo();
-            }
+//            Archivo archivo = archivoService.findFotoPerfil(id);
+//            if (archivo == null) {
+//                archivo = new Archivo();
+//            }
+            Archivo archivo = new Archivo();
             archivo.setTablaId(id);
             archivo.setTablaNombre("usuarios");
-            archivo.setContentType(contentType);
-            archivo.setNombre(imageName);
-            archivo.setDato(imageBase64);
+            archivo.setContentType(multipartFile.getContentType());
+            archivo.setNombre(multipartFile.getOriginalFilename());
             archivo.setUsuarioId(usuario);
             try {
-                archivoService.save(archivo);
+                archivoService.save(archivo, multipartFile);
                 usuarioModel = new UsuarioModel();
                 usuarioModel.setId(usuario.getId());
                 usuarioModel.setFirstName(usuario.getFirstName());
                 usuarioModel.setLastName(usuario.getLastName());
                 usuarioModel.setEmail(usuario.getEmail());
-                usuarioModel.setImageProfileBase64(Base64.encodeBase64String(archivo.getDato()));
                 usuarioModel.setImageProfileName(archivo.getNombre());
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new Exception("No se pudo subir la imagen! " + e.getCause().getMessage());
             }
         }
         return usuarioModel;

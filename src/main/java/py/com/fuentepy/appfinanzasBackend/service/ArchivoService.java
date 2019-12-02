@@ -1,5 +1,6 @@
 package py.com.fuentepy.appfinanzasBackend.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
@@ -12,7 +13,7 @@ public interface ArchivoService {
 
     Archivo findFotoPerfil(Long usuarioId);
 
-    boolean save(Archivo archivo) throws Exception;
+    boolean save(Archivo archivo, MultipartFile multipartFile) throws Exception;
 
     boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 

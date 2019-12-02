@@ -26,8 +26,8 @@ public class AppFinanzasBackendApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        String imageProfileName = "imagen1.jpg";
-        usuarioService.uploadImage(Base64.decodeBase64(imageProfileData), imageProfileName, "image/jpg", 1L);
+//        String imageProfileName = "imagen1.jpg";
+//        usuarioService.uploadImage(Base64.decodeBase64(imageProfileData), imageProfileName, "image/jpg", 1L);
     }
 
 }

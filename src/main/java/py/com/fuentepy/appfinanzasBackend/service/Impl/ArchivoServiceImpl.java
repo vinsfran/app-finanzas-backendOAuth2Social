@@ -6,6 +6,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.ArchivoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
@@ -14,6 +15,10 @@ import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -46,9 +51,32 @@ public class ArchivoServiceImpl implements ArchivoService {
     }
 
     @Override
-    public boolean save(Archivo archivo) throws Exception {
+    public boolean save(Archivo archivo, MultipartFile multipartFile) throws Exception {
         try {
+            ArchivoModel archivoAnterior = null;
+            List<ArchivoModel> archivos = getArchivos(archivo.getUsuarioId().getId(), archivo.getTablaId(), archivo.getTablaNombre());
+            archivos.forEach(item->System.out.println(item));
+
+            if (archivos != null && !archivos.isEmpty() && archivos.get(0).getNombre().length() > 0) {
+                archivoAnterior = archivos.get(0);
+                if (archivoAnterior != null) {
+                    System.out.println("BBBRRRRRASAA1 " + archivoAnterior.getNombre());
+                    Path rutaArchivoAnterior = Paths.get(ConstantUtil.UPLOADS).resolve(archivoAnterior.getNombre()).toAbsolutePath();
+                    File archivoBorrar = rutaArchivoAnterior.toFile();
+                    System.out.println("BBBRRRRRASAA1 " + rutaArchivoAnterior.toString());
+                    if (archivoBorrar.exists() && archivoBorrar.canRead()) {
+                        LOG.info("BORRAR2");
+                        System.out.println("BBBRRRRRASAA2");
+                        archivoBorrar.delete();
+                        archivo.setId(archivoAnterior.getId());
+                    }
+                }
+            }
+            System.out.println("BBBRRRRRASAA3");
+            Path rutaArchivo = Paths.get(ConstantUtil.UPLOADS).resolve(archivo.getNombre()).toAbsolutePath();
+            Files.copy(multipartFile.getInputStream(), rutaArchivo);
             archivoRepository.save(archivo);
+
         } catch (Exception e) {
             throw new Exception("No se pudo guardar el Archivo! " + e.getMessage());
         }

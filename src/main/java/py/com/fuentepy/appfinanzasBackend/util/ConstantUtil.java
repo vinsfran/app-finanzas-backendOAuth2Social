@@ -16,4 +16,5 @@ public interface ConstantUtil {
     String TIPOS_COBROS = "tipos_cobros";
     String TIPOS_PAGOS = "tipos_pagos";
     String USUARIOS = "usuarios";
+    String UPLOADS = "uploads";
 }

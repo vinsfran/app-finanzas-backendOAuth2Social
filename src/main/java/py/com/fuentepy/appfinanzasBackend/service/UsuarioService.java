@@ -1,5 +1,6 @@
 package py.com.fuentepy.appfinanzasBackend.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
@@ -20,5 +21,5 @@ public interface UsuarioService {
 
     void save(Usuario user);
 
-    UsuarioModel uploadImage(byte[] imageBase64, String imageName, String mediaType, Long id);
+    UsuarioModel uploadImage(MultipartFile imageProfile, Long id) throws Exception;
 }

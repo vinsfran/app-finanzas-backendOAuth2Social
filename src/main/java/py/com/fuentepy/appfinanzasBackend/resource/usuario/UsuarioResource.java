@@ -170,9 +170,9 @@ public class UsuarioResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
-    @PostMapping("/uploadMultipartFile")
-    public ResponseEntity<?> uploadMultipartFile(@RequestParam("image_profile") MultipartFile imageProfile,
-                                                 @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    @PostMapping("/upload")
+    public ResponseEntity<?> upload(@RequestParam("image_profile") MultipartFile imageProfile,
+                                    @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
@@ -180,7 +180,7 @@ public class UsuarioResource {
         Long usuarioId = userPrincipal.getId();
         try {
             if (!imageProfile.isEmpty()) {
-                UsuarioModel usuarioModel = usuarioService.uploadImage(imageProfile.getBytes(), imageProfile.getOriginalFilename(), imageProfile.getContentType(), usuarioId);
+                UsuarioModel usuarioModel = usuarioService.uploadImage(imageProfile, usuarioId);
                 if (usuarioModel == null) {
                     httpStatus = HttpStatus.NOT_FOUND;
                     message = new MessageResponse(StatusLevel.WARNING, "Error: El Usuario Nro: ".concat(usuarioId.toString()).concat(" no existe en la base de datos!"));
@@ -205,56 +205,14 @@ public class UsuarioResource {
             message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
-        } catch (IOException e) {
+        } catch (Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             message = new MessageResponse(StatusLevel.INFO, "Error al realizar de la imagen!");
             messages.add(message);
-            message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMessage()));
+            message = new MessageResponse(StatusLevel.ERROR, e.getCause().getMessage());
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
             e.printStackTrace();
-        }
-        return new ResponseEntity<>(response, httpStatus);
-    }
-
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
-    )
-    @Secured({"ROLE_ADMIN"})
-    @PostMapping("/uploadStringBase64")
-    public ResponseEntity<?> uploadStringBase64(@Valid @RequestBody ArchivoModel archivoModel, @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
-        HttpStatus httpStatus;
-        BaseResponse response;
-        MessageResponse message;
-        List<MessageResponse> messages = new ArrayList<>();
-        Long usuarioId = userPrincipal.getId();
-        try {
-            if (archivoModel != null) {
-                UsuarioModel usuarioModel = usuarioService.uploadImage(Base64.decodeBase64(archivoModel.getDato()), archivoModel.getNombre(), archivoModel.getContentType(), usuarioId);
-                if (usuarioModel == null) {
-                    httpStatus = HttpStatus.NOT_FOUND;
-                    message = new MessageResponse(StatusLevel.WARNING, "Error: El Usuario Nro: ".concat(usuarioId.toString()).concat(" no existe en la base de datos!"));
-                    messages.add(message);
-                    response = new BaseResponse(httpStatus.value(), messages);
-                } else {
-                    httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "Imagen guardada");
-                    messages.add(message);
-                    response = new UsuarioResponse(httpStatus.value(), messages, usuarioModel);
-                }
-            } else {
-                httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "No existe en la Imagen!");
-                messages.add(message);
-                response = new BaseResponse(httpStatus.value(), messages);
-            }
-        } catch (DataAccessException e) {
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            message = new MessageResponse(StatusLevel.INFO, "Error al realizar la consulta en la base de datos!");
-            messages.add(message);
-            message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-            messages.add(message);
-            response = new BaseResponse(httpStatus.value(), messages);
         }
         return new ResponseEntity<>(response, httpStatus);
     }
