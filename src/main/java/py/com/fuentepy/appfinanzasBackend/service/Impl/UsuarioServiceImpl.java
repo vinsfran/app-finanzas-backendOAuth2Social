@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,11 +18,13 @@ import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
+import py.com.fuentepy.appfinanzasBackend.util.StringUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -128,15 +131,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
-//            Archivo archivo = archivoService.findFotoPerfil(id);
-//            if (archivo == null) {
-//                archivo = new Archivo();
-//            }
             Archivo archivo = new Archivo();
             archivo.setTablaId(id);
-            archivo.setTablaNombre("usuarios");
+            archivo.setTablaNombre(ConstantUtil.USUARIOS);
             archivo.setContentType(multipartFile.getContentType());
-            archivo.setNombre(multipartFile.getOriginalFilename());
+            archivo.setNombre(StringUtil.encodeBase64(id + "_" + ConstantUtil.USUARIOS) + "_" + multipartFile.getOriginalFilename().replace(" ", "_").toLowerCase());
             archivo.setUsuarioId(usuario);
             try {
                 archivoService.save(archivo, multipartFile);
@@ -151,5 +150,19 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
         }
         return usuarioModel;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Resource getImagenPerfil(Long usuarioId, String nombreArchivo) throws Exception {
+        Resource resource = null;
+        Optional<Usuario> optional = usuarioRepository.findById(usuarioId);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            resource = archivoService.getArchivo(usuarioId, usuarioId, ConstantUtil.USUARIOS, nombreArchivo);
+        } else {
+            throw new Exception("No existe usuario.");
+        }
+        return resource;
     }
 }

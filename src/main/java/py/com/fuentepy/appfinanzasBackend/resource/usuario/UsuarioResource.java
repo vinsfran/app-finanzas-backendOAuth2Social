@@ -2,9 +2,10 @@ package py.com.fuentepy.appfinanzasBackend.resource.usuario;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -23,7 +23,6 @@ import py.com.fuentepy.appfinanzasBackend.service.Impl.UsuarioServiceImpl;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -215,5 +214,32 @@ public class UsuarioResource {
             e.printStackTrace();
         }
         return new ResponseEntity<>(response, httpStatus);
+    }
+
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_ADMIN"})
+    @GetMapping("/uploads/img/{imageProfile:.+}")
+    public ResponseEntity<Resource> upload(@PathVariable String imageProfile,
+                                           @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+        Long usuarioId = userPrincipal.getId();
+        Resource resource = null;
+
+        if (!imageProfile.isEmpty()) {
+            try {
+                resource = usuarioService.getImagenPerfil(usuarioId, imageProfile);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            throw new RuntimeException("No existe image_profile.");
+        }
+        HttpHeaders cabecera = new HttpHeaders();
+        cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
+
+        return new ResponseEntity<>(resource, cabecera, HttpStatus.OK);
     }
 }

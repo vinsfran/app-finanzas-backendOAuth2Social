@@ -1,5 +1,6 @@
 package py.com.fuentepy.appfinanzasBackend.service;
 
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
@@ -18,4 +19,6 @@ public interface ArchivoService {
     boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 
     void deleteFiles(Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
+
+    Resource getArchivo(Long usuarioId, Long tablaId, String tablaNombre, String nombreArchivo) throws Exception;
 }

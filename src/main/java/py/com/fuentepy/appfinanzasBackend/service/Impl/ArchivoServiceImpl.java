@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,7 @@ import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,7 +58,7 @@ public class ArchivoServiceImpl implements ArchivoService {
         try {
             ArchivoModel archivoAnterior = null;
             List<ArchivoModel> archivos = getArchivos(archivo.getUsuarioId().getId(), archivo.getTablaId(), archivo.getTablaNombre());
-            archivos.forEach(item->System.out.println(item));
+            archivos.forEach(item -> System.out.println(item));
 
             if (archivos != null && !archivos.isEmpty() && archivos.get(0).getNombre().length() > 0) {
                 archivoAnterior = archivos.get(0);
@@ -117,6 +120,32 @@ public class ArchivoServiceImpl implements ArchivoService {
         } catch (Exception e) {
             throw new Exception("No se pudieron eliminar los Archivos! " + e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Resource getArchivo(Long usuarioId, Long tablaId, String tablaNombre, String nombreArchivo) throws Exception {
+        Resource resource = null;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+
+        Archivo archivo = archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombreAndNombre(usuario, tablaId, tablaNombre, nombreArchivo);
+        if (archivo != null) {
+            Path rutaArchivo = Paths.get(ConstantUtil.UPLOADS).resolve(archivo.getNombre()).toAbsolutePath();
+            try {
+                resource = new UrlResource(rutaArchivo.toUri());
+            } catch (MalformedURLException e) {
+                throw new Exception("Malformed URL! " + e.getCause().getMessage());
+            }
+
+            if (!resource.exists() && !resource.isReadable()) {
+                throw new Exception("No pudo cargar el Archivo: " + archivo.getNombre());
+            }
+
+        } else {
+            throw new Exception("No existe el Archivo en la BD!");
+        }
+        return resource;
     }
 
 }
