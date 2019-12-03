@@ -221,7 +221,7 @@ public class UsuarioResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
-    @GetMapping("/uploads/img/{imageProfile:.+}")
+    @GetMapping(value = "/uploads/img/{imageProfile:.+}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> upload(@PathVariable String imageProfile,
                                            @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         Long usuarioId = userPrincipal.getId();

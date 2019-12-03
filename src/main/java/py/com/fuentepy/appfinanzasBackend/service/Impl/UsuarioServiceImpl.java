@@ -135,7 +135,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             archivo.setTablaId(id);
             archivo.setTablaNombre(ConstantUtil.USUARIOS);
             archivo.setContentType(multipartFile.getContentType());
-            archivo.setNombre(StringUtil.encodeBase64(id + "_" + ConstantUtil.USUARIOS) + "_" + multipartFile.getOriginalFilename().replace(" ", "_").toLowerCase());
+            archivo.setNombre(StringUtil.armarNombreArchivo(id, ConstantUtil.USUARIOS, multipartFile.getContentType(), multipartFile.getOriginalFilename()));
             archivo.setUsuarioId(usuario);
             try {
                 archivoService.save(archivo, multipartFile);
