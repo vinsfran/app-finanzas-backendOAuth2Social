@@ -2,7 +2,6 @@ package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,13 +17,8 @@ import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
-import py.com.fuentepy.appfinanzasBackend.util.StringUtil;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -60,7 +54,6 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioModel.setFirstName(usuario.getFirstName());
             usuarioModel.setLastName(usuario.getLastName());
             usuarioModel.setEmail(usuario.getEmail());
-            usuarioModel.setImageProfileBase64(Base64.encodeBase64String(archivo.getDato()));
             usuarioModel.setImageProfileName(archivo.getNombre());
         }
         return usuarioModel;
@@ -131,20 +124,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
-            Archivo archivo = new Archivo();
-            archivo.setTablaId(id);
-            archivo.setTablaNombre(ConstantUtil.USUARIOS);
-            archivo.setContentType(multipartFile.getContentType());
-            archivo.setNombre(StringUtil.armarNombreArchivo(id, ConstantUtil.USUARIOS, multipartFile.getContentType(), multipartFile.getOriginalFilename()));
-            archivo.setUsuarioId(usuario);
             try {
-                archivoService.save(archivo, multipartFile);
+                String nombreArchivo = archivoService.save(id, ConstantUtil.USUARIOS, usuario.getId(), multipartFile);
                 usuarioModel = new UsuarioModel();
                 usuarioModel.setId(usuario.getId());
                 usuarioModel.setFirstName(usuario.getFirstName());
                 usuarioModel.setLastName(usuario.getLastName());
                 usuarioModel.setEmail(usuario.getEmail());
-                usuarioModel.setImageProfileName(archivo.getNombre());
+                usuarioModel.setImageProfileName(nombreArchivo);
             } catch (Exception e) {
                 throw new Exception("No se pudo subir la imagen! " + e.getCause().getMessage());
             }

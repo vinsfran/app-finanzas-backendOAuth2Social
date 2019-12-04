@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.MovimientoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
@@ -80,11 +81,11 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     @Transactional
-    public Movimiento registrarMovimiento(Movimiento movimiento, List<ArchivoModel> archivoModels) {
+    public Movimiento registrarMovimiento(Movimiento movimiento, MultipartFile[] multipartFileList) {
         movimiento = movimientoRepository.saveAndFlush(movimiento);
-        if (archivoModels != null && !archivoModels.isEmpty()) {
+        if (multipartFileList != null) {
             try {
-                archivoService.saveList(archivoModels, movimiento.getId(), ConstantUtil.MOVIMIENTOS, movimiento.getUsuarioId().getId());
+                archivoService.saveList(movimiento.getId(), ConstantUtil.MOVIMIENTOS, movimiento.getUsuarioId().getId(), multipartFileList);
             } catch (Exception e) {
                 e.printStackTrace();
             }

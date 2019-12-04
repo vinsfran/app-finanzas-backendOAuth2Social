@@ -38,11 +38,6 @@ public class Archivo implements Serializable {
     @Column(name = "nombre")
     private String nombre;
 
-    //    @Lob
-    @Column(name = "dato", nullable = true)
-    @Basic(optional = true, fetch = FetchType.EAGER)
-    private byte[] dato;
-
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Usuario usuarioId;

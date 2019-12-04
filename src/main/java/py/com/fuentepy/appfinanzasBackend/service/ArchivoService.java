@@ -14,9 +14,9 @@ public interface ArchivoService {
 
     Archivo findFotoPerfil(Long usuarioId);
 
-    boolean save(Archivo archivo, MultipartFile multipartFile) throws Exception;
+    String save(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile multipartFile) throws Exception;
 
-    boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
+    boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile[] multipartFileList) throws Exception;
 
     void deleteFiles(Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 

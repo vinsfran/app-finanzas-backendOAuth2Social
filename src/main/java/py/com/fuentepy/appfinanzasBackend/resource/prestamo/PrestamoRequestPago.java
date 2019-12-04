@@ -5,10 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author vinsfran
@@ -33,9 +31,5 @@ public class PrestamoRequestPago implements Serializable {
     @JsonProperty("numero_cuota")
     @SerializedName("numero_cuota")
     private Long numeroCuota;
-
-    @JsonProperty("archivos")
-    @SerializedName("archivos")
-    List<ArchivoModel> archivoModels;
 
 }

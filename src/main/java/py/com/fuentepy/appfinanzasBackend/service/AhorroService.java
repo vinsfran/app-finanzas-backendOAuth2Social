@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.*;
@@ -25,9 +26,9 @@ public interface AhorroService {
 
     boolean update(AhorroRequestUpdate request, Long usuarioId);
 
-    boolean pagar(AhorroRequestPago request, Long usuarioId);
+    boolean pagar(AhorroRequestPago request, MultipartFile[] multipartFileList, Long usuarioId);
 
-    boolean cobrar(AhorroRequestCobro request, Long usuarioId);
+    boolean cobrar(AhorroRequestCobro request, MultipartFile[] multipartFileList, Long usuarioId);
 
     Long countByTenantName(Long usuarioId);
 

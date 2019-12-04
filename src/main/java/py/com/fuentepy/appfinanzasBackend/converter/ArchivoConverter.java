@@ -1,6 +1,5 @@
 package py.com.fuentepy.appfinanzasBackend.converter;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
@@ -16,7 +15,6 @@ public class ArchivoConverter {
         model.setId(entity.getId());
         model.setNombre(entity.getNombre());
         model.setContentType(entity.getContentType());
-        model.setDato(Base64.encodeBase64String(entity.getDato()));
         return model;
     }
 

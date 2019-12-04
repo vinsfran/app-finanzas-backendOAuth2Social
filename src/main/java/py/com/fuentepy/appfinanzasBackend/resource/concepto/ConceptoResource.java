@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -28,9 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-//@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
 @RequestMapping("/api/conceptos")
 public class ConceptoResource {
@@ -239,6 +238,7 @@ public class ConceptoResource {
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody ConceptoRequestPago conceptoRequestPago,
+                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -261,7 +261,7 @@ public class ConceptoResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (conceptoService.pagar(conceptoRequestPago, usuarioId)) {
+                    if (conceptoService.pagar(conceptoRequestPago, multipartFileList, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Concepto ha sido pagado con éxito!");
                         messages.add(message);
@@ -292,6 +292,7 @@ public class ConceptoResource {
     @PutMapping(value = "/cobro", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody ConceptoRequestCobro conceptoRequestCobro,
+                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -314,7 +315,7 @@ public class ConceptoResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (conceptoService.cobrar(conceptoRequestCobro, usuarioId)) {
+                    if (conceptoService.cobrar(conceptoRequestCobro, multipartFileList, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Concepto ha sido cobrado con éxito!");
                         messages.add(message);

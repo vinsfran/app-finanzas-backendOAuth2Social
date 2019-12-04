@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -240,6 +241,7 @@ public class TarjetaResource {
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody TarjetaRequestPago tarjetaRequestPago,
+                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -262,7 +264,7 @@ public class TarjetaResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (tarjetaService.pagar(tarjetaRequestPago, usuarioId)) {
+                    if (tarjetaService.pagar(tarjetaRequestPago, multipartFileList, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "La Tarjeta ha sido pagada con éxito!");
                         messages.add(message);

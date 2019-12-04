@@ -5,10 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author vinsfran
@@ -29,9 +27,5 @@ public class ConceptoRequestCobro implements Serializable {
     @JsonProperty("monto_cobrado")
     @SerializedName("monto_cobrado")
     private Double montoCobrado;
-
-    @JsonProperty("archivos")
-    @SerializedName("archivos")
-    List<ArchivoModel> archivoModels;
 
 }

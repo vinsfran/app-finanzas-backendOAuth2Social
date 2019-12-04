@@ -40,8 +40,4 @@ public class AhorroRequestPago implements Serializable {
     @SerializedName("numero_cuota")
     private Long numeroCuota;
 
-    @JsonProperty("archivos")
-    @SerializedName("archivos")
-    List<ArchivoModel> archivoModels;
-
 }

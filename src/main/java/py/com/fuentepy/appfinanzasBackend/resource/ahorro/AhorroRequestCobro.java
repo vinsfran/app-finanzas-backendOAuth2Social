@@ -30,8 +30,4 @@ public class AhorroRequestCobro implements Serializable {
     @SerializedName("monto_cobrado")
     private Double montoCobrado;
 
-    @JsonProperty("archivos")
-    @SerializedName("archivos")
-    List<ArchivoModel> archivoModels;
-
 }

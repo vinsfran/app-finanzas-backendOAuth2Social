@@ -2,7 +2,6 @@ package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -16,6 +15,7 @@ import py.com.fuentepy.appfinanzasBackend.data.repository.ArchivoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
+import py.com.fuentepy.appfinanzasBackend.util.StringUtil;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -54,52 +54,46 @@ public class ArchivoServiceImpl implements ArchivoService {
     }
 
     @Override
-    public boolean save(Archivo archivo, MultipartFile multipartFile) throws Exception {
+    public String save(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile multipartFile) throws Exception {
+        String nombreArchivo = null;
         try {
+            nombreArchivo = StringUtil.armarNombreArchivo(tablaId, tablaNombre, multipartFile.getContentType(), multipartFile.getOriginalFilename());
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioId);
+            Archivo archivo = new Archivo();
+            archivo.setTablaId(tablaId);
+            archivo.setTablaNombre(tablaNombre);
+            archivo.setContentType(multipartFile.getContentType());
+            archivo.setNombre(nombreArchivo);
+            archivo.setUsuarioId(usuario);
             ArchivoModel archivoAnterior = null;
             List<ArchivoModel> archivos = getArchivos(archivo.getUsuarioId().getId(), archivo.getTablaId(), archivo.getTablaNombre());
             archivos.forEach(item -> System.out.println(item));
-
             if (archivos != null && !archivos.isEmpty() && archivos.get(0).getNombre().length() > 0) {
                 archivoAnterior = archivos.get(0);
                 if (archivoAnterior != null) {
-                    System.out.println("BBBRRRRRASAA1 " + archivoAnterior.getNombre());
                     Path rutaArchivoAnterior = Paths.get(ConstantUtil.UPLOADS).resolve(archivoAnterior.getNombre()).toAbsolutePath();
                     File archivoBorrar = rutaArchivoAnterior.toFile();
-                    System.out.println("BBBRRRRRASAA1 " + rutaArchivoAnterior.toString());
                     if (archivoBorrar.exists() && archivoBorrar.canRead()) {
-                        LOG.info("BORRAR2");
-                        System.out.println("BBBRRRRRASAA2");
                         archivoBorrar.delete();
                         archivo.setId(archivoAnterior.getId());
                     }
                 }
             }
-            System.out.println("BBBRRRRRASAA3");
             Path rutaArchivo = Paths.get(ConstantUtil.UPLOADS).resolve(archivo.getNombre()).toAbsolutePath();
             Files.copy(multipartFile.getInputStream(), rutaArchivo);
             archivoRepository.save(archivo);
-
         } catch (Exception e) {
             throw new Exception("No se pudo guardar el Archivo! " + e.getMessage());
         }
-        return true;
+        return nombreArchivo;
     }
 
     @Override
-    public boolean saveList(List<ArchivoModel> archivos, Long tablaId, String tablaNombre, Long usuarioId) throws Exception {
-        Usuario usuario = new Usuario();
-        usuario.setId(usuarioId);
-        for (ArchivoModel archivoModel : archivos) {
-            Archivo archivo = new Archivo();
-            archivo.setTablaId(tablaId);
-            archivo.setTablaNombre(tablaNombre);
-            archivo.setContentType(archivoModel.getContentType());
-            archivo.setNombre(archivoModel.getNombre());
-            archivo.setDato(Base64.decodeBase64(archivoModel.getDato()));
-            archivo.setUsuarioId(usuario);
+    public boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile[] multipartFileList) throws Exception {
+        for (MultipartFile multipartFile : multipartFileList) {
             try {
-                archivoRepository.save(archivo);
+                save(tablaId, tablaNombre, usuarioId, multipartFile);
             } catch (Exception e) {
                 throw new Exception("No se pudieron guardar los Archivos! " + e.getMessage());
             }

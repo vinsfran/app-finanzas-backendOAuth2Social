@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
@@ -22,7 +23,7 @@ public interface MovimientoService {
 
     MovimientoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    Movimiento registrarMovimiento(Movimiento movimiento, List<ArchivoModel> archivoModels);
+    Movimiento registrarMovimiento(Movimiento movimiento, MultipartFile[] archivos);
 
     List<Movimiento> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 

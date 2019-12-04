@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.AhorroConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
@@ -96,7 +97,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean pagar(AhorroRequestPago request, Long usuarioId) {
+    public boolean pagar(AhorroRequestPago request, MultipartFile[] multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -119,7 +120,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
+                movimientoService.registrarMovimiento(movimiento, multipartFileList);
                 retorno = true;
             }
         }
@@ -128,7 +129,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean cobrar(AhorroRequestCobro request, Long usuarioId) {
+    public boolean cobrar(AhorroRequestCobro request, MultipartFile[] multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -150,7 +151,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, request.getArchivoModels());
+                movimientoService.registrarMovimiento(movimiento, multipartFileList);
                 retorno = true;
             }
         }

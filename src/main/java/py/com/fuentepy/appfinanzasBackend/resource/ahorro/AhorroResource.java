@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -24,10 +25,7 @@ import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -233,56 +231,54 @@ public class AhorroResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-    @ApiImplicitParams(
-            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = ""),
+            @ApiImplicitParam(name = "ahorroRequestPago", value = "ahorroRequestPago", required = true, allowEmptyValue = false, paramType = "body", dataTypeClass = AhorroRequestPago.class, example = "")
+    }
     )
     @Secured({"ROLE_ADMIN"})
-    @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/pagar", consumes = {"multipart/mixed"})
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                   @Valid @RequestBody AhorroRequestPago ahorroRequestPago,
-                                   BindingResult result) {
+                                   @RequestPart("ahorroRequestPago") @Valid AhorroRequestPago ahorroRequestPago,
+                                   @RequestPart("archivos") MultipartFile[] archivos) {
+
+
+
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         Long id = ahorroRequestPago.getId();
-        if (result.hasErrors()) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            for (FieldError err : result.getFieldErrors()) {
-                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
-                messages.add(message);
-            }
+
+        if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            httpStatus = HttpStatus.NOT_FOUND;
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
-                httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
-                messages.add(message);
-                response = new BaseResponse(httpStatus.value(), messages);
-            } else {
-                try {
-                    if (ahorroService.pagar(ahorroRequestPago, usuarioId)) {
-                        httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido pagado con éxito!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    } else {
-                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo pagar!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    }
-                } catch (DataAccessException e) {
-                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+            try {
+                if (ahorroService.pagar(ahorroRequestPago, archivos, usuarioId)) {
+                    httpStatus = HttpStatus.CREATED;
+                    message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido pagado con éxito!");
                     messages.add(message);
-                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    response = new BaseResponse(httpStatus.value(), messages);
+                } else {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo pagar!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
+            } catch (DataAccessException e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
             }
         }
+
         return new ResponseEntity<>(response, httpStatus);
     }
 
@@ -290,9 +286,10 @@ public class AhorroResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
-    @PutMapping(value = "/cobro", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/cobro")
     public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro,
+                                   @RequestParam("archivos2") MultipartFile[] multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -315,7 +312,7 @@ public class AhorroResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (ahorroService.cobrar(ahorroRequestCobro, usuarioId)) {
+                    if (ahorroService.cobrar(ahorroRequestCobro, multipartFileList, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido cobrado con éxito!");
                         messages.add(message);

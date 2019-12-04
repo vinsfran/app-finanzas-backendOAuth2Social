@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
 import py.com.fuentepy.appfinanzasBackend.resource.tarjeta.*;
 
@@ -23,7 +24,7 @@ public interface TarjetaService {
 
     boolean update(TarjetaRequestUpdate request, Long usuarioId);
 
-    boolean pagar(TarjetaRequestPago request, Long usuarioId);
+    boolean pagar(TarjetaRequestPago request, MultipartFile[] multipartFileList, Long usuarioId);
 
     Long countByTenantName(Long usuarioId);
 

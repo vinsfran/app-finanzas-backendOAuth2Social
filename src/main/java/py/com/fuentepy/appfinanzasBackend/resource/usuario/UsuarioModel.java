@@ -36,8 +36,4 @@ public class UsuarioModel implements Serializable {
     @SerializedName("image_profile_name")
     private String imageProfileName;
 
-    @JsonProperty("image_profile_base64")
-    @SerializedName("image_profile_base64")
-    private String imageProfileBase64;
-
 }

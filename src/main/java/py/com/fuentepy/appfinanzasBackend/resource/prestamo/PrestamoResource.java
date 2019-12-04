@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
 @RequestMapping("/api/prestamos")
 public class PrestamoResource {
@@ -141,6 +141,7 @@ public class PrestamoResource {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                     @Valid @RequestBody PrestamoRequestNew prestamoNew,
+                                    @RequestParam("archivos") MultipartFile[] multipartFileList,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -156,7 +157,7 @@ public class PrestamoResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (prestamoService.create(prestamoNew, usuarioId)) {
+                if (prestamoService.create(prestamoNew, multipartFileList, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
                     message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido creado con éxito!");
                     messages.add(message);
@@ -239,6 +240,7 @@ public class PrestamoResource {
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody PrestamoRequestPago prestamoRequestPago,
+                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -261,7 +263,7 @@ public class PrestamoResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 try {
-                    if (prestamoService.pagar(prestamoRequestPago, usuarioId)) {
+                    if (prestamoService.pagar(prestamoRequestPago, multipartFileList, usuarioId)) {
                         httpStatus = HttpStatus.CREATED;
                         message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido pagado con éxito!");
                         messages.add(message);
