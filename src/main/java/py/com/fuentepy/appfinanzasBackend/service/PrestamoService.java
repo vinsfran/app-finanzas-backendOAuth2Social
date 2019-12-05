@@ -21,11 +21,11 @@ public interface PrestamoService {
 
     PrestamoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    boolean create(PrestamoRequestNew request, MultipartFile[] multipartFileList, Long usuarioId);
+    boolean create(PrestamoRequestNew request, List<MultipartFile> multipartFileList, Long usuarioId);
 
     boolean update(PrestamoRequestUpdate request, Long usuarioId);
 
-    boolean pagar(PrestamoRequestPago prestamoRequestPago, MultipartFile[] multipartFileList, Long usuarioId);
+    boolean pagar(PrestamoRequestPago prestamoRequestPago, List<MultipartFile> multipartFileList, Long usuarioId);
 
     PrestamoModel save(PrestamoModel prestamoModel);
 

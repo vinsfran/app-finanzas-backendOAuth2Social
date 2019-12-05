@@ -23,7 +23,7 @@ public interface MovimientoService {
 
     MovimientoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    Movimiento registrarMovimiento(Movimiento movimiento, MultipartFile[] archivos);
+    Movimiento registrarMovimiento(Movimiento movimiento, List<MultipartFile> archivos);
 
     List<Movimiento> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 

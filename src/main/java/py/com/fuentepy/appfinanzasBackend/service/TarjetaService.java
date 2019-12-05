@@ -24,7 +24,7 @@ public interface TarjetaService {
 
     boolean update(TarjetaRequestUpdate request, Long usuarioId);
 
-    boolean pagar(TarjetaRequestPago request, MultipartFile[] multipartFileList, Long usuarioId);
+    boolean pagar(TarjetaRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId);
 
     Long countByTenantName(Long usuarioId);
 

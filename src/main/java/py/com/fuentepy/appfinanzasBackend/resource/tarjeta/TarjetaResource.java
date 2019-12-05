@@ -241,7 +241,7 @@ public class TarjetaResource {
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody TarjetaRequestPago tarjetaRequestPago,
-                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
+                                   @RequestParam("archivos") List<MultipartFile> multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;

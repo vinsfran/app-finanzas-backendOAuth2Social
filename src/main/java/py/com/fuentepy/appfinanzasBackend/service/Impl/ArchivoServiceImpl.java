@@ -90,7 +90,7 @@ public class ArchivoServiceImpl implements ArchivoService {
     }
 
     @Override
-    public boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile[] multipartFileList) throws Exception {
+    public boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, List<MultipartFile> multipartFileList) throws Exception {
         for (MultipartFile multipartFile : multipartFileList) {
             try {
                 save(tablaId, tablaNombre, usuarioId, multipartFile);

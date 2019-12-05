@@ -238,7 +238,7 @@ public class ConceptoResource {
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody ConceptoRequestPago conceptoRequestPago,
-                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
+                                   @RequestParam("archivos") List<MultipartFile> multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -292,7 +292,7 @@ public class ConceptoResource {
     @PutMapping(value = "/cobro", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody ConceptoRequestCobro conceptoRequestCobro,
-                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
+                                   @RequestParam("archivos") List<MultipartFile> multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;

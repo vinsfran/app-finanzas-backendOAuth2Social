@@ -25,9 +25,9 @@ public interface ConceptoService {
 
     boolean update(ConceptoRequestUpdate request, Long usuarioId);
 
-    boolean pagar(ConceptoRequestPago request, MultipartFile[] multipartFileList, Long usuarioId);
+    boolean pagar(ConceptoRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId);
 
-    boolean cobrar(ConceptoRequestCobro request, MultipartFile[] multipartFileList, Long usuarioId);
+    boolean cobrar(ConceptoRequestCobro request, List<MultipartFile> multipartFileList, Long usuarioId);
 
     List<ConceptoMovimientoModel> findByUsuarioAndConceptoId(Long usuarioId, Long ahorroId);
 

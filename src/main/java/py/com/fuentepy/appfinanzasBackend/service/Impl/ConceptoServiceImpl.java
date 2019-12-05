@@ -105,7 +105,7 @@ public class ConceptoServiceImpl implements ConceptoService {
     }
 
     @Override
-    public boolean pagar(ConceptoRequestPago request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean pagar(ConceptoRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -131,7 +131,7 @@ public class ConceptoServiceImpl implements ConceptoService {
     }
 
     @Override
-    public boolean cobrar(ConceptoRequestCobro request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean cobrar(ConceptoRequestCobro request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);

@@ -16,7 +16,7 @@ public interface ArchivoService {
 
     String save(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile multipartFile) throws Exception;
 
-    boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile[] multipartFileList) throws Exception;
+    boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, List<MultipartFile> multipartFileList) throws Exception;
 
     void deleteFiles(Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 

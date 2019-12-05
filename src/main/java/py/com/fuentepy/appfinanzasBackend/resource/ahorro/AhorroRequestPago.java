@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;

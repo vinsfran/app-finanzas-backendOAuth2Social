@@ -76,7 +76,7 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional
-    public boolean create(PrestamoRequestNew request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean create(PrestamoRequestNew request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -110,7 +110,7 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional
-    public boolean pagar(PrestamoRequestPago request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean pagar(PrestamoRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);

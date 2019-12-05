@@ -233,23 +233,22 @@ public class AhorroResource {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = ""),
-            @ApiImplicitParam(name = "ahorroRequestPago", value = "ahorroRequestPago", required = true, allowEmptyValue = false, paramType = "body", dataTypeClass = AhorroRequestPago.class, example = "")
     }
     )
     @Secured({"ROLE_ADMIN"})
-    @PostMapping(value = "/pagar", consumes = {"multipart/mixed"})
+    @PostMapping(value = "/pagar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                   @RequestPart("ahorroRequestPago") @Valid AhorroRequestPago ahorroRequestPago,
-                                   @RequestPart("archivos") MultipartFile[] archivos) {
-
-
-
+                                   @RequestParam("id") Long id,
+                                   @RequestParam("numero_comprobante") String numeroComprobante,
+                                   @RequestParam("monto_pagado") Double montoPagado,
+                                   @RequestParam("numero_cuota") Long numeroCuota,
+                                   @RequestParam("archivos") MultipartFile[] archivos) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        Long id = ahorroRequestPago.getId();
+//        Long id = ahorroRequestPago.getId();
 
         if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
             httpStatus = HttpStatus.NOT_FOUND;
@@ -258,7 +257,17 @@ public class AhorroResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (ahorroService.pagar(ahorroRequestPago, archivos, usuarioId)) {
+                AhorroRequestPago ahorroRequestPago = new AhorroRequestPago();
+                ahorroRequestPago.setId(id);
+                ahorroRequestPago.setNumeroComprobante(numeroComprobante);
+                ahorroRequestPago.setMontoPagado(montoPagado);
+                ahorroRequestPago.setNumeroCuota(numeroCuota);
+                List<MultipartFile> multipartFileList = new ArrayList<>();
+                for (MultipartFile multipartFile : archivos) {
+                    multipartFileList.add(multipartFile);
+                }
+
+                if (ahorroService.pagar(ahorroRequestPago, multipartFileList, usuarioId)) {
                     httpStatus = HttpStatus.CREATED;
                     message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido pagado con éxito!");
                     messages.add(message);
@@ -289,7 +298,7 @@ public class AhorroResource {
     @PutMapping(value = "/cobro")
     public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro,
-                                   @RequestParam("archivos2") MultipartFile[] multipartFileList,
+                                   @RequestParam("archivos2") final List<MultipartFile> multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;

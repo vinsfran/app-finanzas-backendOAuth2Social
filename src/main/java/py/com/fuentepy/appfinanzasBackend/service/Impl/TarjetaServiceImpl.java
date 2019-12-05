@@ -96,7 +96,7 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     @Override
     @Transactional
-    public boolean pagar(TarjetaRequestPago request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean pagar(TarjetaRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);

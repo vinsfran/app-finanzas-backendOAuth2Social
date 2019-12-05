@@ -141,7 +141,7 @@ public class PrestamoResource {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                     @Valid @RequestBody PrestamoRequestNew prestamoNew,
-                                    @RequestParam("archivos") MultipartFile[] multipartFileList,
+                                    @RequestParam("archivos") List<MultipartFile> multipartFileList,
                                     @ApiIgnore BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;
@@ -240,7 +240,7 @@ public class PrestamoResource {
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
                                    @Valid @RequestBody PrestamoRequestPago prestamoRequestPago,
-                                   @RequestParam("archivos") MultipartFile[] multipartFileList,
+                                   @RequestParam("archivos") List<MultipartFile> multipartFileList,
                                    BindingResult result) {
         HttpStatus httpStatus;
         BaseResponse response;

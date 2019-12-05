@@ -97,7 +97,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean pagar(AhorroRequestPago request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean pagar(AhorroRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -129,7 +129,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean cobrar(AhorroRequestCobro request, MultipartFile[] multipartFileList, Long usuarioId) {
+    public boolean cobrar(AhorroRequestCobro request, List<MultipartFile> multipartFileList, Long usuarioId) {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
