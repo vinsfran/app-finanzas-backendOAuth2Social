@@ -12,7 +12,9 @@ import py.com.fuentepy.appfinanzasBackend.converter.ArchivoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.ArchivoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
+import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 import py.com.fuentepy.appfinanzasBackend.util.StringUtil;
@@ -23,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ArchivoServiceImpl implements ArchivoService {
@@ -31,6 +34,9 @@ public class ArchivoServiceImpl implements ArchivoService {
 
     @Autowired
     private ArchivoRepository archivoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -90,7 +96,7 @@ public class ArchivoServiceImpl implements ArchivoService {
     }
 
     @Override
-    public boolean saveList(Long tablaId, String tablaNombre, Long usuarioId, List<MultipartFile> multipartFileList) throws Exception {
+    public boolean uploadDocumentsList(Long tablaId, String tablaNombre, Long usuarioId, List<MultipartFile> multipartFileList) throws Exception {
         for (MultipartFile multipartFile : multipartFileList) {
             try {
                 save(tablaId, tablaNombre, usuarioId, multipartFile);
@@ -138,6 +144,42 @@ public class ArchivoServiceImpl implements ArchivoService {
 
         } else {
             throw new Exception("No existe el Archivo en la BD!");
+        }
+        return resource;
+    }
+
+    @Override
+    @Transactional
+    public UsuarioModel uploadImagenPerfil(MultipartFile multipartFile, Long id) throws Exception {
+        UsuarioModel usuarioModel = null;
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            try {
+                String nombreArchivo = save(id, ConstantUtil.USUARIOS, usuario.getId(), multipartFile);
+                usuarioModel = new UsuarioModel();
+                usuarioModel.setId(usuario.getId());
+                usuarioModel.setFirstName(usuario.getFirstName());
+                usuarioModel.setLastName(usuario.getLastName());
+                usuarioModel.setEmail(usuario.getEmail());
+                usuarioModel.setImageProfileName(nombreArchivo);
+            } catch (Exception e) {
+                throw new Exception("No se pudo subir la imagen! " + e.getCause().getMessage());
+            }
+        }
+        return usuarioModel;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Resource getImagenPerfil(Long usuarioId, String nombreArchivo) throws Exception {
+        Resource resource = null;
+        Optional<Usuario> optional = usuarioRepository.findById(usuarioId);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            resource = getArchivo(usuario.getId(), usuarioId, ConstantUtil.USUARIOS, nombreArchivo);
+        } else {
+            throw new Exception("No existe usuario.");
         }
         return resource;
     }

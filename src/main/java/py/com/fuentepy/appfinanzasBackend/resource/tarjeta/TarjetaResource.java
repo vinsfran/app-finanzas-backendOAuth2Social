@@ -16,9 +16,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.model.MovimientoIdResponse;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
@@ -240,49 +242,39 @@ public class TarjetaResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                   @Valid @RequestBody TarjetaRequestPago tarjetaRequestPago,
-                                   @RequestParam("archivos") List<MultipartFile> multipartFileList,
-                                   BindingResult result) {
+                                   @Valid @RequestBody TarjetaRequestPago tarjetaRequestPago) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         Long id = tarjetaRequestPago.getId();
-        if (result.hasErrors()) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            for (FieldError err : result.getFieldErrors()) {
-                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
-                messages.add(message);
-            }
+        if (tarjetaService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            httpStatus = HttpStatus.NOT_FOUND;
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, la Tarjeta Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (tarjetaService.findByIdAndUsuarioId(id, usuarioId) == null) {
-                httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, la Tarjeta Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
-                messages.add(message);
-                response = new BaseResponse(httpStatus.value(), messages);
-            } else {
-                try {
-                    if (tarjetaService.pagar(tarjetaRequestPago, multipartFileList, usuarioId)) {
-                        httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "La Tarjeta ha sido pagada con éxito!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    } else {
-                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "La Tarjeta no se pudo pagar!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    }
-                } catch (DataAccessException e) {
-                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+            try {
+                Movimiento movimiento = tarjetaService.pagar(tarjetaRequestPago, usuarioId);
+                if (movimiento != null) {
+                    httpStatus = HttpStatus.CREATED;
+                    message = new MessageResponse(StatusLevel.INFO, "La Tarjeta ha sido pagada con éxito!");
                     messages.add(message);
-                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    response = new MovimientoIdResponse(httpStatus.value(), messages, movimiento.getId());
+                } else {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.ERROR, "La Tarjeta no se pudo pagar!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
+            } catch (DataAccessException e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
             }
         }
         return new ResponseEntity<>(response, httpStatus);

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.AhorroConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
@@ -97,8 +96,8 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean pagar(AhorroRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento pagar(AhorroRequestPago request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(request.getId(), usuario);
@@ -120,8 +119,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, multipartFileList);
-                retorno = true;
+                retorno = movimientoService.registrarMovimiento(movimiento);
             }
         }
         return retorno;
@@ -129,8 +127,8 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public boolean cobrar(AhorroRequestCobro request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento cobrar(AhorroRequestCobro request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(request.getId(), usuario);
@@ -151,8 +149,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, multipartFileList);
-                retorno = true;
+                retorno = movimientoService.registrarMovimiento(movimiento);
             }
         }
         return retorno;

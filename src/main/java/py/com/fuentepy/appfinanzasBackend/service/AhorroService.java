@@ -26,9 +26,9 @@ public interface AhorroService {
 
     boolean update(AhorroRequestUpdate request, Long usuarioId);
 
-    boolean pagar(AhorroRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId);
+    Movimiento pagar(AhorroRequestPago request, Long usuarioId);
 
-    boolean cobrar(AhorroRequestCobro request, List<MultipartFile> multipartFileList, Long usuarioId);
+    Movimiento cobrar(AhorroRequestCobro request, Long usuarioId);
 
     Long countByTenantName(Long usuarioId);
 

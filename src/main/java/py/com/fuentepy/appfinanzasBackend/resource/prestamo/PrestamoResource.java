@@ -16,9 +16,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.model.MovimientoIdResponse;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
@@ -140,42 +142,32 @@ public class PrestamoResource {
     @Secured({"ROLE_ADMIN"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @Valid @RequestBody PrestamoRequestNew prestamoNew,
-                                    @RequestParam("archivos") List<MultipartFile> multipartFileList,
-                                    @ApiIgnore BindingResult result) {
+                                    @Valid @RequestBody PrestamoRequestNew prestamoNew) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        if (result.hasErrors()) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            for (FieldError err : result.getFieldErrors()) {
-                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+        try {
+            Movimiento movimiento = prestamoService.create(prestamoNew, usuarioId);
+            if (movimiento != null) {
+                httpStatus = HttpStatus.CREATED;
+                message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido creado con éxito!");
                 messages.add(message);
-            }
-            response = new BaseResponse(httpStatus.value(), messages);
-        } else {
-            try {
-                if (prestamoService.create(prestamoNew, multipartFileList, usuarioId)) {
-                    httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido creado con éxito!");
-                    messages.add(message);
-                    response = new BaseResponse(httpStatus.value(), messages);
-                } else {
-                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo crear!");
-                    messages.add(message);
-                    response = new BaseResponse(httpStatus.value(), messages);
-                }
-            } catch (DataAccessException e) {
+                response = new MovimientoIdResponse(httpStatus.value(), messages, movimiento.getId());
+            } else {
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
-                messages.add(message);
-                message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo crear!");
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             }
+        } catch (DataAccessException e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+            messages.add(message);
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
         }
         return new ResponseEntity<>(response, httpStatus);
     }
@@ -239,49 +231,39 @@ public class PrestamoResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/pagar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                   @Valid @RequestBody PrestamoRequestPago prestamoRequestPago,
-                                   @RequestParam("archivos") List<MultipartFile> multipartFileList,
-                                   BindingResult result) {
+                                   @Valid @RequestBody PrestamoRequestPago prestamoRequestPago) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         Long id = prestamoRequestPago.getId();
-        if (result.hasErrors()) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            for (FieldError err : result.getFieldErrors()) {
-                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
-                messages.add(message);
-            }
+        if (prestamoService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            httpStatus = HttpStatus.NOT_FOUND;
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Prestamo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (prestamoService.findByIdAndUsuarioId(id, usuarioId) == null) {
-                httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Prestamo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
-                messages.add(message);
-                response = new BaseResponse(httpStatus.value(), messages);
-            } else {
-                try {
-                    if (prestamoService.pagar(prestamoRequestPago, multipartFileList, usuarioId)) {
-                        httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido pagado con éxito!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    } else {
-                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo pagar!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    }
-                } catch (DataAccessException e) {
-                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+            try {
+                Movimiento movimiento = prestamoService.pagar(prestamoRequestPago, usuarioId);
+                if (movimiento != null) {
+                    httpStatus = HttpStatus.CREATED;
+                    message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido pagado con éxito!");
                     messages.add(message);
-                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    response = new MovimientoIdResponse(httpStatus.value(), messages, movimiento.getId());
+                } else {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo pagar!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
+            } catch (DataAccessException e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
             }
         }
         return new ResponseEntity<>(response, httpStatus);

@@ -105,8 +105,8 @@ public class ConceptoServiceImpl implements ConceptoService {
     }
 
     @Override
-    public boolean pagar(ConceptoRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento pagar(ConceptoRequestPago request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Optional<Concepto> optional = conceptoRepository.findByIdAndUsuarioId(request.getId(), usuario);
@@ -123,16 +123,15 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, multipartFileList);
-                retorno = true;
+                retorno = movimientoService.registrarMovimiento(movimiento);
             }
         }
         return retorno;
     }
 
     @Override
-    public boolean cobrar(ConceptoRequestCobro request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento cobrar(ConceptoRequestCobro request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Optional<Concepto> optional = conceptoRepository.findByIdAndUsuarioId(request.getId(), usuario);
@@ -149,8 +148,7 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, multipartFileList);
-                retorno = true;
+                retorno = movimientoService.registrarMovimiento(movimiento);
             }
         }
         return retorno;

@@ -7,8 +7,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/appFinanzas_db
     username: postgres
-    password: 0l1mp1@C@mp3on2OO2
-#    password: admin123
+#    password: 0l1mp1@C@mp3on2OO2
+    password: admin123
     driver-class-name: org.postgresql.Driver
     tomcat:
       test-while-idle: true

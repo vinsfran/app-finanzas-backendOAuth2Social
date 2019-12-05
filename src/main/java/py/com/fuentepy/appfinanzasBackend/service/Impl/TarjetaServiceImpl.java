@@ -96,8 +96,8 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     @Override
     @Transactional
-    public boolean pagar(TarjetaRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento pagar(TarjetaRequestPago request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Optional<Tarjeta> optional = tarjetaRepository.findByIdAndUsuarioId(request.getId(), usuario);
@@ -117,8 +117,7 @@ public class TarjetaServiceImpl implements TarjetaService {
                 movimiento.setTablaNombre(ConstantUtil.TARJETAS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, multipartFileList);
-                retorno = true;
+                retorno = movimientoService.registrarMovimiento(movimiento);
             }
         }
         return retorno;

@@ -15,10 +15,11 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.model.MovimientoIdResponse;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
@@ -236,20 +237,15 @@ public class AhorroResource {
     }
     )
     @Secured({"ROLE_ADMIN"})
-    @PostMapping(value = "/pagar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/pagar")
     public ResponseEntity<?> pagar(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                   @RequestParam("id") Long id,
-                                   @RequestParam("numero_comprobante") String numeroComprobante,
-                                   @RequestParam("monto_pagado") Double montoPagado,
-                                   @RequestParam("numero_cuota") Long numeroCuota,
-                                   @RequestParam("archivos") MultipartFile[] archivos) {
+                                   @Valid @RequestBody AhorroRequestPago ahorroRequestPago) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-//        Long id = ahorroRequestPago.getId();
-
+        Long id = ahorroRequestPago.getId();
         if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
             httpStatus = HttpStatus.NOT_FOUND;
             message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
@@ -257,21 +253,12 @@ public class AhorroResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                AhorroRequestPago ahorroRequestPago = new AhorroRequestPago();
-                ahorroRequestPago.setId(id);
-                ahorroRequestPago.setNumeroComprobante(numeroComprobante);
-                ahorroRequestPago.setMontoPagado(montoPagado);
-                ahorroRequestPago.setNumeroCuota(numeroCuota);
-                List<MultipartFile> multipartFileList = new ArrayList<>();
-                for (MultipartFile multipartFile : archivos) {
-                    multipartFileList.add(multipartFile);
-                }
-
-                if (ahorroService.pagar(ahorroRequestPago, multipartFileList, usuarioId)) {
+                Movimiento movimiento = ahorroService.pagar(ahorroRequestPago, usuarioId);
+                if (movimiento != null) {
                     httpStatus = HttpStatus.CREATED;
                     message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido pagado con éxito!");
                     messages.add(message);
-                    response = new BaseResponse(httpStatus.value(), messages);
+                    response = new MovimientoIdResponse(httpStatus.value(), messages, movimiento.getId());
                 } else {
                     httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
                     message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo pagar!");
@@ -287,7 +274,6 @@ public class AhorroResource {
                 response = new BaseResponse(httpStatus.value(), messages);
             }
         }
-
         return new ResponseEntity<>(response, httpStatus);
     }
 
@@ -297,49 +283,39 @@ public class AhorroResource {
     @Secured({"ROLE_ADMIN"})
     @PutMapping(value = "/cobro")
     public ResponseEntity<?> cobro(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                   @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro,
-                                   @RequestParam("archivos2") final List<MultipartFile> multipartFileList,
-                                   BindingResult result) {
+                                   @Valid @RequestBody AhorroRequestCobro ahorroRequestCobro) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         Long id = ahorroRequestCobro.getId();
-        if (result.hasErrors()) {
-            httpStatus = HttpStatus.BAD_REQUEST;
-            for (FieldError err : result.getFieldErrors()) {
-                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
-                messages.add(message);
-            }
+        if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            httpStatus = HttpStatus.NOT_FOUND;
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo cobrar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
-                httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo cobrar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
-                messages.add(message);
-                response = new BaseResponse(httpStatus.value(), messages);
-            } else {
-                try {
-                    if (ahorroService.cobrar(ahorroRequestCobro, multipartFileList, usuarioId)) {
-                        httpStatus = HttpStatus.CREATED;
-                        message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido cobrado con éxito!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    } else {
-                        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                        message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo cobrar!");
-                        messages.add(message);
-                        response = new BaseResponse(httpStatus.value(), messages);
-                    }
-                } catch (DataAccessException e) {
-                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+            try {
+                Movimiento movimiento = ahorroService.cobrar(ahorroRequestCobro, usuarioId);
+                if (movimiento != null) {
+                    httpStatus = HttpStatus.CREATED;
+                    message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido cobrado con éxito!");
                     messages.add(message);
-                    message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                    response = new MovimientoIdResponse(httpStatus.value(), messages, movimiento.getId());
+                } else {
+                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                    message = new MessageResponse(StatusLevel.ERROR, "El Ahorro no se pudo cobrar!");
                     messages.add(message);
                     response = new BaseResponse(httpStatus.value(), messages);
                 }
+            } catch (DataAccessException e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
             }
         }
         return new ResponseEntity<>(response, httpStatus);

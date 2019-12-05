@@ -81,15 +81,8 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     @Transactional
-    public Movimiento registrarMovimiento(Movimiento movimiento, List<MultipartFile> multipartFileList) {
+    public Movimiento registrarMovimiento(Movimiento movimiento) {
         movimiento = movimientoRepository.saveAndFlush(movimiento);
-        if (multipartFileList != null && !multipartFileList.isEmpty()) {
-            try {
-                archivoService.saveList(movimiento.getId(), ConstantUtil.MOVIMIENTOS, movimiento.getUsuarioId().getId(), multipartFileList);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         return movimiento;
     }
 

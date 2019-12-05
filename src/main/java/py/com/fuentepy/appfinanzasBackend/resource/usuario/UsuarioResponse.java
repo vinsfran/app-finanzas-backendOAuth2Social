@@ -17,7 +17,7 @@ public class UsuarioResponse extends BaseResponse {
     @SerializedName("data")
     private UsuarioModel usuarioModel;
 
-    UsuarioResponse(Integer status, List<MessageResponse> messages, UsuarioModel usuarioModel) {
+    public UsuarioResponse(Integer status, List<MessageResponse> messages, UsuarioModel usuarioModel) {
         super(status, messages);
         this.usuarioModel = usuarioModel;
     }

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
@@ -76,8 +75,8 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional
-    public boolean create(PrestamoRequestNew request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento create(PrestamoRequestNew request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Prestamo entity = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToPrestamoEntity(request, usuarioId));
@@ -92,8 +91,7 @@ public class PrestamoServiceImpl implements PrestamoService {
             movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
             movimiento.setMonedaId(entity.getMonedaId());
             movimiento.setUsuarioId(entity.getUsuarioId());
-            movimientoService.registrarMovimiento(movimiento, multipartFileList);
-            retorno = true;
+            retorno = movimientoService.registrarMovimiento(movimiento);
         }
         return retorno;
     }
@@ -110,8 +108,8 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional
-    public boolean pagar(PrestamoRequestPago request, List<MultipartFile> multipartFileList, Long usuarioId) {
-        boolean retorno = false;
+    public Movimiento pagar(PrestamoRequestPago request, Long usuarioId) {
+        Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Optional<Prestamo> optional = prestamoRepository.findByIdAndUsuarioId(request.getId(), usuario);
@@ -133,8 +131,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
                 movimiento.setMonedaId(entity.getMonedaId());
                 movimiento.setUsuarioId(entity.getUsuarioId());
-                movimientoService.registrarMovimiento(movimiento, multipartFileList);
-                retorno = true;
+                retorno = movimientoService.registrarMovimiento(movimiento);
             }
         }
         return retorno;
