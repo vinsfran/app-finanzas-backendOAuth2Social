@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 
@@ -23,9 +22,5 @@ public class ArchivoModel implements Serializable {
     @JsonProperty("content_type")
     @SerializedName("content_type")
     private String contentType;
-
-    @JsonProperty("dato")
-    @SerializedName("dato")
-    private String dato;
 
 }

@@ -10,16 +10,16 @@ import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import java.util.List;
 
 @Data
-@ApiModel(value = "movimientoIdResponse", description = "Response de MovimientoIdResponse")
-public class MovimientoIdResponse extends BaseResponse {
+@ApiModel(value = "listStringResponse", description = "Response de ListStringResponse")
+public class ListStringResponse extends BaseResponse {
 
-    @JsonProperty("movimiento_id")
-    @SerializedName("movimiento_id")
-    private Long movimientoId;
+    @JsonProperty("data")
+    @SerializedName("data")
+    private List<String> stringList;
 
-    public MovimientoIdResponse(Integer status, List<MessageResponse> messages, Long movimientoId) {
+    public ListStringResponse(Integer status, List<MessageResponse> messages, List<String> stringList) {
         super(status, messages);
-        this.movimientoId = movimientoId;
+        this.stringList = stringList;
     }
 
 }

@@ -15,10 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.model.ListStringResponse;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
 import py.com.fuentepy.appfinanzasBackend.service.ArchivoService;
@@ -47,26 +47,30 @@ public class MovimientoResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @GetMapping("/archivos/{id}")
-    public ResponseEntity<?> getArchivos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                  @PathVariable Long id) {
+    @GetMapping("/documentos")
+    public ResponseEntity<?> getDocumentos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                           @RequestParam("movimiento_id") Long movimientoId) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            List<ArchivoModel> archivoModelList = archivoService.getArchivos(usuarioId, id, ConstantUtil.MOVIMIENTOS);
+            List<ArchivoModel> archivoModelList = archivoService.getArchivos(usuarioId, movimientoId, ConstantUtil.MOVIMIENTOS);
             if (archivoModelList == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: El Movimiento Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Movimiento Nro: ".concat(movimientoId.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
+                List<String> list = new ArrayList<>();
+                for (ArchivoModel archivoModel : archivoModelList) {
+                    list.add(archivoModel.getNombre());
+                }
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
                 messages.add(message);
-                response = new ArchivoResponse(httpStatus.value(), messages, archivoModelList);
+                response = new ListStringResponse(httpStatus.value(), messages, list);
             }
         } catch (DataAccessException e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

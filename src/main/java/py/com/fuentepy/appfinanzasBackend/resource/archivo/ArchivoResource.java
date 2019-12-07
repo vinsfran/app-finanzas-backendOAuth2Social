@@ -75,6 +75,29 @@ public class ArchivoResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
+    @GetMapping(value = "/movimientos/documentos", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> getResourceMovimientoByName(@RequestParam("file_name") String fileName,
+                                                                @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+        Long usuarioId = userPrincipal.getId();
+        Resource resource = null;
+        if (!fileName.isEmpty()) {
+            try {
+                resource = archivoService.getResourceByName(usuarioId, fileName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            throw new RuntimeException("No existe el archivo.");
+        }
+        HttpHeaders cabecera = new HttpHeaders();
+        cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
+        return new ResponseEntity<>(resource, cabecera, HttpStatus.OK);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @Secured({"ROLE_ADMIN"})
     @PostMapping("/usuarios/imagen-perfil")
     public ResponseEntity<?> uploadImagenPerfil(@RequestParam("image_profile") MultipartFile imageProfile,
                                                 @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
@@ -127,22 +150,18 @@ public class ArchivoResource {
     )
     @Secured({"ROLE_ADMIN"})
     @GetMapping(value = "/usuarios/imagen-perfil", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> getImagenPerfil(@RequestParam("image_profile") String imageProfile,
-                                                    @ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<Resource> getImagenPerfil(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         Long usuarioId = userPrincipal.getId();
         Resource resource = null;
-
-        if (!imageProfile.isEmpty()) {
-            try {
-                resource = archivoService.getImagenPerfil(usuarioId, imageProfile);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            throw new RuntimeException("No existe image_profile.");
+        try {
+            resource = archivoService.getImagenPerfil(usuarioId);
+        } catch (Exception ex) {
+            throw new RuntimeException("Error en imagen de perfil. " + ex.getCause().getMessage());
         }
         HttpHeaders cabecera = new HttpHeaders();
         cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"");
         return new ResponseEntity<>(resource, cabecera, HttpStatus.OK);
     }
+
+
 }

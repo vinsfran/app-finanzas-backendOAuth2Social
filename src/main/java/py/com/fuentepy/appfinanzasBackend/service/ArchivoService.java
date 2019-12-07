@@ -16,13 +16,17 @@ public interface ArchivoService {
 
     String save(Long tablaId, String tablaNombre, Long usuarioId, MultipartFile multipartFile) throws Exception;
 
+    void deleteFile(String nombreArchivo) throws Exception;
+
     boolean uploadDocumentsList(Long tablaId, String tablaNombre, Long usuarioId, List<MultipartFile> multipartFileList) throws Exception;
 
     void deleteFiles(Long tablaId, String tablaNombre, Long usuarioId) throws Exception;
 
-    Resource getArchivo(Long usuarioId, Long tablaId, String tablaNombre, String nombreArchivo) throws Exception;
+    Resource getResourceByName(Long usuarioId, String nombreArchivo) throws Exception;
+
+    List<Resource> getResources(Long usuarioId, Long tablaId, String tablaNombre) throws Exception;
 
     UsuarioModel uploadImagenPerfil(MultipartFile imageProfile, Long id) throws Exception;
 
-    Resource getImagenPerfil(Long usuarioId, String nombreArchivo) throws Exception;
+    Resource getImagenPerfil(Long usuarioId) throws Exception;
 }

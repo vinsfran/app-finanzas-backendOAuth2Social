@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,20 +73,6 @@ public class ArchivoServiceImpl implements ArchivoService {
             archivo.setContentType(multipartFile.getContentType());
             archivo.setNombre(nombreArchivo);
             archivo.setUsuarioId(usuario);
-            ArchivoModel archivoAnterior = null;
-            List<ArchivoModel> archivos = getArchivos(archivo.getUsuarioId().getId(), archivo.getTablaId(), archivo.getTablaNombre());
-            archivos.forEach(item -> System.out.println(item));
-            if (archivos != null && !archivos.isEmpty() && archivos.get(0).getNombre().length() > 0) {
-                archivoAnterior = archivos.get(0);
-                if (archivoAnterior != null) {
-                    Path rutaArchivoAnterior = Paths.get(ConstantUtil.UPLOADS).resolve(archivoAnterior.getNombre()).toAbsolutePath();
-                    File archivoBorrar = rutaArchivoAnterior.toFile();
-                    if (archivoBorrar.exists() && archivoBorrar.canRead()) {
-                        archivoBorrar.delete();
-                        archivo.setId(archivoAnterior.getId());
-                    }
-                }
-            }
             Path rutaArchivo = Paths.get(ConstantUtil.UPLOADS).resolve(archivo.getNombre()).toAbsolutePath();
             Files.copy(multipartFile.getInputStream(), rutaArchivo);
             archivoRepository.save(archivo);
@@ -93,6 +80,21 @@ public class ArchivoServiceImpl implements ArchivoService {
             throw new Exception("No se pudo guardar el Archivo! " + e.getMessage());
         }
         return nombreArchivo;
+    }
+
+    @Override
+    public void deleteFile(String nombreArchivo) throws Exception {
+        try {
+            Path rutaArchivoAnterior = Paths.get(ConstantUtil.UPLOADS).resolve(nombreArchivo).toAbsolutePath();
+            File archivoBorrar = rutaArchivoAnterior.toFile();
+            if (archivoBorrar.exists() && archivoBorrar.canRead()) {
+                archivoBorrar.delete();
+            } else {
+                throw new Exception("No existe o no se puede leer el Archivo!");
+            }
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Archivo! " + e.getMessage());
+        }
     }
 
     @Override
@@ -112,10 +114,11 @@ public class ArchivoServiceImpl implements ArchivoService {
     public void deleteFiles(Long tablaId, String tablaNombre, Long usuarioId) throws Exception {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        List<Long> archivosIds = archivoRepository.listArchivoIdByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
+        List<Archivo> archivos = archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
         try {
-            for (Long archivosId : archivosIds) {
-                archivoRepository.deleteById(archivosId);
+            for (Archivo archivo : archivos) {
+                deleteFile(archivo.getNombre());
+                archivoRepository.deleteById(archivo.getId());
             }
         } catch (Exception e) {
             throw new Exception("No se pudieron eliminar los Archivos! " + e.getMessage());
@@ -124,12 +127,11 @@ public class ArchivoServiceImpl implements ArchivoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Resource getArchivo(Long usuarioId, Long tablaId, String tablaNombre, String nombreArchivo) throws Exception {
+    public Resource getResourceByName(Long usuarioId, String nombreArchivo) throws Exception {
         Resource resource = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-
-        Archivo archivo = archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombreAndNombre(usuario, tablaId, tablaNombre, nombreArchivo);
+        Archivo archivo = archivoRepository.findByUsuarioIdAndNombre(usuario, nombreArchivo);
         if (archivo != null) {
             Path rutaArchivo = Paths.get(ConstantUtil.UPLOADS).resolve(archivo.getNombre()).toAbsolutePath();
             try {
@@ -137,15 +139,40 @@ public class ArchivoServiceImpl implements ArchivoService {
             } catch (MalformedURLException e) {
                 throw new Exception("Malformed URL! " + e.getCause().getMessage());
             }
-
             if (!resource.exists() && !resource.isReadable()) {
                 throw new Exception("No pudo cargar el Archivo: " + archivo.getNombre());
             }
-
         } else {
             throw new Exception("No existe el Archivo en la BD!");
         }
         return resource;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Resource> getResources(Long usuarioId, Long tablaId, String tablaNombre) throws Exception {
+        List<Resource> resources = new ArrayList<>();
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        List<Archivo> archivos = archivoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
+        if (archivos != null && !archivos.isEmpty()) {
+            for (Archivo archivo : archivos) {
+                Resource resource = null;
+                Path rutaArchivo = Paths.get(ConstantUtil.UPLOADS).resolve(archivo.getNombre()).toAbsolutePath();
+                try {
+                    resource = new UrlResource(rutaArchivo.toUri());
+                } catch (MalformedURLException e) {
+                    throw new Exception("Malformed URL! " + e.getCause().getMessage());
+                }
+                if (!resource.exists() && !resource.isReadable()) {
+                    throw new Exception("No pudo cargar el Archivo: " + archivo.getNombre());
+                }
+                resources.add(resource);
+            }
+        } else {
+            throw new Exception("No existe el Archivo en la BD!");
+        }
+        return resources;
     }
 
     @Override
@@ -156,6 +183,10 @@ public class ArchivoServiceImpl implements ArchivoService {
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
             try {
+                Archivo archivo = findFotoPerfil(usuario.getId());
+                if (archivo != null && archivo.getNombre().length() > 0) {
+                    deleteFile(archivo.getNombre());
+                }
                 String nombreArchivo = save(id, ConstantUtil.USUARIOS, usuario.getId(), multipartFile);
                 usuarioModel = new UsuarioModel();
                 usuarioModel.setId(usuario.getId());
@@ -172,12 +203,12 @@ public class ArchivoServiceImpl implements ArchivoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Resource getImagenPerfil(Long usuarioId, String nombreArchivo) throws Exception {
+    public Resource getImagenPerfil(Long usuarioId) throws Exception {
         Resource resource = null;
         Optional<Usuario> optional = usuarioRepository.findById(usuarioId);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
-            resource = getArchivo(usuario.getId(), usuarioId, ConstantUtil.USUARIOS, nombreArchivo);
+            resource = getResources(usuario.getId(), usuarioId, ConstantUtil.USUARIOS).get(0);
         } else {
             throw new Exception("No existe usuario.");
         }

@@ -15,6 +15,8 @@ public interface ArchivoRepository extends JpaRepository<Archivo, Long> {
 
     Archivo findByUsuarioIdAndTablaIdAndTablaNombreAndNombre(Usuario usuario, Long tablaId, String tablaNombre, String nombreArchivo);
 
+    Archivo findByUsuarioIdAndNombre(Usuario usuario, String nombreArchivo);
+
     @Query(value = "select u.id from Archivo u where u.usuarioId = :usuario and u.tablaId = :tablaId and u.tablaNombre = :tablaNombre")
     List<Long> listArchivoIdByUsuarioIdAndTablaIdAndTablaNombre(Usuario usuario, Long tablaId, String tablaNombre);
 }

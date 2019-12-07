@@ -1,8 +1,6 @@
 package py.com.fuentepy.appfinanzasBackend;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,9 +11,6 @@ import py.com.fuentepy.appfinanzasBackend.service.Impl.UsuarioServiceImpl;
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
 public class AppFinanzasBackendApplication implements CommandLineRunner {
-
-    @Value("${app.image64}")
-    private String imageProfileData;
 
     @Autowired
     private UsuarioServiceImpl usuarioService;

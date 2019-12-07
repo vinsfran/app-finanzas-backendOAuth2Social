@@ -27,7 +27,7 @@ public class StringUtil {
         String uuid = UUID.randomUUID().toString();
         nombreArchivo = nombreArchivo.replace(" ", "");
         nombreArchivo = removeCaracteresEspeciales(nombreArchivo);
-        String b64 = encodeBase64(tablaId + tablaNombre + nombreArchivo).toLowerCase();
+        String b64 = encodeBase64(tablaId + tablaNombre + nombreArchivo).toLowerCase() + uuid;
         nombreArchivo = b64 + "." + ext;
         return nombreArchivo;
     }
