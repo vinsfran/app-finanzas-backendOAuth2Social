@@ -25,6 +25,8 @@ public interface TarjetaService {
 
     boolean update(TarjetaRequestUpdate request, Long usuarioId);
 
+    boolean deuda(TarjetaRequestDeuda request, Long usuarioId);
+
     Movimiento pagar(TarjetaRequestPago request, Long usuarioId);
 
     Long countByTenantName(Long usuarioId);

@@ -96,6 +96,25 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     @Override
     @Transactional
+    public boolean deuda(TarjetaRequestDeuda request, Long usuarioId) {
+        boolean retorno = false;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Optional<Tarjeta> optional = tarjetaRepository.findByIdAndUsuarioId(request.getId(), usuario);
+        if (optional.isPresent()) {
+            Tarjeta entity = optional.get();
+            if (entity.getEstado()) {
+                entity.setDeudaTotal(entity.getDeudaTotal() + request.getDeuda());
+                entity.setMontoDisponible(entity.getMontoDisponible() + request.getDeuda());
+                tarjetaRepository.save(entity);
+                retorno = true;
+            }
+        }
+        return retorno;
+    }
+
+    @Override
+    @Transactional
     public Movimiento pagar(TarjetaRequestPago request, Long usuarioId) {
         Movimiento retorno = null;
         Usuario usuario = new Usuario();

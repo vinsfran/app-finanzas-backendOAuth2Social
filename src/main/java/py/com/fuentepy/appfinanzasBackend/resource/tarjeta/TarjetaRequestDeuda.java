@@ -12,20 +12,20 @@ import java.io.Serializable;
  * @author vinsfran
  */
 @Data
-@ApiModel(value = "tarjetaRequestPago", description = "Ejemplo de para Pago de una Tarjeta")
-public class TarjetaRequestPago implements Serializable {
+@ApiModel(value = "tarjetaRequestDeuda", description = "Ejemplo de para Deuda de una Tarjeta")
+public class TarjetaRequestDeuda implements Serializable {
 
     @ApiModelProperty(value = "Identificador Unico del Tarjeta", required = true)
     @JsonProperty("id")
     @SerializedName("id")
     private Long id;
 
-    @JsonProperty("numero_comprobante")
-    @SerializedName("numero_comprobante")
-    private String numeroComprobante;
+    @JsonProperty("deuda")
+    @SerializedName("deuda")
+    private Double deuda;
 
-    @JsonProperty("monto_pagado")
-    @SerializedName("monto_pagado")
-    private Double montoPagado;
+    @JsonProperty("detalle")
+    @SerializedName("detalle")
+    private String detalle;
 
 }

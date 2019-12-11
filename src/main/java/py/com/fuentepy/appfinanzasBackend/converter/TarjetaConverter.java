@@ -53,6 +53,7 @@ public class TarjetaConverter {
         usuario.setId(usuarioId);
         Tarjeta entity = new Tarjeta();
         entity.setMontoDisponible(request.getMontoDisponible());
+        entity.setDeudaTotal(0.0);
         entity.setNumeroTarjeta(request.getNumeroTarjeta());
         entity.setMarca(request.getMarca());
         entity.setLineaCredito(request.getLineaCredito());

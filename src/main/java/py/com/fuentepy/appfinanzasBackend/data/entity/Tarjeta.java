@@ -40,6 +40,9 @@ public class Tarjeta implements Serializable {
     @Column(name = "monto_ultimo_pago")
     private Double montoUltimoPago;
 
+    @Column(name = "deuda_total")
+    private Double deudaTotal;
+
     @Column(name = "fecha_vencimiento")
     @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
