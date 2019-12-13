@@ -69,7 +69,7 @@ public class PrestamoRequestUpdate implements Serializable {
     @ApiModelProperty(value = "Cantidad Cuotas Pagadas del Prestamo", required = true)
     @JsonProperty("cantidad_cuotas_pagadas")
     @SerializedName("cantidad_cuotas_pagadas")
-    private Long cantidadCuotasPagadas;
+    private Integer cantidadCuotasPagadas;
 
     @ApiModelProperty(value = "Monto Cuota del Prestamo", required = true)
     @JsonProperty("monto_cuota")

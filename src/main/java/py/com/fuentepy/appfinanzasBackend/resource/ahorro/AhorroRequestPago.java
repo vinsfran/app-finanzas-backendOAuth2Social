@@ -39,6 +39,6 @@ public class AhorroRequestPago implements Serializable {
 
     @JsonProperty("numero_cuota")
     @SerializedName("numero_cuota")
-    private Long numeroCuota;
+    private Integer numeroCuota;
 
 }

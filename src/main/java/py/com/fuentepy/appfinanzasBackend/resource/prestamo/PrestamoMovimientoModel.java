@@ -44,7 +44,7 @@ public class PrestamoMovimientoModel implements Serializable {
 
     @JsonProperty("numero_cuota")
     @SerializedName("numero_cuota")
-    private Long numeroCuota;
+    private Integer numeroCuota;
 
     @JsonProperty("tipo_movimiento")
     @SerializedName("tipo_movimiento")

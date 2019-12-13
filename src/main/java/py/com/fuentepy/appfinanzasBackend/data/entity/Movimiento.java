@@ -41,7 +41,7 @@ public class Movimiento implements Serializable {
     private Double monto;
 
     @Column(name = "numero_cuota")
-    private Long numeroCuota;
+    private Integer numeroCuota;
 
     @NotNull
     @Column(name = "signo")

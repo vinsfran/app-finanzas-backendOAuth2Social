@@ -52,11 +52,11 @@ public class Ahorro implements Serializable {
     @Column(name = "tasa")
     private Double tasa;
 
-    @Column(name = "cantidad_cuotas")
-    private Integer cantidadCuotas;
+    @Column(name = "cantidad_cuotas_cobradas")
+    private Integer cantidadCuotasCobradas;
 
     @Column(name = "cantidad_cuotas_pagadas")
-    private Long cantidadCuotasPagadas;
+    private Integer cantidadCuotasPagadas;
 
     @Column(name = "monto_cuota")
     private Double montoCuota;

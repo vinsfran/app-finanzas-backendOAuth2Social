@@ -135,9 +135,8 @@ public class AhorroServiceImpl implements AhorroService {
         if (optional.isPresent()) {
             Ahorro entity = optional.get();
             if (entity.getEstado()) {
-                entity.setCantidadCobro(request.getMontoCobrado());
-                entity.setEstado(false);
-                entity.setFechaFin(new Date());
+                entity.setCantidadCobro(entity.getCantidadCobro() + request.getMontoCobrado());
+                entity.setCantidadCuotasCobradas(entity.getCantidadCuotasCobradas() + 1);
                 ahorroRepository.save(entity);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());

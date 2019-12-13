@@ -65,7 +65,7 @@ public class AhorroConverter {
         entity.setMontoCuota(request.getMontoCuota());
         entity.setInteres(request.getInteres());
         entity.setTasa(request.getTasa());
-        entity.setCantidadCuotas(request.getCantidadCuotas());
+        entity.setCantidadCuotasCobradas(request.getCantidadCuotasCobradas());
         entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
         entity.setCantidadCobro(request.getCantidadCobro());
@@ -100,7 +100,7 @@ public class AhorroConverter {
         entity.setMontoCuota(request.getMontoCuota());
         entity.setInteres(request.getInteres());
         entity.setTasa(request.getTasa());
-        entity.setCantidadCuotas(request.getCantidadCuotas());
+        entity.setCantidadCuotasCobradas(request.getCantidadCuotasCobradas());
         entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
         entity.setCantidadCobro(request.getCantidadCobro());
@@ -137,7 +137,7 @@ public class AhorroConverter {
         entity.setMontoCuota(model.getMontoCuota());
         entity.setInteres(model.getInteres());
         entity.setTasa(model.getTasa());
-        entity.setCantidadCuotas(model.getCantidadCuotas());
+        entity.setCantidadCuotasCobradas(model.getCantidadCuotasCobradas());
         entity.setCantidadCuotasPagadas(model.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(model.getMontoInteresCuota());
         entity.setCantidadCobro(model.getCantidadCobro());
@@ -160,7 +160,7 @@ public class AhorroConverter {
         model.setMontoCuota(entity.getMontoCuota());
         model.setInteres(entity.getInteres());
         model.setTasa(entity.getTasa());
-        model.setCantidadCuotas(entity.getCantidadCuotas());
+        model.setCantidadCuotasCobradas(entity.getCantidadCuotasCobradas());
         model.setCantidadCuotasPagadas(entity.getCantidadCuotasPagadas());
         model.setMontoInteresCuota(entity.getMontoInteresCuota());
         model.setCantidadCobro(entity.getCantidadCobro());

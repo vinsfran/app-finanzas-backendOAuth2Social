@@ -27,15 +27,15 @@ public class AhorroRequestNew implements Serializable {
     @SerializedName("cantidad_cobro")
     private Double cantidadCobro;
 
-    @ApiModelProperty(value = "Cantidad de Cuotas", required = true)
-    @JsonProperty("cantidad_cuotas")
-    @SerializedName("cantidad_cuotas")
-    private Integer cantidadCuotas;
+    @ApiModelProperty(value = "Cantidad de Cuotas Cobradas", required = true)
+    @JsonProperty("cantidad_cuotas_cobradas")
+    @SerializedName("cantidad_cuotas_cobradas")
+    private Integer cantidadCuotasCobradas;
 
     @ApiModelProperty(value = "Cantidad de Cuotas Pagadas", required = true)
     @JsonProperty("cantidad_cuotas_pagadas")
     @SerializedName("cantidad_cuotas_pagadas")
-    private Long cantidadCuotasPagadas;
+    private Integer cantidadCuotasPagadas;
 
     @ApiModelProperty(value = "Id de la Entidad Financiera", required = true)
     @JsonProperty("entidad_financiera_id")
