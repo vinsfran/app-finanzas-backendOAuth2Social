@@ -30,4 +30,8 @@ public class AhorroRequestCobro implements Serializable {
     @SerializedName("monto_cobrado")
     private Double montoCobrado;
 
+    @JsonProperty("numero_cuota")
+    @SerializedName("numero_cuota")
+    private Integer numeroCuota;
+
 }

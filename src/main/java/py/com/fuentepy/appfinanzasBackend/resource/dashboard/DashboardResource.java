@@ -80,7 +80,7 @@ public class DashboardResource {
             dashboardModel.setSaldoTotalPrestamos(0.0);
             dashboardModel.setTotalCuotasMontoPrestamos(0.0);
             dashboardModel.setProximoVencimientoPrestamos(new Date());
-            for (Prestamo prestamo : prestamoService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
+            for (Prestamo prestamo : prestamoService.findByUsuarioAndEstado(usuarioId, true)) {
                 dashboardModel.setCantidadPrestamos(dashboardModel.getCantidadPrestamos() + 1);
                 dashboardModel.setSaldoTotalPrestamos(dashboardModel.getSaldoTotalPrestamos() + prestamo.getMontoPrestamo() - prestamo.getMontoPagado());
                 dashboardModel.setTotalCuotasMontoPrestamos(dashboardModel.getTotalCuotasMontoPrestamos() + prestamo.getMontoCuota());

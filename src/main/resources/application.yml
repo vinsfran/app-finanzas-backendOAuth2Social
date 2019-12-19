@@ -1,3 +1,5 @@
+server:
+  address: 192.168.0.13
 spring:
   servlet:
     multipart:
@@ -86,3 +88,4 @@ app:
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect
   urlResetPassword: http://35.224.58.42
+

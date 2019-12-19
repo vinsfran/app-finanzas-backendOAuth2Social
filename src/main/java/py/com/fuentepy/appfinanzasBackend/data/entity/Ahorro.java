@@ -25,6 +25,9 @@ public class Ahorro implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "objetivo_ahorro")
+    private String objetivoAhorro;
+
     @Column(name = "numero_comprobante")
     private String numeroComprobante;
 
@@ -51,6 +54,9 @@ public class Ahorro implements Serializable {
 
     @Column(name = "tasa")
     private Double tasa;
+
+    @Column(name = "cantidad_cuotas")
+    private Integer cantidadCuotas;
 
     @Column(name = "cantidad_cuotas_cobradas")
     private Integer cantidadCuotasCobradas;

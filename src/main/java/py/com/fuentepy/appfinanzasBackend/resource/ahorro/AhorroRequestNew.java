@@ -18,6 +18,10 @@ import java.util.Date;
 @ApiModel(value = "ahorroRequestNew", description = "Ejemplo de para un nuevo Ahorro")
 public class AhorroRequestNew implements Serializable {
 
+    @JsonProperty("objetivo_ahorro")
+    @SerializedName("objetivo_ahorro")
+    private String objetivoAhorro;
+
     @JsonProperty("numero_comprobante")
     @SerializedName("numero_comprobante")
     private String numeroComprobante;
@@ -26,6 +30,11 @@ public class AhorroRequestNew implements Serializable {
     @JsonProperty("cantidad_cobro")
     @SerializedName("cantidad_cobro")
     private Double cantidadCobro;
+
+    @ApiModelProperty(value = "Cantidad de Cuotas", required = true)
+    @JsonProperty("cantidad_cuotas")
+    @SerializedName("cantidad_cuotas")
+    private Integer cantidadCuotas;
 
     @ApiModelProperty(value = "Cantidad de Cuotas Cobradas", required = true)
     @JsonProperty("cantidad_cuotas_cobradas")

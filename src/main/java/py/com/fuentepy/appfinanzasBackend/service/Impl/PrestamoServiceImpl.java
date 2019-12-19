@@ -76,6 +76,8 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     @Transactional
     public Movimiento create(PrestamoRequestNew request, Long usuarioId) {
+
+        //SACAR REGISTRO DE MOVIMIENTOS
         Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -157,6 +159,14 @@ public class PrestamoServiceImpl implements PrestamoService {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         return prestamoRepository.findByUsuarioIdRangoFecha(usuario, fechaInicio, fechaFin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Prestamo> findByUsuarioAndEstado(Long usuarioId, boolean estado) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        return prestamoRepository.findByUsuarioIdAndEstado(usuario, estado);
     }
 
     @Override

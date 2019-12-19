@@ -33,6 +33,8 @@ public interface PrestamoService {
 
     List<Prestamo> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 
+    List<Prestamo> findByUsuarioAndEstado(Long usuarioId, boolean estado);
+
     List<PrestamoMovimientoModel> findByUsuarioAndPrestamoId(Long usuarioId, Long prestamoId);
 
     void delete(Long usuarioId, Long PrestamoId) throws Exception;

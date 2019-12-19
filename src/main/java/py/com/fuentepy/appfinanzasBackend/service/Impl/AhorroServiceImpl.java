@@ -77,11 +77,14 @@ public class AhorroServiceImpl implements AhorroService {
     @Override
     @Transactional
     public boolean create(AhorroRequestNew request, Long usuarioId) {
-        Ahorro entity = ahorroRepository.save(AhorroConverter.ahorroNewToAhorroEntity(request, usuarioId));
+        boolean retorno = false;
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Ahorro entity = ahorroRepository.saveAndFlush(AhorroConverter.ahorroNewToAhorroEntity(request, usuarioId));
         if (entity != null) {
-            return true;
+            retorno = true;
         }
-        return false;
+        return retorno;
     }
 
     @Override
@@ -114,7 +117,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
-                movimiento.setDetalle("Pago: Ahorro, Cuota: " + entity.getCantidadCuotasPagadas() + " - " + entity.getEntidadFinancieraId().getNombre());
+                movimiento.setDetalle("Pago: Ahorro, Cuota: " + entity.getCantidadCuotasPagadas());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());
@@ -136,14 +139,14 @@ public class AhorroServiceImpl implements AhorroService {
             Ahorro entity = optional.get();
             if (entity.getEstado()) {
                 entity.setCantidadCobro(entity.getCantidadCobro() + request.getMontoCobrado());
-                entity.setCantidadCuotasCobradas(entity.getCantidadCuotasCobradas() + 1);
+                entity.setCantidadCuotasCobradas(request.getNumeroCuota());
                 ahorroRepository.save(entity);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
                 movimiento.setFechaMovimiento(new Date());
                 movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setSigno("+");
-                movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId() + " - " + entity.getEntidadFinancieraId().getNombre());
+                movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());

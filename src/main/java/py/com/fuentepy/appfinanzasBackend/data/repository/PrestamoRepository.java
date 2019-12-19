@@ -26,4 +26,6 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
 
     @Query(value = "select u from Prestamo u where u.usuarioId = :usuario and u.fechaVencimiento BETWEEN :startDate and :endDate")
     List<Prestamo> findByUsuarioIdRangoFecha(@Param("usuario") Usuario usuario, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    List<Prestamo> findByUsuarioIdAndEstado(Usuario usuario, boolean estado);
 }

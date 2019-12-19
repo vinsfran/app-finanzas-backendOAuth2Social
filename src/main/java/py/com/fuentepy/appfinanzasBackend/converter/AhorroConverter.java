@@ -25,6 +25,7 @@ public class AhorroConverter {
     public static AhorroMovimientoModel movimientoToAhorroMovimientoModel(Movimiento movimiento) {
         AhorroMovimientoModel ahorroMovimientoModel = new AhorroMovimientoModel();
         ahorroMovimientoModel.setMovimientoId(movimiento.getId());
+        ahorroMovimientoModel.setDetalle(movimiento.getDetalle());
         ahorroMovimientoModel.setNumeroComprobante(movimiento.getNumeroComprobante());
         ahorroMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
         ahorroMovimientoModel.setMonto(movimiento.getMonto());
@@ -57,6 +58,7 @@ public class AhorroConverter {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
+        entity.setObjetivoAhorro(request.getObjetivoAhorro());
         entity.setNumeroComprobante(request.getNumeroComprobante());
         entity.setMontoCapital(request.getMontoCapital());
         entity.setFechaInicio(request.getFechaInicio());
@@ -65,6 +67,7 @@ public class AhorroConverter {
         entity.setMontoCuota(request.getMontoCuota());
         entity.setInteres(request.getInteres());
         entity.setTasa(request.getTasa());
+        entity.setCantidadCuotas(request.getCantidadCuotas());
         entity.setCantidadCuotasCobradas(request.getCantidadCuotasCobradas());
         entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
@@ -92,6 +95,7 @@ public class AhorroConverter {
         usuario.setId(usuarioId);
         Ahorro entity = new Ahorro();
         entity.setId(request.getId());
+        entity.setObjetivoAhorro(request.getObjetivoAhorro());
         entity.setNumeroComprobante(request.getNumeroComprobante());
         entity.setMontoCapital(request.getMontoCapital());
         entity.setFechaInicio(request.getFechaInicio());
@@ -100,6 +104,7 @@ public class AhorroConverter {
         entity.setMontoCuota(request.getMontoCuota());
         entity.setInteres(request.getInteres());
         entity.setTasa(request.getTasa());
+        entity.setCantidadCuotas(request.getCantidadCuotas());
         entity.setCantidadCuotasCobradas(request.getCantidadCuotasCobradas());
         entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
@@ -129,6 +134,7 @@ public class AhorroConverter {
         tipoCobro.setNombre(model.getTipoAhorroNombre());
         Ahorro entity = new Ahorro();
         entity.setId(model.getId());
+        entity.setObjetivoAhorro(model.getObjetivoAhorro());
         entity.setNumeroComprobante(model.getNumeroComprobante());
         entity.setMontoCapital(model.getMontoCapital());
         entity.setFechaInicio(model.getFechaInicio());
@@ -137,6 +143,7 @@ public class AhorroConverter {
         entity.setMontoCuota(model.getMontoCuota());
         entity.setInteres(model.getInteres());
         entity.setTasa(model.getTasa());
+        entity.setCantidadCuotas(model.getCantidadCuotas());
         entity.setCantidadCuotasCobradas(model.getCantidadCuotasCobradas());
         entity.setCantidadCuotasPagadas(model.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(model.getMontoInteresCuota());
@@ -152,6 +159,7 @@ public class AhorroConverter {
     public static AhorroModel entityToModel(Ahorro entity) {
         AhorroModel model = new AhorroModel();
         model.setId(entity.getId());
+        model.setObjetivoAhorro(entity.getObjetivoAhorro());
         model.setNumeroComprobante(entity.getNumeroComprobante());
         model.setMontoCapital(entity.getMontoCapital());
         model.setFechaInicio(entity.getFechaInicio());
@@ -160,6 +168,7 @@ public class AhorroConverter {
         model.setMontoCuota(entity.getMontoCuota());
         model.setInteres(entity.getInteres());
         model.setTasa(entity.getTasa());
+        model.setCantidadCuotas(entity.getCantidadCuotas());
         model.setCantidadCuotasCobradas(entity.getCantidadCuotasCobradas());
         model.setCantidadCuotasPagadas(entity.getCantidadCuotasPagadas());
         model.setMontoInteresCuota(entity.getMontoInteresCuota());
