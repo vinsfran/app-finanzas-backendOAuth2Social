@@ -72,6 +72,9 @@ public class AhorroConverter {
         entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
         entity.setCantidadCobro(request.getCantidadCobro());
+        if (request.getCantidadCuotasCobradas() > 0) {
+            entity.setCantidadCobro(request.getMontoCuota() * request.getCantidadCuotasCobradas());
+        }
         entity.setEstado(request.getEstado());
         entity.setTipoAhorroId(tipoAhorro);
         entity.setMonedaId(moneda);
@@ -109,6 +112,9 @@ public class AhorroConverter {
         entity.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
         entity.setMontoInteresCuota(request.getMontoInteresCuota());
         entity.setCantidadCobro(request.getCantidadCobro());
+        if (request.getCantidadCuotasCobradas() > 0) {
+            entity.setCantidadCobro(request.getMontoCuota() * request.getCantidadCuotasCobradas());
+        }
         entity.setEstado(request.getEstado());
         entity.setTipoAhorroId(tipoAhorro);
         entity.setMonedaId(moneda);

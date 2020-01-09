@@ -113,7 +113,7 @@ public class AhorroServiceImpl implements AhorroService {
                 ahorroRepository.save(entity);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
-                movimiento.setFechaMovimiento(new Date());
+                movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
@@ -143,7 +143,7 @@ public class AhorroServiceImpl implements AhorroService {
                 ahorroRepository.save(entity);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
-                movimiento.setFechaMovimiento(new Date());
+                movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId());
