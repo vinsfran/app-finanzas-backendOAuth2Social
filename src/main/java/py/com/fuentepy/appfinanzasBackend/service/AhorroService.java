@@ -38,4 +38,6 @@ public interface AhorroService {
     List<AhorroMovimientoModel> findByUsuarioAndAhorroId(Long usuarioId, Long ahorroId);
 
     void delete(Long usuarioId, Long AhorroId) throws Exception;
+
+    void deleteMovimiento(Long usuarioId, Long AhorroId, Long MovimientoId) throws Exception;
 }

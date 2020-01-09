@@ -103,6 +103,26 @@ public class AhorroResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
+    @GetMapping("/{ahorro_id}/movimientos/{movimiento_id}")
+    public ResponseEntity<?> deleteMovimiento(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                              @PathVariable Long ahorroId,
+                                              @PathVariable Long movimientoId) {
+        Long usuarioId = userPrincipal.getId();
+        Map<String, Object> response = new HashMap<>();
+        try {
+            ahorroService.deleteMovimiento(usuarioId, ahorroId, movimientoId);
+        } catch (Exception e) {
+            response.put("mensaje", "Error al realizar la consulta en la base de datos!");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("mensaje", "Movimiento borrado!");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,

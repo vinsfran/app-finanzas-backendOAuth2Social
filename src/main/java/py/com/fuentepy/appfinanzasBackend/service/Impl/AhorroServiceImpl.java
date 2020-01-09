@@ -13,6 +13,7 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.AhorroRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.ahorro.*;
+import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
@@ -145,6 +146,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
                 movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoCobrado());
+                movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId());
                 movimiento.setTablaId(entity.getId());
@@ -195,6 +197,27 @@ public class AhorroServiceImpl implements AhorroService {
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Ahorro! " + e.getMessage());
         }
+    }
+
+    @Override
+    public void deleteMovimiento(Long usuarioId, Long AhorroId, Long MovimientoId) throws Exception {
+        try {
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioId);
+            Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(AhorroId, usuario);
+            if (optional.isPresent()) {
+                Ahorro ahorro = optional.get();
+                MovimientoModel movimientoModel = movimientoService.findByIdAndUsuarioId(MovimientoId, usuarioId);
+                ahorro.setCantidadCobro(ahorro.getCantidadCobro() - movimientoModel.getMonto());
+                ahorroRepository.save(ahorro);
+                movimientoService.deleteMovimiento(usuarioId, MovimientoId);
+            } else {
+                throw new Exception("No existe ahorro!");
+            }
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Movimiento! " + e.getMessage());
+        }
+
     }
 
 }
