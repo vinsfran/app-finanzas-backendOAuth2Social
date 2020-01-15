@@ -33,7 +33,6 @@ public class AhorroServiceImpl implements AhorroService {
     @Autowired
     private MovimientoService movimientoService;
 
-
     @Override
     @Transactional(readOnly = true)
     public List<AhorroModel> findAll() {
@@ -64,7 +63,7 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional(readOnly = true)
-    public AhorroModel findByIdAndUsuarioId(Long id, Long usuarioId) {
+    public AhorroModel findByAhorroIdAndUsuarioId(Long id, Long usuarioId) {
         AhorroModel model = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
@@ -147,6 +146,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setMonto(request.getMontoCobrado());
+                movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId());
                 movimiento.setTablaId(entity.getId());
@@ -190,27 +190,28 @@ public class AhorroServiceImpl implements AhorroService {
 
     @Override
     @Transactional
-    public void delete(Long usuarioId, Long AhorroId) throws Exception {
+    public void delete(Long usuarioId, Long ahorroId) throws Exception {
         try {
-            movimientoService.deleteMovimientos(AhorroId, ConstantUtil.AHORROS, usuarioId);
-            ahorroRepository.deleteById(AhorroId);
+            movimientoService.deleteMovimientos(ahorroId, ConstantUtil.AHORROS, usuarioId);
+            ahorroRepository.deleteById(ahorroId);
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Ahorro! " + e.getMessage());
         }
     }
 
     @Override
-    public void deleteMovimiento(Long usuarioId, Long AhorroId, Long MovimientoId) throws Exception {
+    public void deleteMovimiento(Long usuarioId, Long ahorroId, Long movimientoId) throws Exception {
         try {
             Usuario usuario = new Usuario();
             usuario.setId(usuarioId);
-            Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(AhorroId, usuario);
+            Optional<Ahorro> optional = ahorroRepository.findByIdAndUsuarioId(ahorroId, usuario);
             if (optional.isPresent()) {
                 Ahorro ahorro = optional.get();
-                MovimientoModel movimientoModel = movimientoService.findByIdAndUsuarioId(MovimientoId, usuarioId);
+                MovimientoModel movimientoModel = movimientoService.findByIdAndUsuarioId(movimientoId, usuarioId);
                 ahorro.setCantidadCobro(ahorro.getCantidadCobro() - movimientoModel.getMonto());
+                ahorro.setCantidadCuotasCobradas(ahorro.getCantidadCuotasCobradas() - movimientoModel.getNumeroCuota());
                 ahorroRepository.save(ahorro);
-                movimientoService.deleteMovimiento(usuarioId, MovimientoId);
+                movimientoService.deleteMovimiento(usuarioId, movimientoId);
             } else {
                 throw new Exception("No existe ahorro!");
             }

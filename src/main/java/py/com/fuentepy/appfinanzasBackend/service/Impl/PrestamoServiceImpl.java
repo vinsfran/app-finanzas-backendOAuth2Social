@@ -10,12 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
+import py.com.fuentepy.appfinanzasBackend.data.entity.PrestamoCuotera;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoCuoteraRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.*;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
+import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +34,9 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Autowired
     private MovimientoService movimientoService;
+
+    @Autowired
+    private PrestamoCuoteraRepository prestamoCuoteraRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -81,18 +87,31 @@ public class PrestamoServiceImpl implements PrestamoService {
         Movimiento retorno = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        Prestamo entity = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToPrestamoEntity(request, usuarioId));
-        if (entity != null) {
+        Prestamo prestamo = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToPrestamoEntity(request, usuarioId));
+        if (prestamo != null) {
+
+            int totDias = 30;
+            for (int i = 0; i < request.getCantidadCuotas(); i++) {
+                PrestamoCuotera prestamoCuotera = new PrestamoCuotera();
+                prestamoCuotera.setPrestamoId(prestamo);
+                prestamoCuotera.setNumeroCuota(i + 1);
+                prestamoCuotera.setMontoCuota(prestamo.getMontoCuota());
+                prestamoCuotera.setFechaVencimiento(DateUtil.sumarDiasAFecha(prestamo.getFechaDesembolso(), totDias));
+                prestamoCuotera.setUsuarioId(prestamo.getUsuarioId());
+                totDias = totDias + 30;
+                prestamoCuoteraRepository.save(prestamoCuotera);
+            }
+
             Movimiento movimiento = new Movimiento();
-            movimiento.setNumeroComprobante(entity.getNumeroComprobante());
+            movimiento.setNumeroComprobante(prestamo.getNumeroComprobante());
             movimiento.setFechaMovimiento(new Date());
-            movimiento.setMonto(entity.getMontoPrestamo());
+            movimiento.setMonto(prestamo.getMontoPrestamo());
             movimiento.setSigno("+");
-            movimiento.setDetalle("Cobro: Prestamo: " + entity.getDestinoPrestamo() + " - " + entity.getEntidadFinancieraId().getNombre());
-            movimiento.setTablaId(entity.getId());
+            movimiento.setDetalle("Cobro: Prestamo: " + prestamo.getDestinoPrestamo() + " - " + prestamo.getEntidadFinancieraId().getNombre());
+            movimiento.setTablaId(prestamo.getId());
             movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
-            movimiento.setMonedaId(entity.getMonedaId());
-            movimiento.setUsuarioId(entity.getUsuarioId());
+            movimiento.setMonedaId(prestamo.getMonedaId());
+            movimiento.setUsuarioId(prestamo.getUsuarioId());
             retorno = movimientoService.registrarMovimiento(movimiento);
         }
         return retorno;

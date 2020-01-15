@@ -10,6 +10,8 @@ public interface ConstantUtil {
     String MONEDAS = "monedas";
     String MOVIMIENTOS = "movimientos";
     String PRESTAMOS = "prestamos";
+    String PRESTAMOS_CUOTERAS = "prestamos_cuoteras";
+    String PRESTAMOS_PAGOS = "prestamos_pagos";
     String PRESUPUESTOS = "presupuestos";
     String TARJETAS = "tarjetas";
     String TIPOS_AHORROS = "tipos_ahorros";

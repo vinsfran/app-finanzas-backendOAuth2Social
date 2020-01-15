@@ -78,14 +78,14 @@ public class AhorroResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
-    @GetMapping("/movimientos/{id}")
+    @GetMapping("/{ahorro_id}/movimientos")
     public ResponseEntity<?> getMovimientos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                            @PathVariable Long id) {
+                                            @PathVariable(name = "ahorro_id") Long ahorroId) {
         Long usuarioId = userPrincipal.getId();
         List<AhorroMovimientoModel> movimientos = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            movimientos = ahorroService.findByUsuarioAndAhorroId(usuarioId, id);
+            movimientos = ahorroService.findByUsuarioAndAhorroId(usuarioId, ahorroId);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -103,10 +103,10 @@ public class AhorroResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
-    @GetMapping("/{ahorro_id}/movimientos/{movimiento_id}")
+    @DeleteMapping("/{ahorro_id}/movimientos/{movimiento_id}")
     public ResponseEntity<?> deleteMovimiento(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                              @PathVariable Long ahorroId,
-                                              @PathVariable Long movimientoId) {
+                                              @PathVariable(name = "ahorro_id") Long ahorroId,
+                                              @PathVariable(name = "movimiento_id") Long movimientoId) {
         Long usuarioId = userPrincipal.getId();
         Map<String, Object> response = new HashMap<>();
         try {
@@ -124,19 +124,19 @@ public class AhorroResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @GetMapping("/{id}")
+    @GetMapping("/{ahorro_id}")
     public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                  @PathVariable Long id) {
+                                  @PathVariable(name = "ahorro_id") Long ahorroId) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            AhorroModel ahorroModel = ahorroService.findByIdAndUsuarioId(id, usuarioId);
+            AhorroModel ahorroModel = ahorroService.findByAhorroIdAndUsuarioId(ahorroId, usuarioId);
             if (ahorroModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: El Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Ahorro Nro: ".concat(ahorroId.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
@@ -224,7 +224,7 @@ public class AhorroResource {
             }
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
-            if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+            if (ahorroService.findByAhorroIdAndUsuarioId(id, usuarioId) == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
                 message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo editar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
@@ -269,7 +269,7 @@ public class AhorroResource {
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         Long id = ahorroRequestPago.getId();
-        if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+        if (ahorroService.findByAhorroIdAndUsuarioId(id, usuarioId) == null) {
             httpStatus = HttpStatus.NOT_FOUND;
             message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo pagar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
             messages.add(message);
@@ -313,7 +313,7 @@ public class AhorroResource {
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         Long id = ahorroRequestCobro.getId();
-        if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+        if (ahorroService.findByAhorroIdAndUsuarioId(id, usuarioId) == null) {
             httpStatus = HttpStatus.NOT_FOUND;
             message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo cobrar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
             messages.add(message);
@@ -348,23 +348,23 @@ public class AhorroResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{ahorro_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @PathVariable Long id) {
+                                    @PathVariable(name = "ahorro_id") Long ahorroId) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        if (ahorroService.findByIdAndUsuarioId(id, usuarioId) == null) {
+        if (ahorroService.findByAhorroIdAndUsuarioId(ahorroId, usuarioId) == null) {
             httpStatus = HttpStatus.NOT_FOUND;
-            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo borrar, el Ahorro Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo borrar, el Ahorro Nro: ".concat(ahorroId.toString()).concat(" no existe en la base de datos!"));
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                ahorroService.delete(usuarioId, id);
+                ahorroService.delete(usuarioId, ahorroId);
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "El Ahorro ha sido borrado con éxito!");
                 messages.add(message);

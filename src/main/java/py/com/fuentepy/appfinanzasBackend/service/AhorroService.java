@@ -19,7 +19,7 @@ public interface AhorroService {
 
     Page<AhorroModel> findByUsuarioId(Long usuarioId, Pageable pageable);
 
-    AhorroModel findByIdAndUsuarioId(Long id, Long usuarioId);
+    AhorroModel findByAhorroIdAndUsuarioId(Long ahorroId, Long usuarioId);
 
     boolean create(AhorroRequestNew request, Long usuarioId);
 
@@ -37,7 +37,7 @@ public interface AhorroService {
 
     List<AhorroMovimientoModel> findByUsuarioAndAhorroId(Long usuarioId, Long ahorroId);
 
-    void delete(Long usuarioId, Long AhorroId) throws Exception;
+    void delete(Long usuarioId, Long ahorroId) throws Exception;
 
-    void deleteMovimiento(Long usuarioId, Long AhorroId, Long MovimientoId) throws Exception;
+    void deleteMovimiento(Long usuarioId, Long ahorroId, Long movimientoId) throws Exception;
 }
