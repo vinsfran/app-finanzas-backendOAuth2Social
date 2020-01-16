@@ -8,11 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.data.entity.PrestamoCuotera;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoCuoteraRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoPagoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.*;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
@@ -37,6 +35,9 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Autowired
     private PrestamoCuoteraRepository prestamoCuoteraRepository;
+
+    @Autowired
+    private PrestamoPagoRepository prestamoPagoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -96,7 +97,9 @@ public class PrestamoServiceImpl implements PrestamoService {
                 prestamoCuotera.setPrestamoId(prestamo);
                 prestamoCuotera.setNumeroCuota(i + 1);
                 prestamoCuotera.setMontoCuota(prestamo.getMontoCuota());
+                prestamoCuotera.setSaldoCuota(prestamo.getMontoCuota());
                 prestamoCuotera.setFechaVencimiento(DateUtil.sumarDiasAFecha(prestamo.getFechaDesembolso(), totDias));
+                prestamoCuotera.setEstadoCuota(ConstantUtil.CUOTA_PENDIENTE);
                 prestamoCuotera.setUsuarioId(prestamo.getUsuarioId());
                 totDias = totDias + 30;
                 prestamoCuoteraRepository.save(prestamoCuotera);
@@ -135,24 +138,53 @@ public class PrestamoServiceImpl implements PrestamoService {
         usuario.setId(usuarioId);
         Optional<Prestamo> optional = prestamoRepository.findByIdAndUsuarioId(request.getId(), usuario);
         if (optional.isPresent()) {
-            Prestamo entity = optional.get();
-            if (entity.getEstado()) {
-                entity.setCantidadCuotasPagadas(request.getNumeroCuota());
-                entity.setMontoUltimoPago(request.getMontoPagado());
-                entity.setMontoPagado(entity.getMontoPagado() + entity.getMontoUltimoPago());
-                prestamoRepository.save(entity);
+            Prestamo prestamo = optional.get();
+            if (prestamo.getEstado()) {
+                prestamo.setCantidadCuotasPagadas(request.getNumeroCuota());
+                prestamo.setMontoUltimoPago(request.getMontoPagado());
+                prestamo.setMontoPagado(prestamo.getMontoPagado() + prestamo.getMontoUltimoPago());
+                prestamoRepository.save(prestamo);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
                 movimiento.setFechaMovimiento(new Date());
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
-                movimiento.setDetalle("Pago: Prestamo: " + entity.getDestinoPrestamo() + ", Cuota: " + entity.getCantidadCuotasPagadas() + " - " + entity.getEntidadFinancieraId().getNombre());
-                movimiento.setTablaId(entity.getId());
+                movimiento.setDetalle("Pago: Prestamo: " + prestamo.getDestinoPrestamo() + ", Cuota: " + prestamo.getCantidadCuotasPagadas() + " - " + prestamo.getEntidadFinancieraId().getNombre());
+                movimiento.setTablaId(prestamo.getId());
                 movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
-                movimiento.setMonedaId(entity.getMonedaId());
-                movimiento.setUsuarioId(entity.getUsuarioId());
+                movimiento.setMonedaId(prestamo.getMonedaId());
+                movimiento.setUsuarioId(prestamo.getUsuarioId());
                 retorno = movimientoService.registrarMovimiento(movimiento);
+
+                List<PrestamoCuotera> prestamoCuoteraList = prestamoCuoteraRepository.findByPrestamoIdAndUsuarioIdAndEstadoCuota(prestamo, usuario, ConstantUtil.CUOTA_PENDIENTE);
+                Double montoPago = request.getMontoPagado();
+                boolean salir = true;
+                LOG.info(prestamoCuoteraList.size());
+                int i = 0;
+                while (salir) {
+                    PrestamoCuotera prestamoCuotera = prestamoCuoteraList.get(i);
+                    LOG.info(prestamoCuotera.getNumeroCuota());
+                    PrestamoPago prestamoPago = new PrestamoPago();
+                    if (montoPago > prestamoCuotera.getSaldoCuota() || montoPago.equals(prestamoCuotera.getSaldoCuota())) {
+                        montoPago = montoPago - prestamoCuotera.getSaldoCuota();
+                        prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota());
+                        prestamoCuotera.setEstadoCuota(ConstantUtil.CUOTA_PAGADA);
+                    } else {
+                        prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() - montoPago);
+                        salir = false;
+                    }
+                    i++;
+                    prestamoPago.setMontoPago(prestamoCuotera.getSaldoCuota());
+                    prestamoPago.setNumeroCuota(prestamoCuotera.getNumeroCuota());
+                    prestamoPago.setPrestamoId(prestamo);
+                    prestamoPago.setMovimientoId(retorno);
+                    prestamoPago.setUsuarioId(usuario);
+                    prestamoPago.setFechaPago(retorno.getFechaMovimiento());
+                    prestamoPagoRepository.save(prestamoPago);
+                    prestamoCuoteraRepository.save(prestamoCuotera);
+
+                }
             }
         }
         return retorno;

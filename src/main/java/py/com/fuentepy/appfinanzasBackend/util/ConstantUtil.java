@@ -19,4 +19,6 @@ public interface ConstantUtil {
     String TIPOS_PAGOS = "tipos_pagos";
     String USUARIOS = "usuarios";
     String UPLOADS = "/var/opt/archivos";
+    String CUOTA_PENDIENTE = "PENDIENTE";
+    String CUOTA_PAGADA = "PAGADO";
 }

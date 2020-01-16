@@ -28,9 +28,15 @@ public class PrestamoCuotera implements Serializable {
     @Column(name = "monto_cuota")
     private Double montoCuota;
 
+    @Column(name = "saldo_cuota")
+    private Double saldoCuota;
+
     @Column(name = "fecha_vencimiento")
     @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
+
+    @Column(name = "estado_cuota")
+    private String estadoCuota;
 
     @JoinColumn(name = "prestamo_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
