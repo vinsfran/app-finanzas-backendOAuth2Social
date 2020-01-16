@@ -21,7 +21,7 @@ public interface PrestamoService {
 
     PrestamoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    Movimiento create(PrestamoRequestNew request, Long usuarioId);
+    boolean create(PrestamoRequestNew request, Long usuarioId);
 
     boolean update(PrestamoRequestUpdate request, Long usuarioId);
 
@@ -39,4 +39,5 @@ public interface PrestamoService {
 
     void delete(Long usuarioId, Long PrestamoId) throws Exception;
 
+    void deleteMovimiento(Long usuarioId, Long prestamoId, Long movimientoId) throws Exception;
 }

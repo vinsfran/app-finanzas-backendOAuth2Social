@@ -25,6 +25,8 @@ public interface MovimientoService {
 
     Movimiento registrarMovimiento(Movimiento movimiento);
 
+    Movimiento update(Movimiento movimiento);
+
     List<Movimiento> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin);
 
     List<Movimiento> findByUsuarioIdAndTablaIdAndTablaNombre(Long usuarioId, Long tablaId, String tablaNombre);

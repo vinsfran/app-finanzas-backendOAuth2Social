@@ -218,7 +218,6 @@ public class AhorroServiceImpl implements AhorroService {
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Movimiento! " + e.getMessage());
         }
-
     }
 
 }

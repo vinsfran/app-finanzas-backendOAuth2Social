@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
 @RequestMapping("/api/ahorros")
 public class AhorroResource {
@@ -255,9 +254,8 @@ public class AhorroResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = ""),
-    }
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_ADMIN"})
     @PostMapping(value = "/pagar")

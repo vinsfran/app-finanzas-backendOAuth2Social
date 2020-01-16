@@ -87,6 +87,13 @@ public class MovimientoServiceImpl implements MovimientoService {
     }
 
     @Override
+    @Transactional
+    public Movimiento update(Movimiento movimiento) {
+        movimiento = movimientoRepository.saveAndFlush(movimiento);
+        return movimiento;
+    }
+
+    @Override
     public List<Movimiento> movimientosByUsuarioAndRangoFecha(Long usuarioId, Date fechaInicio, Date fechaFin) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);

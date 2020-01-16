@@ -15,7 +15,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
@@ -78,14 +77,14 @@ public class PrestamoResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
-    @GetMapping("/movimientos/{id}")
+    @GetMapping("/{prestamo_id}/movimientos")
     public ResponseEntity<?> getMovimientos(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                            @PathVariable Long id) {
+                                            @PathVariable(name = "prestamo_id") Long prestamoId) {
         Long usuarioId = userPrincipal.getId();
         List<PrestamoMovimientoModel> movimientos = null;
         Map<String, Object> response = new HashMap<>();
         try {
-            movimientos = prestamoService.findByUsuarioAndPrestamoId(usuarioId, id);
+            movimientos = prestamoService.findByUsuarioAndPrestamoId(usuarioId, prestamoId);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -103,20 +102,40 @@ public class PrestamoResource {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
+    @DeleteMapping("/{prestamo_id}/movimientos/{movimiento_id}")
+    public ResponseEntity<?> deleteMovimiento(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                              @PathVariable(name = "prestamo_id") Long prestamoId,
+                                              @PathVariable(name = "movimiento_id") Long movimientoId) {
+        Long usuarioId = userPrincipal.getId();
+        Map<String, Object> response = new HashMap<>();
+        try {
+            prestamoService.deleteMovimiento(usuarioId, prestamoId, movimientoId);
+        } catch (Exception e) {
+            response.put("mensaje", "Error al realizar la consulta en la base de datos!");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("mensaje", "Movimiento borrado!");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @GetMapping("/{id}")
+    @GetMapping("/{prestamo_id}")
     public ResponseEntity<?> show(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                  @PathVariable Long id) {
+                                  @PathVariable(name = "prestamo_id") Long prestamoId) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            PrestamoModel prestamoModel = prestamoService.findByIdAndUsuarioId(id, usuarioId);
+            PrestamoModel prestamoModel = prestamoService.findByIdAndUsuarioId(prestamoId, usuarioId);
             if (prestamoModel == null) {
                 httpStatus = HttpStatus.NOT_FOUND;
-                message = new MessageResponse(StatusLevel.WARNING, "Error: El Prestamo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+                message = new MessageResponse(StatusLevel.WARNING, "Error: El Prestamo Nro: ".concat(prestamoId.toString()).concat(" no existe en la base de datos!"));
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             } else {
@@ -149,12 +168,11 @@ public class PrestamoResource {
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
         try {
-            Movimiento movimiento = prestamoService.create(prestamoNew, usuarioId);
-            if (movimiento != null) {
+            if (prestamoService.create(prestamoNew, usuarioId)) {
                 httpStatus = HttpStatus.CREATED;
                 message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido creado con éxito!");
                 messages.add(message);
-                response = new MovimientoIdResponse(httpStatus.value(), messages, movimiento.getId());
+                response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
                 message = new MessageResponse(StatusLevel.ERROR, "El Prestamo no se pudo crear!");
@@ -273,23 +291,23 @@ public class PrestamoResource {
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{prestamo_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                    @PathVariable Long id) {
+                                    @PathVariable(name = "prestamo_id") Long prestamoId) {
         HttpStatus httpStatus;
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         Long usuarioId = userPrincipal.getId();
-        if (prestamoService.findByIdAndUsuarioId(id, usuarioId) == null) {
+        if (prestamoService.findByIdAndUsuarioId(prestamoId, usuarioId) == null) {
             httpStatus = HttpStatus.NOT_FOUND;
-            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo borrar, el Prestamo Nro: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            message = new MessageResponse(StatusLevel.WARNING, "Error: no se pudo borrar, el Prestamo Nro: ".concat(prestamoId.toString()).concat(" no existe en la base de datos!"));
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                prestamoService.delete(usuarioId, id);
+                prestamoService.delete(usuarioId, prestamoId);
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "El Prestamo ha sido borrado con éxito!");
                 messages.add(message);

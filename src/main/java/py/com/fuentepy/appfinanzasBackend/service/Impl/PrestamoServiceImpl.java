@@ -12,6 +12,7 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoCuoteraRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoPagoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.*;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
@@ -82,15 +83,12 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional
-    public Movimiento create(PrestamoRequestNew request, Long usuarioId) {
-
-        //SACAR REGISTRO DE MOVIMIENTOS
-        Movimiento retorno = null;
+    public boolean create(PrestamoRequestNew request, Long usuarioId) {
+        boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         Prestamo prestamo = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToPrestamoEntity(request, usuarioId));
         if (prestamo != null) {
-
             int totDias = 30;
             for (int i = 0; i < request.getCantidadCuotas(); i++) {
                 PrestamoCuotera prestamoCuotera = new PrestamoCuotera();
@@ -104,18 +102,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 totDias = totDias + 30;
                 prestamoCuoteraRepository.save(prestamoCuotera);
             }
-
-            Movimiento movimiento = new Movimiento();
-            movimiento.setNumeroComprobante(prestamo.getNumeroComprobante());
-            movimiento.setFechaMovimiento(new Date());
-            movimiento.setMonto(prestamo.getMontoPrestamo());
-            movimiento.setSigno("+");
-            movimiento.setDetalle("Cobro: Prestamo: " + prestamo.getDestinoPrestamo() + " - " + prestamo.getEntidadFinancieraId().getNombre());
-            movimiento.setTablaId(prestamo.getId());
-            movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
-            movimiento.setMonedaId(prestamo.getMonedaId());
-            movimiento.setUsuarioId(prestamo.getUsuarioId());
-            retorno = movimientoService.registrarMovimiento(movimiento);
+            retorno = true;
         }
         return retorno;
     }
@@ -150,40 +137,53 @@ public class PrestamoServiceImpl implements PrestamoService {
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
-                movimiento.setDetalle("Pago: Prestamo: " + prestamo.getDestinoPrestamo() + ", Cuota: " + prestamo.getCantidadCuotasPagadas() + " - " + prestamo.getEntidadFinancieraId().getNombre());
+                movimiento.setDetalle("Pago: Prestamo: " + prestamo.getDestinoPrestamo());
                 movimiento.setTablaId(prestamo.getId());
                 movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
                 movimiento.setMonedaId(prestamo.getMonedaId());
                 movimiento.setUsuarioId(prestamo.getUsuarioId());
                 retorno = movimientoService.registrarMovimiento(movimiento);
 
-                List<PrestamoCuotera> prestamoCuoteraList = prestamoCuoteraRepository.findByPrestamoIdAndUsuarioIdAndEstadoCuota(prestamo, usuario, ConstantUtil.CUOTA_PENDIENTE);
+                List<PrestamoCuotera> prestamoCuoteraList = prestamoCuoteraRepository.findByPrestamoIdAndUsuarioIdAndEstadoCuotaOrderByNumeroCuota(prestamo, usuario, ConstantUtil.CUOTA_PENDIENTE);
                 Double montoPago = request.getMontoPagado();
-                boolean salir = true;
-                LOG.info(prestamoCuoteraList.size());
-                int i = 0;
-                while (salir) {
-                    PrestamoCuotera prestamoCuotera = prestamoCuoteraList.get(i);
-                    LOG.info(prestamoCuotera.getNumeroCuota());
+                Double montoPagoReal = 0.0;
+                boolean salir = false;
+                LOG.info(prestamoCuoteraList.size() + " " + prestamoCuoteraList.get(0).getNumeroCuota() + " " + prestamoCuoteraList.get(prestamoCuoteraList.size() - 1).getNumeroCuota());
+                PrestamoCuotera ultimoElementoRecorrido = new PrestamoCuotera();
+                for (PrestamoCuotera prestamoCuotera : prestamoCuoteraList) {
                     PrestamoPago prestamoPago = new PrestamoPago();
                     if (montoPago > prestamoCuotera.getSaldoCuota() || montoPago.equals(prestamoCuotera.getSaldoCuota())) {
+                        LOG.info("MA " + prestamoCuotera.getNumeroCuota() + " montoPago: " + montoPago + " getSaldoCuota: " + prestamoCuotera.getSaldoCuota());
                         montoPago = montoPago - prestamoCuotera.getSaldoCuota();
-                        prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota());
+                        prestamoPago.setMontoPago(prestamoCuotera.getSaldoCuota());
+                        prestamoCuotera.setSaldoCuota(0.0);
                         prestamoCuotera.setEstadoCuota(ConstantUtil.CUOTA_PAGADA);
+                        if (montoPago == 0.0) {
+                            salir = true;
+                        }
                     } else {
+                        LOG.info("ME " + prestamoCuotera.getNumeroCuota() + " montoPago: " + montoPago + " getSaldoCuota: " + prestamoCuotera.getSaldoCuota());
+                        prestamoPago.setMontoPago(montoPago);
                         prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() - montoPago);
-                        salir = false;
+                        salir = true;
                     }
-                    i++;
-                    prestamoPago.setMontoPago(prestamoCuotera.getSaldoCuota());
+                    montoPagoReal = montoPagoReal + prestamoPago.getMontoPago();
                     prestamoPago.setNumeroCuota(prestamoCuotera.getNumeroCuota());
                     prestamoPago.setPrestamoId(prestamo);
                     prestamoPago.setMovimientoId(retorno);
                     prestamoPago.setUsuarioId(usuario);
                     prestamoPago.setFechaPago(retorno.getFechaMovimiento());
                     prestamoPagoRepository.save(prestamoPago);
-                    prestamoCuoteraRepository.save(prestamoCuotera);
-
+                    ultimoElementoRecorrido = prestamoCuoteraRepository.saveAndFlush(prestamoCuotera);
+                    if (salir) {
+                        break;
+                    }
+                }
+                if (ultimoElementoRecorrido.getNumeroCuota().equals(prestamoCuoteraList.get(prestamoCuoteraList.size() - 1).getNumeroCuota()) && ultimoElementoRecorrido.getSaldoCuota().equals(0.0)) {
+                    prestamo.setEstado(false);
+                    prestamoRepository.save(prestamo);
+                    retorno.setMonto(montoPagoReal);
+                    retorno = movimientoService.registrarMovimiento(retorno);
                 }
             }
         }
@@ -233,6 +233,27 @@ public class PrestamoServiceImpl implements PrestamoService {
             prestamoRepository.deleteById(PrestamoId);
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Prestamo! " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteMovimiento(Long usuarioId, Long prestamoId, Long movimientoId) throws Exception {
+        try {
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioId);
+            Optional<Prestamo> optional = prestamoRepository.findByIdAndUsuarioId(prestamoId, usuario);
+            if (optional.isPresent()) {
+                Prestamo prestamo = optional.get();
+                MovimientoModel movimientoModel = movimientoService.findByIdAndUsuarioId(movimientoId, usuarioId);
+                prestamo.setMontoPagado(prestamo.getMontoPagado() - movimientoModel.getMonto());
+                prestamo.setCantidadCuotasPagadas(prestamo.getCantidadCuotasPagadas() - movimientoModel.getNumeroCuota());
+                prestamoRepository.save(prestamo);
+                movimientoService.deleteMovimiento(usuarioId, movimientoId);
+            } else {
+                throw new Exception("No existe ahorro!");
+            }
+        } catch (Exception e) {
+            throw new Exception("No se pudo eliminar el Movimiento! " + e.getMessage());
         }
     }
 }
