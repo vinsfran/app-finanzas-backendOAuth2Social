@@ -1,8 +1,14 @@
 package py.com.fuentepy.appfinanzasBackend.resource.prestamo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
+import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -29,9 +35,21 @@ public class PrestamoModel implements Serializable {
     @SerializedName("fecha_desembolso")
     private Date fechaDesembolso;
 
+    @ApiModelProperty(value = "Fecha de Vencimiento", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("fecha_vencimiento")
     @SerializedName("fecha_vencimiento")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date fechaVencimiento;
+
+    @ApiModelProperty(value = "Fecha Proximo Vencimiento", required = false, example = "AAAA-MM-DD")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("fecha_prox_vencimiento")
+    @SerializedName("fecha_prox_vencimiento")
+    @JsonSerialize(using = JsonDateSimpleSerializer.class)
+    @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
+    private Date fechaProxVencimiento;
 
     @JsonProperty("interes")
     @SerializedName("interes")
@@ -49,9 +67,17 @@ public class PrestamoModel implements Serializable {
     @SerializedName("cantidad_cuotas_pagadas")
     private Integer cantidadCuotasPagadas;
 
+    @JsonProperty("siguiente_cuota")
+    @SerializedName("siguiente_cuota")
+    private Integer siguienteCuota;
+
     @JsonProperty("monto_cuota")
     @SerializedName("monto_cuota")
     private Double montoCuota;
+
+    @JsonProperty("saldo_cuota")
+    @SerializedName("saldo_cuota")
+    private Double saldoCuota;
 
     @JsonProperty("monto_pagado")
     @SerializedName("monto_pagado")

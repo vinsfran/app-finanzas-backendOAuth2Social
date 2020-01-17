@@ -133,7 +133,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 prestamoRepository.save(prestamo);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
-                movimiento.setFechaMovimiento(new Date());
+                movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
@@ -150,8 +150,18 @@ public class PrestamoServiceImpl implements PrestamoService {
                 boolean salir = false;
                 LOG.info(prestamoCuoteraList.size() + " " + prestamoCuoteraList.get(0).getNumeroCuota() + " " + prestamoCuoteraList.get(prestamoCuoteraList.size() - 1).getNumeroCuota());
                 PrestamoCuotera ultimoElementoRecorrido = new PrestamoCuotera();
-                for (PrestamoCuotera prestamoCuotera : prestamoCuoteraList) {
+                int cont = prestamoCuoteraList.size();
+                for (int i = 0; i < prestamoCuoteraList.size(); i++) {
+                    cont--;
+                    PrestamoCuotera prestamoCuotera = prestamoCuoteraList.get(i);
                     PrestamoPago prestamoPago = new PrestamoPago();
+                    prestamo.setFechaProxVencimiento(prestamoCuotera.getFechaVencimiento());
+                    prestamo.setSaldoCuota(prestamoCuotera.getSaldoCuota());
+                    prestamo.setSiguienteCuota(prestamoCuotera.getNumeroCuota());
+                    prestamo.setMontoMoraTotal(prestamo.getMontoMoraTotal() + request.getMontoMora());
+                    if (request.getNumeroCuota().equals(prestamoCuotera.getNumeroCuota())) {
+                        prestamoPago.setMontoMora(request.getMontoMora());
+                    }
                     if (montoPago > prestamoCuotera.getSaldoCuota() || montoPago.equals(prestamoCuotera.getSaldoCuota())) {
                         LOG.info("MA " + prestamoCuotera.getNumeroCuota() + " montoPago: " + montoPago + " getSaldoCuota: " + prestamoCuotera.getSaldoCuota());
                         montoPago = montoPago - prestamoCuotera.getSaldoCuota();
@@ -161,12 +171,19 @@ public class PrestamoServiceImpl implements PrestamoService {
                         if (montoPago == 0.0) {
                             salir = true;
                         }
+                        if (0 < cont) {
+                            LOG.info("DENTRO: " + cont);
+                            prestamo.setFechaProxVencimiento(prestamoCuoteraList.get(i + 1).getFechaVencimiento());
+                            prestamo.setSaldoCuota(prestamoCuoteraList.get(i + 1).getSaldoCuota());
+                            prestamo.setSiguienteCuota(prestamoCuoteraList.get(i + 1).getNumeroCuota());
+                        }
                     } else {
                         LOG.info("ME " + prestamoCuotera.getNumeroCuota() + " montoPago: " + montoPago + " getSaldoCuota: " + prestamoCuotera.getSaldoCuota());
                         prestamoPago.setMontoPago(montoPago);
                         prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() - montoPago);
                         salir = true;
                     }
+                    prestamo.setCantidadCuotasPagadas(prestamoCuotera.getNumeroCuota());
                     montoPagoReal = montoPagoReal + prestamoPago.getMontoPago();
                     prestamoPago.setNumeroCuota(prestamoCuotera.getNumeroCuota());
                     prestamoPago.setPrestamoId(prestamo);
@@ -175,7 +192,9 @@ public class PrestamoServiceImpl implements PrestamoService {
                     prestamoPago.setFechaPago(retorno.getFechaMovimiento());
                     prestamoPagoRepository.save(prestamoPago);
                     ultimoElementoRecorrido = prestamoCuoteraRepository.saveAndFlush(prestamoCuotera);
+
                     if (salir) {
+                        prestamoRepository.save(prestamo);
                         break;
                     }
                 }

@@ -38,6 +38,10 @@ public class Prestamo implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
 
+    @Column(name = "fecha_prox_vencimiento")
+    @Temporal(TemporalType.DATE)
+    private Date fechaProxVencimiento;
+
     @Column(name = "interes")
     private Double interes;
 
@@ -49,12 +53,21 @@ public class Prestamo implements Serializable {
 
     @Column(name = "cantidad_cuotas_pagadas")
     private Integer cantidadCuotasPagadas;
-    
+
+    @Column(name = "siguiente_cuota")
+    private Integer siguienteCuota;
+
     @Column(name = "monto_cuota")
     private Double montoCuota;
 
     @Column(name = "monto_pagado")
     private Double montoPagado;
+
+    @Column(name = "monto_mora_total")
+    private Double montoMoraTotal;
+
+    @Column(name = "saldo_cuota")
+    private Double saldoCuota;
 
     @Column(name = "monto_ultimo_pago")
     private Double montoUltimoPago;

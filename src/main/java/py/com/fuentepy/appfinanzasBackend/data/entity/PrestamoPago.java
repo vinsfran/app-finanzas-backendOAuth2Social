@@ -30,6 +30,9 @@ public class PrestamoPago implements Serializable {
     @Column(name = "monto_pago")
     private Double montoPago;
 
+    @Column(name = "monto_mora")
+    private Double montoMora;
+
     @Column(name = "fecha_pago")
     @Temporal(TemporalType.DATE)
     private Date fechaPago;

@@ -12,6 +12,7 @@ import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoMovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.prestamo.PrestamoRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,10 @@ public class PrestamoConverter {
         entity.setMonedaId(moneda);
         entity.setEntidadFinancieraId(entidadFinanciera);
         entity.setUsuarioId(usuario);
+        entity.setSaldoCuota(request.getMontoCuota());
+        entity.setFechaProxVencimiento(DateUtil.sumarDiasAFecha(request.getFechaDesembolso(), 30));
+        entity.setSiguienteCuota(1);
+        entity.setMontoMoraTotal(0.0);
         return entity;
     }
 
@@ -145,6 +150,10 @@ public class PrestamoConverter {
         model.setMonedaCodigo(entity.getMonedaId().getCodigo());
         model.setEntidadFinancieraId(entity.getEntidadFinancieraId().getId());
         model.setEntidadFinancieraNombre(entity.getEntidadFinancieraId().getNombre());
+
+        model.setFechaProxVencimiento(entity.getFechaProxVencimiento());
+        model.setSaldoCuota(entity.getSaldoCuota());
+        model.setSiguienteCuota(entity.getSiguienteCuota());
         return model;
     }
 
