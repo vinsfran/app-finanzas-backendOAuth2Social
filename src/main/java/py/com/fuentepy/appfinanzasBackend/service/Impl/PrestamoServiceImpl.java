@@ -130,6 +130,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 prestamo.setCantidadCuotasPagadas(request.getNumeroCuota());
                 prestamo.setMontoUltimoPago(request.getMontoPagado());
                 prestamo.setMontoPagado(prestamo.getMontoPagado() + prestamo.getMontoUltimoPago());
+                prestamo.setMontoMoraTotal(prestamo.getMontoMoraTotal() + request.getMontoMora());
                 prestamoRepository.save(prestamo);
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
@@ -137,7 +138,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
-                movimiento.setDetalle("Pago: Prestamo: " + prestamo.getDestinoPrestamo());
+                movimiento.setDetalle("Pago Prestamo: " + prestamo.getDestinoPrestamo());
                 movimiento.setTablaId(prestamo.getId());
                 movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
                 movimiento.setMonedaId(prestamo.getMonedaId());
@@ -148,7 +149,6 @@ public class PrestamoServiceImpl implements PrestamoService {
                 Double montoPago = request.getMontoPagado();
                 Double montoPagoReal = 0.0;
                 boolean salir = false;
-                LOG.info(prestamoCuoteraList.size() + " " + prestamoCuoteraList.get(0).getNumeroCuota() + " " + prestamoCuoteraList.get(prestamoCuoteraList.size() - 1).getNumeroCuota());
                 PrestamoCuotera ultimoElementoRecorrido = new PrestamoCuotera();
                 int cont = prestamoCuoteraList.size();
                 for (int i = 0; i < prestamoCuoteraList.size(); i++) {
@@ -158,12 +158,10 @@ public class PrestamoServiceImpl implements PrestamoService {
                     prestamo.setFechaProxVencimiento(prestamoCuotera.getFechaVencimiento());
                     prestamo.setSaldoCuota(prestamoCuotera.getSaldoCuota());
                     prestamo.setSiguienteCuota(prestamoCuotera.getNumeroCuota());
-                    prestamo.setMontoMoraTotal(prestamo.getMontoMoraTotal() + request.getMontoMora());
                     if (request.getNumeroCuota().equals(prestamoCuotera.getNumeroCuota())) {
                         prestamoPago.setMontoMora(request.getMontoMora());
                     }
                     if (montoPago > prestamoCuotera.getSaldoCuota() || montoPago.equals(prestamoCuotera.getSaldoCuota())) {
-                        LOG.info("MA " + prestamoCuotera.getNumeroCuota() + " montoPago: " + montoPago + " getSaldoCuota: " + prestamoCuotera.getSaldoCuota());
                         montoPago = montoPago - prestamoCuotera.getSaldoCuota();
                         prestamoPago.setMontoPago(prestamoCuotera.getSaldoCuota());
                         prestamoCuotera.setSaldoCuota(0.0);
@@ -172,13 +170,11 @@ public class PrestamoServiceImpl implements PrestamoService {
                             salir = true;
                         }
                         if (0 < cont) {
-                            LOG.info("DENTRO: " + cont);
                             prestamo.setFechaProxVencimiento(prestamoCuoteraList.get(i + 1).getFechaVencimiento());
                             prestamo.setSaldoCuota(prestamoCuoteraList.get(i + 1).getSaldoCuota());
                             prestamo.setSiguienteCuota(prestamoCuoteraList.get(i + 1).getNumeroCuota());
                         }
                     } else {
-                        LOG.info("ME " + prestamoCuotera.getNumeroCuota() + " montoPago: " + montoPago + " getSaldoCuota: " + prestamoCuotera.getSaldoCuota());
                         prestamoPago.setMontoPago(montoPago);
                         prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() - montoPago);
                         salir = true;
@@ -202,6 +198,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                     prestamo.setEstado(false);
                     prestamoRepository.save(prestamo);
                     retorno.setMonto(montoPagoReal);
+                    retorno.setNumeroCuota(ultimoElementoRecorrido.getNumeroCuota());
                     retorno = movimientoService.registrarMovimiento(retorno);
                 }
             }
@@ -246,10 +243,22 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Override
     @Transactional
-    public void delete(Long usuarioId, Long PrestamoId) throws Exception {
+    public void delete(Long usuarioId, Long prestamoId) throws Exception {
         try {
-            movimientoService.deleteMovimientos(PrestamoId, ConstantUtil.PRESTAMOS, usuarioId);
-            prestamoRepository.deleteById(PrestamoId);
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioId);
+            Prestamo prestamo = new Prestamo();
+            prestamo.setId(prestamoId);
+            List<PrestamoPago> prestamoPagoList = prestamoPagoRepository.findByPrestamoIdAndUsuarioId(prestamo, usuario);
+            for (PrestamoPago prestamoPago : prestamoPagoList) {
+                prestamoPagoRepository.delete(prestamoPago);
+            }
+            List<PrestamoCuotera> prestamoCuoteraList = prestamoCuoteraRepository.findByPrestamoIdAndUsuarioId(prestamo, usuario);
+            for (PrestamoCuotera prestamoCuotera : prestamoCuoteraList) {
+                prestamoCuoteraRepository.delete(prestamoCuotera);
+            }
+            movimientoService.deleteMovimientos(prestamoId, ConstantUtil.PRESTAMOS, usuarioId);
+            prestamoRepository.deleteById(prestamoId);
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Prestamo! " + e.getMessage());
         }
@@ -264,8 +273,29 @@ public class PrestamoServiceImpl implements PrestamoService {
             if (optional.isPresent()) {
                 Prestamo prestamo = optional.get();
                 MovimientoModel movimientoModel = movimientoService.findByIdAndUsuarioId(movimientoId, usuarioId);
+                Movimiento movimiento = new Movimiento();
+                movimiento.setId(movimientoId);
+                List<PrestamoPago> prestamoPagoList = prestamoPagoRepository.findByMovimientoIdAndUsuarioId(movimiento, usuario);
+                int cantidaCuotasRevertir = 0;
+                int cuotaPagoContador = 0;
+                for (PrestamoPago prestamoPago : prestamoPagoList) {
+                    if (!prestamoPago.getNumeroCuota().equals(cuotaPagoContador)) {
+                        cuotaPagoContador = prestamoPago.getNumeroCuota();
+                        cantidaCuotasRevertir++;
+                    }
+                    PrestamoCuotera prestamoCuotera = prestamoCuoteraRepository.findByNumeroCuotaAndPrestamoIdAndUsuarioId(prestamoPago.getNumeroCuota(), prestamo, usuario);
+                    prestamoCuotera.setEstadoCuota(ConstantUtil.CUOTA_PENDIENTE);
+                    prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() + prestamoPago.getMontoPago());
+                    prestamoPagoRepository.delete(prestamoPago);
+                }
+
                 prestamo.setMontoPagado(prestamo.getMontoPagado() - movimientoModel.getMonto());
-                prestamo.setCantidadCuotasPagadas(prestamo.getCantidadCuotasPagadas() - movimientoModel.getNumeroCuota());
+                cantidaCuotasRevertir = prestamo.getCantidadCuotasPagadas() - cantidaCuotasRevertir;
+                if (cantidaCuotasRevertir < 0) {
+                    cantidaCuotasRevertir = 0;
+                }
+                prestamo.setCantidadCuotasPagadas(prestamo.getCantidadCuotasPagadas() - cantidaCuotasRevertir);
+                prestamo.setSiguienteCuota(prestamo.getCantidadCuotasPagadas() + 1);
                 prestamoRepository.save(prestamo);
                 movimientoService.deleteMovimiento(usuarioId, movimientoId);
             } else {

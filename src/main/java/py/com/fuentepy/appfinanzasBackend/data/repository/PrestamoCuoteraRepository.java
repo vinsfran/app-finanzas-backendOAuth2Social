@@ -13,6 +13,7 @@ public interface PrestamoCuoteraRepository extends JpaRepository<PrestamoCuotera
 
     List<PrestamoCuotera> findByPrestamoIdAndUsuarioId(Prestamo prestamo, Usuario usuario);
 
-    List<PrestamoCuotera> findByPrestamoIdAndUsuarioIdAndEstadoCuotaOrderByNumeroCuota(Prestamo prestamo, Usuario usuario, String cuotaPendiente);
+    List<PrestamoCuotera> findByPrestamoIdAndUsuarioIdAndEstadoCuotaOrderByNumeroCuota(Prestamo prestamoId, Usuario usuarioId, String cuotaPendiente);
 
+    PrestamoCuotera findByNumeroCuotaAndPrestamoIdAndUsuarioId(Integer numeroCuota, Prestamo prestamoId, Usuario usuarioId);
 }

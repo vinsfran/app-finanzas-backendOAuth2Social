@@ -34,7 +34,7 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     @Query(value = "select u from Movimiento u where u.usuarioId = :usuario and u.fechaMovimiento BETWEEN :startDate and :endDate")
     List<Movimiento> findByUsuarioIdRangoFecha(@Param("usuario") Usuario usuario, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    List<Movimiento> findByUsuarioIdAndTablaIdAndTablaNombre(Usuario usuario, Long tablaId, String tablaNombre);
+    List<Movimiento> findByUsuarioIdAndTablaIdAndTablaNombreOrderByIdDesc(Usuario usuario, Long tablaId, String tablaNombre);
 
     @Query(value = "select u.id from Movimiento u where u.usuarioId = :usuario and u.tablaId = :tablaId and u.tablaNombre = :tablaNombre")
     List<Long> listMovimientoIdByUsuarioIdAndTablaIdAndTablaNombre(Usuario usuario, Long tablaId, String tablaNombre);

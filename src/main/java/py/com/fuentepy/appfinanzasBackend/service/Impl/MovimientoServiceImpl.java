@@ -104,7 +104,7 @@ public class MovimientoServiceImpl implements MovimientoService {
     public List<Movimiento> findByUsuarioIdAndTablaIdAndTablaNombre(Long usuarioId, Long tablaId, String tablaNombre) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return movimientoRepository.findByUsuarioIdAndTablaIdAndTablaNombre(usuario, tablaId, tablaNombre);
+        return movimientoRepository.findByUsuarioIdAndTablaIdAndTablaNombreOrderByIdDesc(usuario, tablaId, tablaNombre);
     }
 
     @Override

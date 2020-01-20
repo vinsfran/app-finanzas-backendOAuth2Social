@@ -75,6 +75,10 @@ public class PrestamoModel implements Serializable {
     @SerializedName("monto_cuota")
     private Double montoCuota;
 
+    @JsonProperty("saldo")
+    @SerializedName("saldo")
+    private Double saldo;
+
     @JsonProperty("saldo_cuota")
     @SerializedName("saldo_cuota")
     private Double saldoCuota;
@@ -110,5 +114,9 @@ public class PrestamoModel implements Serializable {
     @JsonProperty("entidad_financiera_nombre")
     @SerializedName("entidad_financiera_nombre")
     private String entidadFinancieraNombre;
+
+    @JsonProperty("monto_mora_total")
+    @SerializedName("monto_mora_total")
+    private Double montoMoraTotal;
 
 }

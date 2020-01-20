@@ -26,6 +26,7 @@ public class PrestamoConverter {
     public static PrestamoMovimientoModel movimientoToPrestamoMovimientoModel(Movimiento movimiento) {
         PrestamoMovimientoModel prestamoMovimientoModel = new PrestamoMovimientoModel();
         prestamoMovimientoModel.setMovimientoId(movimiento.getId());
+        prestamoMovimientoModel.setDetalle(movimiento.getDetalle());
         prestamoMovimientoModel.setNumeroComprobante(movimiento.getNumeroComprobante());
         prestamoMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
         prestamoMovimientoModel.setMonto(movimiento.getMonto());
@@ -150,10 +151,11 @@ public class PrestamoConverter {
         model.setMonedaCodigo(entity.getMonedaId().getCodigo());
         model.setEntidadFinancieraId(entity.getEntidadFinancieraId().getId());
         model.setEntidadFinancieraNombre(entity.getEntidadFinancieraId().getNombre());
-
+        model.setSaldo(entity.getMontoPrestamo() - entity.getMontoPagado());
         model.setFechaProxVencimiento(entity.getFechaProxVencimiento());
         model.setSaldoCuota(entity.getSaldoCuota());
         model.setSiguienteCuota(entity.getSiguienteCuota());
+        model.setMontoMoraTotal(entity.getMontoMoraTotal());
         return model;
     }
 

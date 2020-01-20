@@ -26,6 +26,10 @@ public class PrestamoMovimientoModel implements Serializable {
     @SerializedName("movimiento_id")
     private Long movimientoId;
 
+    @JsonProperty("detalle")
+    @SerializedName("detalle")
+    private String detalle;
+
     @JsonProperty("numero_comprobante")
     @SerializedName("numero_comprobante")
     private String numeroComprobante;
