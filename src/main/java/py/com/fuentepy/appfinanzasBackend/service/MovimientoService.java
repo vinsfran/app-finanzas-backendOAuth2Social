@@ -15,7 +15,7 @@ public interface MovimientoService {
 
     List<MovimientoModel> findAll();
 
-    List<MovimientoModel> findByUsuarioIdAndParent(Long usuarioId, String parent);
+    List<MovimientoModel> findByUsuarioIdAndParentAndFechaDesdeAndFechaHasta(Long usuarioId, String parent, Date fechaInicio, Date fechaFin);
 
     Page<MovimientoModel> findAll(Pageable pageable);
 

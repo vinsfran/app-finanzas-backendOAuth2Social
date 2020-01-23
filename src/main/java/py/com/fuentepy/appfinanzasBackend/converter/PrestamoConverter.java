@@ -151,7 +151,10 @@ public class PrestamoConverter {
         model.setMonedaCodigo(entity.getMonedaId().getCodigo());
         model.setEntidadFinancieraId(entity.getEntidadFinancieraId().getId());
         model.setEntidadFinancieraNombre(entity.getEntidadFinancieraId().getNombre());
-        model.setSaldo(entity.getMontoPrestamo() - entity.getMontoPagado());
+        model.setSaldo((entity.getCantidadCuotas() * entity.getMontoCuota()) - entity.getMontoPagado());
+        if (model.getSaldo() < 0.0) {
+            model.setSaldo(0.0);
+        }
         model.setFechaProxVencimiento(entity.getFechaProxVencimiento());
         model.setSaldoCuota(entity.getSaldoCuota());
         model.setSiguienteCuota(entity.getSiguienteCuota());

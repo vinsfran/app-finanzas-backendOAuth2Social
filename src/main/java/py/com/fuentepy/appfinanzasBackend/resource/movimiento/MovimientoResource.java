@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -26,10 +27,7 @@ import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/movimientos")
@@ -89,9 +87,11 @@ public class MovimientoResource {
     })
     @GetMapping()
     public List<MovimientoModel> getAll(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                        @RequestHeader(value = "parent", required = false) String parent) {
+                                        @RequestHeader(value = "parent", required = false) String parent,
+                                        @RequestParam(value = "fecha_desde", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaDesde,
+                                        @RequestParam(value = "fecha_hasta", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaHasta) {
         Long usuarioId = userPrincipal.getId();
-        return movimientoService.findByUsuarioIdAndParent(usuarioId, parent);
+        return movimientoService.findByUsuarioIdAndParentAndFechaDesdeAndFechaHasta(usuarioId, parent, fechaDesde, fechaHasta);
     }
 
     @ApiImplicitParams(

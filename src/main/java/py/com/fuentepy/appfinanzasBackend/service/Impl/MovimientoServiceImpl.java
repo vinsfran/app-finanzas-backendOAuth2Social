@@ -7,12 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.MovimientoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.archivo.ArchivoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
@@ -40,14 +38,14 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MovimientoModel> findByUsuarioIdAndParent(Long usuarioId, String parent) {
+    public List<MovimientoModel> findByUsuarioIdAndParentAndFechaDesdeAndFechaHasta(Long usuarioId, String parent, Date fechaInicio, Date fechaFin) {
         List<Movimiento> movimientos = null;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         if (parent == null || parent.isEmpty()) {
-            movimientos = movimientoRepository.findByUsuarioIdOrderByIdDesc(usuario);
+            movimientos = movimientoRepository.findByUsuarioIdAndFechaMovimientoBetweensStarDateAndEndDateOrderByIdDesc(usuario, fechaInicio, fechaFin);
         } else {
-            movimientos = movimientoRepository.findByUsuarioIdAndParent(usuario, parent);
+            movimientos = movimientoRepository.findByUsuarioIdAndFechaMovimientoBetweensStarDateAndEndDateAndParentOrderByIdDesc(usuario, parent, fechaInicio, fechaFin);
         }
         return MovimientoConverter.listEntitytoListModel(movimientos);
     }

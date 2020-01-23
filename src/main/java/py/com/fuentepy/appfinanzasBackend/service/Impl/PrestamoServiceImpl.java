@@ -177,6 +177,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                     } else {
                         prestamoPago.setMontoPago(montoPago);
                         prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() - montoPago);
+                        prestamo.setSaldoCuota(prestamoCuotera.getSaldoCuota());
                         salir = true;
                     }
                     prestamo.setCantidadCuotasPagadas(prestamoCuotera.getNumeroCuota());
@@ -294,7 +295,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 if (cantidaCuotasRevertir < 0) {
                     cantidaCuotasRevertir = 0;
                 }
-                prestamo.setCantidadCuotasPagadas(prestamo.getCantidadCuotasPagadas() - cantidaCuotasRevertir);
+                prestamo.setCantidadCuotasPagadas(cantidaCuotasRevertir);
                 prestamo.setSiguienteCuota(prestamo.getCantidadCuotasPagadas() + 1);
                 prestamoRepository.save(prestamo);
                 movimientoService.deleteMovimiento(usuarioId, movimientoId);
