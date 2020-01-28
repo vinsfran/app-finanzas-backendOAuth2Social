@@ -115,7 +115,7 @@ public class ConceptoServiceImpl implements ConceptoService {
             if (TipoConcepto.egreso.toString().equals(entity.getTipoConcepto().name())) {
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
-                movimiento.setFechaMovimiento(new Date());
+                movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago: " + entity.getNombre());
@@ -140,7 +140,7 @@ public class ConceptoServiceImpl implements ConceptoService {
             if (TipoConcepto.ingreso.toString().equals(entity.getTipoConcepto().name())) {
                 Movimiento movimiento = new Movimiento();
                 movimiento.setNumeroComprobante(request.getNumeroComprobante());
-                movimiento.setFechaMovimiento(new Date());
+                movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: " + entity.getNombre());
