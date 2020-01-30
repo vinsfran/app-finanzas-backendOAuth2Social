@@ -5,7 +5,6 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.exception.BadRequestException;
 import py.com.fuentepy.appfinanzasBackend.data.entity.AuthProvider;
 import py.com.fuentepy.appfinanzasBackend.payload.ApiResponse;
-import py.com.fuentepy.appfinanzasBackend.payload.SignUpRequest;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
@@ -73,7 +72,8 @@ public class AuthResource {
         }
         // Creating usuario's account
         Usuario usuario = new Usuario();
-        usuario.setFirstName(signUpRequest.getName());
+        usuario.setFirstName(signUpRequest.getFirstName());
+        usuario.setLastName(signUpRequest.getLastName());
         usuario.setEmail(signUpRequest.getEmail());
         usuario.setPassword(signUpRequest.getPassword());
         usuario.setProvider(AuthProvider.local);

@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Presupuesto;
 import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestUpdate;
@@ -25,4 +26,6 @@ public interface PresupuestoService {
     boolean update(PresupuestoRequestUpdate request, Long usuarioId);
 
     void delete(Long id);
+
+    Presupuesto findByUsuarioIdAnioMes(Long usuarioId, Integer anio, Integer mes);
 }

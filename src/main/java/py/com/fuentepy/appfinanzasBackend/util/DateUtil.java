@@ -19,4 +19,16 @@ public class DateUtil {
         calendar.add(Calendar.DAY_OF_YEAR, dias);
         return calendar.getTime();
     }
+
+    public static Integer extraerAnio(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
+        return calendar.get(Calendar.YEAR);
+    }
+
+    public static Integer extraerMes(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
+        return calendar.get(Calendar.MONTH) + 1;
+    }
 }

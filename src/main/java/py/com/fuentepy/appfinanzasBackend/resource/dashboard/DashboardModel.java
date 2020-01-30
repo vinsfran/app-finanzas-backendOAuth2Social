@@ -81,4 +81,12 @@ public class DashboardModel {
     @JsonProperty("total_linea_tarjetas")
     @SerializedName("total_linea_tarjetas")
     private Double totalLineaTarjetas;
+
+    @JsonProperty("monto_presupuesto")
+    @SerializedName("monto_presupuesto")
+    private Double montoPresupuesto;
+
+    @JsonProperty("monto_presupuesto_usado")
+    @SerializedName("monto_presupuesto_usado")
+    private Double montoPresupuestoUsado;
 }

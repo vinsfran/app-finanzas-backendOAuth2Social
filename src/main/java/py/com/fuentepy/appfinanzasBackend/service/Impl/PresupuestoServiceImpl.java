@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PresupuestoConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Presupuesto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
@@ -111,5 +112,15 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     @Transactional
     public void delete(Long id) {
         presupuestoRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Presupuesto findByUsuarioIdAnioMes(Long usuarioId, Integer anio, Integer mesId) {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Mes mes = new Mes();
+        mes.setId(mesId);
+        return presupuestoRepository.findByUsuarioIdAndAnioAndMesId(usuario, anio, mes);
     }
 }

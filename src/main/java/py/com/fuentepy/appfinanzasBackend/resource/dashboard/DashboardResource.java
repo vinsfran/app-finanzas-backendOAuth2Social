@@ -14,19 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Ahorro;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Prestamo;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Tarjeta;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.security.CurrentUser;
 import py.com.fuentepy.appfinanzasBackend.security.UserPrincipal;
-import py.com.fuentepy.appfinanzasBackend.service.AhorroService;
-import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
-import py.com.fuentepy.appfinanzasBackend.service.PrestamoService;
-import py.com.fuentepy.appfinanzasBackend.service.TarjetaService;
+import py.com.fuentepy.appfinanzasBackend.service.*;
+import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
@@ -51,6 +46,9 @@ public class DashboardResource {
     @Autowired
     private TarjetaService tarjetaService;
 
+    @Autowired
+    private PresupuestoService presupuestoService;
+
     @ApiImplicitParams(
             @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
     )
@@ -68,11 +66,14 @@ public class DashboardResource {
         try {
             dashboardModel.setTotalIngresos(0.0);
             dashboardModel.setTotalEgresos(0.0);
-            for (Movimiento movimiento : movimientoService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta)) {
-                if (movimiento.getSigno().equals("+")) {
-                    dashboardModel.setTotalIngresos(dashboardModel.getTotalIngresos() + movimiento.getMonto());
-                } else {
-                    dashboardModel.setTotalEgresos(dashboardModel.getTotalEgresos() + movimiento.getMonto());
+            List<Movimiento> movimientos = movimientoService.movimientosByUsuarioAndRangoFecha(usuarioId, fechaDesde, fechaHasta);
+            if (movimientos != null && !movimientos.isEmpty()) {
+                for (Movimiento movimiento : movimientos) {
+                    if (movimiento.getSigno().equals("+")) {
+                        dashboardModel.setTotalIngresos(dashboardModel.getTotalIngresos() + movimiento.getMonto());
+                    } else {
+                        dashboardModel.setTotalEgresos(dashboardModel.getTotalEgresos() + movimiento.getMonto());
+                    }
                 }
             }
             dashboardModel.setSaldoIngresosEgresos(dashboardModel.getTotalIngresos() - dashboardModel.getTotalEgresos());
@@ -101,6 +102,18 @@ public class DashboardResource {
                 dashboardModel.setCantidadTarjetas(dashboardModel.getCantidadTarjetas() + 1);
                 dashboardModel.setTotalLineaTarjetas(dashboardModel.getTotalLineaTarjetas() + tarjeta.getLineaCredito());
             }
+
+            dashboardModel.setMontoPresupuesto(0.0);
+            dashboardModel.setMontoPresupuestoUsado(0.0);
+            Integer anio = DateUtil.extraerAnio(fechaDesde);
+            Integer mes = DateUtil.extraerMes(fechaDesde);
+            Presupuesto presupuesto = presupuestoService.findByUsuarioIdAnioMes(usuarioId, anio, mes);
+            if (presupuesto != null && presupuesto.getMonto() != null) {
+                LOG.info("Entro");
+                dashboardModel.setMontoPresupuesto(presupuesto.getMonto());
+                dashboardModel.setMontoPresupuestoUsado(dashboardModel.getTotalEgresos());
+            }
+
             httpStatus = HttpStatus.OK;
             message = new MessageResponse(StatusLevel.INFO, "Consulta correcta");
             messages.add(message);
