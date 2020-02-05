@@ -14,7 +14,8 @@ import java.util.Optional;
 @Repository
 public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> {
 
-    List<Presupuesto> findByUsuarioIdOrderByIdDesc(Usuario usuario);
+//    @Query(value = "SELECT p from Presupuesto p where p.usuarioId = :usuario order by p.anio desc, p.mesId.id desc")
+    List<Presupuesto> findByUsuarioIdOrderByAnioDescMesIdDesc(Usuario usuario);
 
     Optional<Presupuesto> findByIdAndUsuarioId(Long id, Usuario usuario);
 

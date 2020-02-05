@@ -266,42 +266,9 @@ public class PrestamoServiceImpl implements PrestamoService {
     }
 
     @Override
-    public void deleteMovimiento(Long usuarioId, Long prestamoId, Long movimientoId) throws Exception {
+    public void deleteMovimiento(Long usuarioId, Long movimientoId) throws Exception {
         try {
-            Usuario usuario = new Usuario();
-            usuario.setId(usuarioId);
-            Optional<Prestamo> optional = prestamoRepository.findByIdAndUsuarioId(prestamoId, usuario);
-            if (optional.isPresent()) {
-                Prestamo prestamo = optional.get();
-                MovimientoModel movimientoModel = movimientoService.findByIdAndUsuarioId(movimientoId, usuarioId);
-                Movimiento movimiento = new Movimiento();
-                movimiento.setId(movimientoId);
-                List<PrestamoPago> prestamoPagoList = prestamoPagoRepository.findByMovimientoIdAndUsuarioId(movimiento, usuario);
-                int cantidaCuotasRevertir = 0;
-                int cuotaPagoContador = 0;
-                for (PrestamoPago prestamoPago : prestamoPagoList) {
-                    if (!prestamoPago.getNumeroCuota().equals(cuotaPagoContador)) {
-                        cuotaPagoContador = prestamoPago.getNumeroCuota();
-                        cantidaCuotasRevertir++;
-                    }
-                    PrestamoCuotera prestamoCuotera = prestamoCuoteraRepository.findByNumeroCuotaAndPrestamoIdAndUsuarioId(prestamoPago.getNumeroCuota(), prestamo, usuario);
-                    prestamoCuotera.setEstadoCuota(ConstantUtil.CUOTA_PENDIENTE);
-                    prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() + prestamoPago.getMontoPago());
-                    prestamoPagoRepository.delete(prestamoPago);
-                }
-
-                prestamo.setMontoPagado(prestamo.getMontoPagado() - movimientoModel.getMonto());
-                cantidaCuotasRevertir = prestamo.getCantidadCuotasPagadas() - cantidaCuotasRevertir;
-                if (cantidaCuotasRevertir < 0) {
-                    cantidaCuotasRevertir = 0;
-                }
-                prestamo.setCantidadCuotasPagadas(cantidaCuotasRevertir);
-                prestamo.setSiguienteCuota(prestamo.getCantidadCuotasPagadas() + 1);
-                prestamoRepository.save(prestamo);
-                movimientoService.deleteMovimiento(usuarioId, movimientoId);
-            } else {
-                throw new Exception("No existe ahorro!");
-            }
+            movimientoService.deleteMovimiento(usuarioId, movimientoId);
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Movimiento! " + e.getMessage());
         }

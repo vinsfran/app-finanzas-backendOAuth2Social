@@ -2,6 +2,7 @@
 ##  address: 192.168.0.8
 #  address: 192.168.38.80
 #  address: 192.168.43.224
+#  address: 126.10.10.189
 spring:
   servlet:
     multipart:

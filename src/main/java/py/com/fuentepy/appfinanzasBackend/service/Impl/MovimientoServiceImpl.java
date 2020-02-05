@@ -8,9 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.MovimientoConverter;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MovimientoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoCuoteraRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoPagoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.movimiento.MovimientoModel;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
@@ -29,6 +31,15 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Autowired
     private ArchivoServiceImpl archivoService;
+
+    @Autowired
+    private PrestamoRepository prestamoRepository;
+
+    @Autowired
+    private PrestamoPagoRepository prestamoPagoRepository;
+
+    @Autowired
+    private PrestamoCuoteraRepository prestamoCuoteraRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -109,8 +120,47 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Transactional
     public void deleteMovimiento(Long usuarioId, Long movimientoId) throws Exception {
         try {
-            archivoService.deleteFiles(movimientoId, ConstantUtil.MOVIMIENTOS, usuarioId);
-            movimientoRepository.deleteById(movimientoId);
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioId);
+            Optional<Movimiento> optionalMovimiento = movimientoRepository.findByIdAndUsuarioId(movimientoId, usuario);
+            if (optionalMovimiento.isPresent()) {
+                Movimiento movimiento = optionalMovimiento.get();
+                if (movimiento.getTablaNombre().equals(ConstantUtil.PRESTAMOS)) {
+                    Long prestamoId = movimiento.getTablaId();
+                    Optional<Prestamo> optionalPrestamo = prestamoRepository.findByIdAndUsuarioId(prestamoId, usuario);
+                    if (optionalPrestamo.isPresent()) {
+                        Prestamo prestamo = optionalPrestamo.get();
+                        List<PrestamoPago> prestamoPagoList = prestamoPagoRepository.findByMovimientoIdAndUsuarioId(movimiento, usuario);
+                        int cantidaCuotasRevertir = 0;
+                        int cuotaPagoContador = 0;
+                        for (PrestamoPago prestamoPago : prestamoPagoList) {
+                            if (!prestamoPago.getNumeroCuota().equals(cuotaPagoContador)) {
+                                cuotaPagoContador = prestamoPago.getNumeroCuota();
+                                cantidaCuotasRevertir++;
+                            }
+                            PrestamoCuotera prestamoCuotera = prestamoCuoteraRepository.findByNumeroCuotaAndPrestamoIdAndUsuarioId(prestamoPago.getNumeroCuota(), prestamo, usuario);
+                            prestamoCuotera.setEstadoCuota(ConstantUtil.CUOTA_PENDIENTE);
+                            prestamoCuotera.setSaldoCuota(prestamoCuotera.getSaldoCuota() + prestamoPago.getMontoPago());
+                            prestamoPagoRepository.delete(prestamoPago);
+                        }
+
+                        prestamo.setMontoPagado(prestamo.getMontoPagado() - movimiento.getMonto());
+                        cantidaCuotasRevertir = prestamo.getCantidadCuotasPagadas() - cantidaCuotasRevertir;
+                        if (cantidaCuotasRevertir < 0) {
+                            cantidaCuotasRevertir = 0;
+                        }
+                        prestamo.setCantidadCuotasPagadas(cantidaCuotasRevertir);
+                        prestamo.setSiguienteCuota(prestamo.getCantidadCuotasPagadas() + 1);
+                        prestamoRepository.save(prestamo);
+                    } else {
+                        throw new Exception("No existe Prestamo!");
+                    }
+                }
+                archivoService.deleteFiles(movimientoId, ConstantUtil.MOVIMIENTOS, usuarioId);
+                movimientoRepository.deleteById(movimientoId);
+            } else {
+                throw new Exception("No existe el Movimiento!");
+            }
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Movimientos! " + e.getMessage());
         }

@@ -39,5 +39,5 @@ public interface PrestamoService {
 
     void delete(Long usuarioId, Long PrestamoId) throws Exception;
 
-    void deleteMovimiento(Long usuarioId, Long prestamoId, Long movimientoId) throws Exception;
+    void deleteMovimiento(Long usuarioId, Long movimientoId) throws Exception;
 }

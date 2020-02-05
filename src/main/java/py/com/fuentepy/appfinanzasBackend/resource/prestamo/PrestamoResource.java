@@ -109,7 +109,7 @@ public class PrestamoResource {
         Long usuarioId = userPrincipal.getId();
         Map<String, Object> response = new HashMap<>();
         try {
-            prestamoService.deleteMovimiento(usuarioId, prestamoId, movimientoId);
+            prestamoService.deleteMovimiento(usuarioId, movimientoId);
         } catch (Exception e) {
             response.put("mensaje", "Error al realizar la consulta en la base de datos!");
             response.put("error", e.getMessage());

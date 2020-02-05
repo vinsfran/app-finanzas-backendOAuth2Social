@@ -11,8 +11,8 @@ import py.com.fuentepy.appfinanzasBackend.converter.PresupuestoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Mes;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Presupuesto;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PresupuestoRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.presupuesto.PresupuestoRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.PresupuestoService;
@@ -39,7 +39,7 @@ public class PresupuestoServiceImpl implements PresupuestoService {
     public List<PresupuestoModel> findByUsuarioId(Long usuarioId) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-        return PresupuestoConverter.listEntitytoListModel(presupuestoRepository.findByUsuarioIdOrderByIdDesc(usuario));
+        return PresupuestoConverter.listEntitytoListModel(presupuestoRepository.findByUsuarioIdOrderByAnioDescMesIdDesc(usuario));
     }
 
     @Override

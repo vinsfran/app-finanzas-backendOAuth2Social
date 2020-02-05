@@ -109,7 +109,6 @@ public class DashboardResource {
             Integer mes = DateUtil.extraerMes(fechaDesde);
             Presupuesto presupuesto = presupuestoService.findByUsuarioIdAnioMes(usuarioId, anio, mes);
             if (presupuesto != null && presupuesto.getMonto() != null) {
-                LOG.info("Entro");
                 dashboardModel.setMontoPresupuesto(presupuesto.getMonto());
                 dashboardModel.setMontoPresupuestoUsado(dashboardModel.getTotalEgresos());
             }
