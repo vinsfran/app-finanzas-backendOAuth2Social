@@ -71,31 +71,20 @@ public class PresupuestoServiceImpl implements PresupuestoService {
 
     @Override
     @Transactional
-    public boolean create(PresupuestoRequestNew request, Long usuarioId) {
-        Presupuesto entity = presupuestoRepository.save(PresupuestoConverter.presupuestoNewToPresupuestoEntity(request, usuarioId));
-        if (entity != null) {
-            return true;
+    public void create(PresupuestoRequestNew request, Long usuarioId) throws Exception {
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Mes mes = new Mes();
+        mes.setId(request.getMesId());
+        try {
+            Presupuesto entity = presupuestoRepository.findByUsuarioIdAndAnioAndMesId(usuario, request.getAnio(), mes);
+            if (entity != null) {
+                throw new Exception("Ya existe el Presupueto para " + request.getAnio() + "/" + request.getMesId());
+            }
+            presupuestoRepository.save(PresupuestoConverter.presupuestoNewToPresupuestoEntity(request, usuarioId));
+        } catch (Exception e) {
+            throw new Exception("Error: " + e.getMessage());
         }
-        return false;
-
-//        if(!entity.getEstado()){
-//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-//
-//            Movimiento movimiento = new Movimiento();
-//            movimiento.setNumeroComprobante("");
-//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-//            movimiento.setMontoPagado(entity.getMontoCapital());
-//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-//            movimiento.setPrestamoId(null);
-//            movimiento.setPresupuestoId(entity);
-//            movimiento.setTarjetaId(null);
-//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-//            movimiento.setConceptoId(concepto);
-//            movimiento.setMonedaId(entity.getMonedaId());
-////            movimiento.setTipoPagoId(entity.getTipoCobroId());
-//            movimiento.setUsuarioId(usuario);
-//            movimientoRepository.save(movimiento);
-//        }
     }
 
     @Override

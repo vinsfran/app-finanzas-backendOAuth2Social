@@ -21,7 +21,7 @@ public interface PresupuestoService {
 
     PresupuestoModel findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    boolean create(PresupuestoRequestNew request, Long usuarioId);
+    void create(PresupuestoRequestNew request, Long usuarioId) throws Exception;
 
     boolean update(PresupuestoRequestUpdate request, Long usuarioId);
 

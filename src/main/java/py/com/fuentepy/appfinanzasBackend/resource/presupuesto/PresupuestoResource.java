@@ -131,22 +131,23 @@ public class PresupuestoResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } else {
             try {
-                if (presupuestoService.create(presupuestoNew, usuarioId)) {
-                    httpStatus = HttpStatus.CREATED;
-                    message = new MessageResponse(StatusLevel.INFO, "El Presupuesto ha sido creado con éxito!");
-                    messages.add(message);
-                    response = new BaseResponse(httpStatus.value(), messages);
-                } else {
-                    httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-                    message = new MessageResponse(StatusLevel.ERROR, "El Presupuesto no se pudo crear!");
-                    messages.add(message);
-                    response = new BaseResponse(httpStatus.value(), messages);
-                }
+                presupuestoService.create(presupuestoNew, usuarioId);
+                httpStatus = HttpStatus.CREATED;
+                message = new MessageResponse(StatusLevel.INFO, "El Presupuesto ha sido creado con éxito!");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
             } catch (DataAccessException e) {
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
                 message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
                 messages.add(message);
                 message = new MessageResponse(StatusLevel.ERROR, e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } catch (Exception e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el insert en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
                 messages.add(message);
                 response = new BaseResponse(httpStatus.value(), messages);
             }
