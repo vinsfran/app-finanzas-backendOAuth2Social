@@ -1,6 +1,7 @@
-#server:
+server:
 ##  address: 192.168.0.8
-#  address: 192.168.38.80
+  address: 192.168.38.84
+#  port: 8081
 #  address: 192.168.43.224
 #  address: 126.10.10.189
 spring:
@@ -77,6 +78,10 @@ spring:
             tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
             userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
 app:
+  fcm:
+    key: AIzaSyCZa_lSo0SrMSWr9QrE-emUcJ2GopdTlNo
+    url:
+      send: https://fcm.googleapis.com/fcm/send
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     tokenExpirationMsec: 864000000

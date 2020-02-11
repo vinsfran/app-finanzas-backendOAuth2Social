@@ -14,6 +14,8 @@ public interface UsuarioService {
 
     boolean changePassword(Long id, String passwordOld, String passwordNew) throws Exception;
 
+    void registerToken(Long id, String token) throws Exception;
+
     Optional<Usuario> findUserByEmail(String email);
 
     Optional<Usuario> findUserByResetToken(String resetToken);

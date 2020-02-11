@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Archivo;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Dispositivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.DispositivoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
@@ -27,6 +29,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private DispositivoRepository dispositivoRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -94,6 +99,25 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new Exception("No exite el usuario!");
         }
         return true;
+    }
+
+    @Override
+    @Transactional
+    public void registerToken(Long id, String token) throws Exception {
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            try {
+                Dispositivo dispositivo = new Dispositivo();
+                dispositivo.setUsuarioId(usuario);
+                dispositivo.setToken(token);
+                dispositivoRepository.save(dispositivo);
+            } catch (Exception e) {
+                throw new Exception("No se pudo registrar el token del dispositivo! " + e.getMessage());
+            }
+        } else {
+            throw new Exception("No exite el usuario!");
+        }
     }
 
     @Override

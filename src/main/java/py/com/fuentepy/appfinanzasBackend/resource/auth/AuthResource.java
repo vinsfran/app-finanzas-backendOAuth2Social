@@ -1,28 +1,38 @@
 package py.com.fuentepy.appfinanzasBackend.resource.auth;
 
-import org.springframework.http.HttpStatus;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
-import py.com.fuentepy.appfinanzasBackend.exception.BadRequestException;
-import py.com.fuentepy.appfinanzasBackend.data.entity.AuthProvider;
-import py.com.fuentepy.appfinanzasBackend.payload.ApiResponse;
-import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
-import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
-import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
-import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
-import py.com.fuentepy.appfinanzasBackend.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import py.com.fuentepy.appfinanzasBackend.data.entity.AuthProvider;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Dispositivo;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Mensaje;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.DispositivoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.MensajeRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.exception.BadRequestException;
+import py.com.fuentepy.appfinanzasBackend.payload.ApiResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.common.BaseResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
+import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
+import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationRequestModel;
+import py.com.fuentepy.appfinanzasBackend.security.TokenProvider;
+import py.com.fuentepy.appfinanzasBackend.service.FcmService;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController

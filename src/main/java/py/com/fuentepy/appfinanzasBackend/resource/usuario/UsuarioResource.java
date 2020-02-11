@@ -162,4 +162,42 @@ public class UsuarioResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "Authorization", value = "Authorization Header", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "")
+    )
+    @PutMapping(value = "/register-token", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerToken(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                           @Valid @RequestBody TokenRequest tokenRequest,
+                                           @ApiIgnore BindingResult result) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        Long usuarioId = userPrincipal.getId();
+        if (result.hasErrors()) {
+            httpStatus = HttpStatus.BAD_REQUEST;
+            for (FieldError err : result.getFieldErrors()) {
+                message = new MessageResponse(StatusLevel.INFO, "El campo '".concat(err.getField()).concat("' ").concat(err.getDefaultMessage()));
+                messages.add(message);
+            }
+            response = new BaseResponse(httpStatus.value(), messages);
+        } else {
+            try {
+                usuarioService.registerToken(usuarioId, tokenRequest.getToken());
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "Token registrado correctamente");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            } catch (Exception e) {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.INFO, "Error al realizar el update en la base de datos!");
+                messages.add(message);
+                message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            }
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
 }

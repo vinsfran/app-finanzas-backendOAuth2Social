@@ -111,6 +111,10 @@ public class DashboardResource {
             if (presupuesto != null && presupuesto.getMonto() != null) {
                 dashboardModel.setMontoPresupuesto(presupuesto.getMonto());
                 dashboardModel.setMontoPresupuestoUsado(dashboardModel.getTotalEgresos());
+                dashboardModel.setPorcentajeAlerta(presupuesto.getPorcentajeAlerta());
+                if (presupuesto.getPorcentajeAlerta() == null) {
+                    dashboardModel.setPorcentajeAlerta(0);
+                }
             }
 
             httpStatus = HttpStatus.OK;

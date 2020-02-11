@@ -21,4 +21,6 @@ public interface ConstantUtil {
     String UPLOADS = "/var/opt/archivos";
     String CUOTA_PENDIENTE = "PENDIENTE";
     String CUOTA_PAGADA = "PAGADO";
+    String DISPOSITIVOS = "dispositivos";
+    String MENSAJES = "mensajes";
 }

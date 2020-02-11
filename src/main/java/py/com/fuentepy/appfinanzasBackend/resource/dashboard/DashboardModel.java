@@ -89,4 +89,8 @@ public class DashboardModel {
     @JsonProperty("monto_presupuesto_usado")
     @SerializedName("monto_presupuesto_usado")
     private Double montoPresupuestoUsado;
+
+    @JsonProperty("porcentaje_alerta")
+    @SerializedName("porcentaje_alerta")
+    private Integer porcentajeAlerta;
 }

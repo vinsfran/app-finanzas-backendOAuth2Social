@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.PrestamoConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.*;
+import py.com.fuentepy.appfinanzasBackend.data.repository.MensajeRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoCuoteraRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoPagoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.PrestamoRepository;
@@ -39,6 +40,9 @@ public class PrestamoServiceImpl implements PrestamoService {
 
     @Autowired
     private PrestamoPagoRepository prestamoPagoRepository;
+
+    @Autowired
+    private MensajeRepository mensajeRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -101,6 +105,16 @@ public class PrestamoServiceImpl implements PrestamoService {
                 prestamoCuotera.setUsuarioId(prestamo.getUsuarioId());
                 totDias = totDias + 30;
                 prestamoCuoteraRepository.save(prestamoCuotera);
+
+                Mensaje mensaje = new Mensaje();
+                mensaje.setId(new Date());
+                mensaje.setTitulo("Vencimiento de Prestamo");
+                mensaje.setBody("Tu prestamo de " + request.getDestinoPrestamo() + ", vence mañana.");
+                mensaje.setDataJson("DATA");
+                mensaje.setUsuarioId(usuario);
+                mensaje.setStatus(false);
+                mensaje.setFechaEnvio(DateUtil.sumarDiasAFecha(prestamoCuotera.getFechaVencimiento(), 1));
+                mensajeRepository.save(mensaje);
             }
             retorno = true;
         }
