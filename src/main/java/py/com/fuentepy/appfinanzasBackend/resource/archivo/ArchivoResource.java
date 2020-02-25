@@ -135,9 +135,9 @@ public class ArchivoResource {
             response = new BaseResponse(httpStatus.value(), messages);
         } catch (Exception e) {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-            message = new MessageResponse(StatusLevel.INFO, "Error al realizar de la imagen!");
+            message = new MessageResponse(StatusLevel.INFO, "Error al subir la imagen!");
             messages.add(message);
-            message = new MessageResponse(StatusLevel.ERROR, e.getCause().getMessage());
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
             messages.add(message);
             response = new BaseResponse(httpStatus.value(), messages);
             e.printStackTrace();

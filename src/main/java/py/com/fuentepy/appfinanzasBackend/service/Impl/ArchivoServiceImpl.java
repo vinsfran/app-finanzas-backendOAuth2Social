@@ -186,6 +186,7 @@ public class ArchivoServiceImpl implements ArchivoService {
                 Archivo archivo = findFotoPerfil(usuario.getId());
                 if (archivo != null && archivo.getNombre().length() > 0) {
                     deleteFile(archivo.getNombre());
+                    archivoRepository.delete(archivo);
                 }
                 String nombreArchivo = save(id, ConstantUtil.USUARIOS, usuario.getId(), multipartFile);
                 usuarioModel = new UsuarioModel();
@@ -195,7 +196,7 @@ public class ArchivoServiceImpl implements ArchivoService {
                 usuarioModel.setEmail(usuario.getEmail());
                 usuarioModel.setImageProfileName(nombreArchivo);
             } catch (Exception e) {
-                throw new Exception("No se pudo subir la imagen! " + e.getCause().getMessage());
+                throw new Exception("No se pudo subir la imagen! " + e.getMessage());
             }
         }
         return usuarioModel;
