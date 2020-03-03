@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.*;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface ConceptoService {
     List<ConceptoMovimientoModel> findByUsuarioAndConceptoId(Long usuarioId, Long ahorroId);
 
     void delete(Long usuarioId, Long ConceptoId) throws Exception;
+
+    void saveDefault(Usuario usuario);
 }

@@ -5,6 +5,7 @@ public interface ConstantUtil {
     String AHORROS = "ahorros";
     String ARCHIVOS = "archivos";
     String CONCEPTOS = "conceptos";
+    String CONCEPTOS_DEFAULT = "conceptos_default";
     String ENTIDADES_FINANCIERAS = "entidades_financieras";
     String MESES = "meses";
     String MONEDAS = "monedas";
@@ -23,4 +24,5 @@ public interface ConstantUtil {
     String CUOTA_PAGADA = "PAGADO";
     String DISPOSITIVOS = "dispositivos";
     String MENSAJES = "mensajes";
+    String PARAMETROS = "parametros";
 }

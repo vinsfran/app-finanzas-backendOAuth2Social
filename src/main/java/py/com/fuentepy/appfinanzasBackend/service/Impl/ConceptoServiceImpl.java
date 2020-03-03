@@ -9,11 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import py.com.fuentepy.appfinanzasBackend.converter.ConceptoConverter;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Concepto;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Movimiento;
-import py.com.fuentepy.appfinanzasBackend.data.entity.TipoConcepto;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.entity.*;
 import py.com.fuentepy.appfinanzasBackend.data.repository.ConceptoRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ParametroRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.concepto.*;
 import py.com.fuentepy.appfinanzasBackend.service.ConceptoService;
 import py.com.fuentepy.appfinanzasBackend.service.MovimientoService;
@@ -30,6 +28,9 @@ public class ConceptoServiceImpl implements ConceptoService {
 
     @Autowired
     private ConceptoRepository conceptoRepository;
+
+    @Autowired
+    private ParametroRepository parametroRepository;
 
     @Autowired
     private MovimientoService movimientoService;
@@ -167,6 +168,23 @@ public class ConceptoServiceImpl implements ConceptoService {
             conceptoRepository.deleteById(ConceptoId);
         } catch (Exception e) {
             throw new Exception("No se pudo eliminar el Concepto! " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveDefault(Usuario usuario) {
+        Moneda moneda = new Moneda();
+        moneda.setId(1);
+        List<Parametro> parametroList = parametroRepository.findByGrupo(ConstantUtil.CONCEPTOS_DEFAULT);
+        for (Parametro parametro : parametroList) {
+            TipoConcepto tipoConcepto = TipoConcepto.valueOf(parametro.getValor());
+            Concepto concepto = new Concepto();
+            concepto.setNombre(parametro.getCodigo());
+            concepto.setTipoConcepto(tipoConcepto);
+            concepto.setMonedaId(moneda);
+            concepto.setUsuarioId(usuario);
+            conceptoRepository.save(concepto);
         }
     }
 }
