@@ -6,13 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TipoAhorroConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Parametro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoAhorro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoCobro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ParametroRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TipoAhorroRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoAhorro.TipoAhorroModel;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoAhorro.TipoAhorroRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoAhorro.TipoAhorroRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.TipoAhorroService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +26,9 @@ public class TipoAhorroServiceImpl implements TipoAhorroService {
 
     @Autowired
     private TipoAhorroRepository tipoAhorroRepository;
+
+    @Autowired
+    private ParametroRepository parametroRepository;
 
     @Override
     public List<TipoAhorroModel> findByUsuarioId(Long usuarioId) {
@@ -58,25 +65,6 @@ public class TipoAhorroServiceImpl implements TipoAhorroService {
             return true;
         }
         return false;
-
-//        if(!entity.getEstado()){
-//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-//
-//            Movimiento movimiento = new Movimiento();
-//            movimiento.setNumeroComprobante("");
-//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-//            movimiento.setMontoPagado(entity.getMontoCapital());
-//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-//            movimiento.setPrestamoId(null);
-//            movimiento.setAhorroId(entity);
-//            movimiento.setTarjetaId(null);
-//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-//            movimiento.setConceptoId(concepto);
-//            movimiento.setMonedaId(entity.getMonedaId());
-////            movimiento.setTipoPagoId(entity.getTipoCobroId());
-//            movimiento.setUsuarioId(usuario);
-//            movimientoRepository.save(movimiento);
-//        }
     }
 
     @Override
@@ -93,5 +81,17 @@ public class TipoAhorroServiceImpl implements TipoAhorroService {
     @Transactional
     public void delete(Long id) {
         tipoAhorroRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void saveDefault(Usuario usuario) {
+        List<Parametro> parametroList = parametroRepository.findByGrupo(ConstantUtil.TIPOS_AHORROS_DEFAULT);
+        for (Parametro parametro : parametroList) {
+            TipoAhorro tipoAhorro = new TipoAhorro();
+            tipoAhorro.setNombre(parametro.getDescripcion());
+            tipoAhorro.setUsuarioId(usuario);
+            tipoAhorroRepository.save(tipoAhorro);
+        }
     }
 }

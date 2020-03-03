@@ -46,21 +46,44 @@ INSERT INTO meses (nombre, numero) VALUES ('Octubre', 10);
 INSERT INTO meses (nombre, numero) VALUES ('Noviembre', 11);
 INSERT INTO meses (nombre, numero) VALUES ('Diciembre', 12);
 
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Alquileres', 'egreso', 'conceptos_default', 'Valor por default para Alquileres');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Bebidas', 'egreso', 'conceptos_default', 'Valor por default para Bebidas');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Compras', 'egreso', 'conceptos_default', 'Valor por default para Compras');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Donaciones', 'egreso', 'conceptos_default', 'Valor por default para Donaciones');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Educación', 'egreso', 'conceptos_default', 'Valor por default para Educación');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Entretenimiento', 'egreso', 'conceptos_default', 'Valor por default para Entretenimiento');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Hogar', 'egreso', 'conceptos_default', 'Valor por default para Hogar');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Mascotas', 'egreso', 'conceptos_default', 'Valor por default para Mascotas');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Niños', 'egreso', 'conceptos_default', 'Valor por default para Niños');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Regalos', 'egreso', 'conceptos_default', 'Valor por default para Regalos');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Ropa', 'egreso', 'conceptos_default', 'Valor por default para Ropa');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Salud', 'egreso', 'conceptos_default', 'Valor por default para Salud');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Seguros', 'egreso', 'conceptos_default', 'Valor por default para Seguros');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Servicios', 'egreso', 'conceptos_default', 'Valor por default para Servicios');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Supermercados', 'egreso', 'conceptos_default', 'Valor por default para Supermercados');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Television Cable', 'egreso', 'conceptos_default', 'Valor por default para Television Cable');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Transporte', 'egreso', 'conceptos_default', 'Valor por default para Transporte');
-INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('Vehiculo', 'egreso', 'conceptos_default', 'Valor por default para Vehiculo');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('SUEL', 'ingreso', 'conceptos_default', 'Sueldos');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('ALQU', 'egreso', 'conceptos_default', 'Alquileres');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('BEBI', 'egreso', 'conceptos_default', 'Bebidas');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('COMI', 'egreso', 'conceptos_default', 'Compras');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('DONA', 'egreso', 'conceptos_default', 'Donaciones');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('EDUC', 'egreso', 'conceptos_default', 'Educación');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('ENTR', 'egreso', 'conceptos_default', 'Entretenimiento');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('HOGA', 'egreso', 'conceptos_default', 'Hogar');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('MASC', 'egreso', 'conceptos_default', 'Mascotas');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('NINO', 'egreso', 'conceptos_default', 'Niños');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('REGA', 'egreso', 'conceptos_default', 'Regalos');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('ROPA', 'egreso', 'conceptos_default', 'Ropa');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('SALU', 'egreso', 'conceptos_default', 'Salud');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('SEGU', 'egreso', 'conceptos_default', 'Seguros');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('SERV', 'egreso', 'conceptos_default', 'Servicios');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('SUPE', 'egreso', 'conceptos_default', 'Supermercados');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('TECA', 'egreso', 'conceptos_default', 'Television Cable');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('TRAN', 'egreso', 'conceptos_default', 'Transporte');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('VEHI', 'egreso', 'conceptos_default', 'Vehiculo');
+
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('MENS', 'mensual', 'tipos_cobros_default', 'Mensual');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('TRIM', 'trimestral', 'tipos_cobros_default', 'Trimestral');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('SEME', 'semestral', 'tipos_cobros_default', 'Semestral');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('ANUA', 'anual', 'tipos_cobros_default', 'Anual');
+
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('BAPR', 'banco_prueba', 'entidades_financieras_default', 'Banco Prueba');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('COPR', 'cooperativa_prueba', 'entidades_financieras_default', 'Cooperativa Prueba');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('CAPR', 'casa_credito_prueba', 'entidades_financieras_default', 'Casa de Credito Prueba');
+
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('CCDA', 'certificado_deposito_cda', 'tipos_ahorros_default', 'Certificado de Deposito (CDA)');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('BONO', 'bonos', 'tipos_ahorros_default', 'Bonos');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('ACCI', 'acciones', 'tipos_ahorros_default', 'Acciones');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('DEPF', 'deposito_plazo_fijo', 'tipos_ahorros_default', 'Deposito a Plazo Fijo');
+
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('EFEC', 'efectivo', 'tipos_pagos_default', 'Efectivo');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('TADE', 'tarjeta_debito', 'tipos_pagos_default', 'Tarjeta de Debito');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('TACR', 'tarjeta_credito', 'tipos_pagos_default', 'Tarjeta de Credito');
+INSERT INTO parametros (codigo, valor, grupo, descripcion) VALUES ('DECU', 'deposito_cuenta', 'tipos_pagos_default', 'Deposito en cuenta');
+
+
+

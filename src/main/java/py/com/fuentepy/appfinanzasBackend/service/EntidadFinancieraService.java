@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraModel;
 import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestUpdate;
@@ -27,4 +28,6 @@ public interface EntidadFinancieraService {
     boolean update(EntidadFinancieraRequestUpdate request, Long usuarioId);
 
     void delete(Long id);
+
+    void saveDefault(Usuario usuario);
 }

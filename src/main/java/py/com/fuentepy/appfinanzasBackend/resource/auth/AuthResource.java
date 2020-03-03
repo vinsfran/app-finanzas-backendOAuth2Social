@@ -27,8 +27,7 @@ import py.com.fuentepy.appfinanzasBackend.resource.common.MessageResponse;
 import py.com.fuentepy.appfinanzasBackend.resource.common.StatusLevel;
 import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationRequestModel;
 import py.com.fuentepy.appfinanzasBackend.security.TokenProvider;
-import py.com.fuentepy.appfinanzasBackend.service.ConceptoService;
-import py.com.fuentepy.appfinanzasBackend.service.FcmService;
+import py.com.fuentepy.appfinanzasBackend.service.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -54,6 +53,19 @@ public class AuthResource {
 
     @Autowired
     private ConceptoService conceptoService;
+
+    @Autowired
+    private TipoCobroService tipoCobroService;
+
+    @Autowired
+    private EntidadFinancieraService entidadFinancieraService;
+
+    @Autowired
+    private TipoAhorroService tipoAhorroService;
+
+    @Autowired
+    private TipoPagoService tipoPagoService;
+
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -96,6 +108,11 @@ public class AuthResource {
         usuario.setCreatedOn(new Date());
         Usuario result = usuarioRepository.saveAndFlush(usuario);
         conceptoService.saveDefault(result);
+        tipoCobroService.saveDefault(result);
+        entidadFinancieraService.saveDefault(result);
+        tipoAhorroService.saveDefault(result);
+        tipoPagoService.saveDefault(result);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/usuario/me")
                 .buildAndExpand(result.getId()).toUri();

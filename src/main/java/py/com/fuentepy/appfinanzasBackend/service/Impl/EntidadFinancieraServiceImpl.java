@@ -9,13 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.EntidadFinancieraConverter;
 import py.com.fuentepy.appfinanzasBackend.data.entity.EntidadFinanciera;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Parametro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoCobro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.EntidadFinancieraRepository;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ParametroRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraModel;
 import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.entidadFinanciera.EntidadFinancieraRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.EntidadFinancieraService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +31,9 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
 
     @Autowired
     private EntidadFinancieraRepository entidadFinancieraRepository;
+
+    @Autowired
+    private ParametroRepository parametroRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -86,25 +93,6 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
             return true;
         }
         return false;
-
-//        if(!entity.getEstado()){
-//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-//
-//            Movimiento movimiento = new Movimiento();
-//            movimiento.setNumeroComprobante("");
-//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-//            movimiento.setMontoPagado(entity.getMontoCapital());
-//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-//            movimiento.setPrestamoId(null);
-//            movimiento.setAhorroId(entity);
-//            movimiento.setTarjetaId(null);
-//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-//            movimiento.setConceptoId(concepto);
-//            movimiento.setMonedaId(entity.getMonedaId());
-////            movimiento.setTipoPagoId(entity.getTipoCobroId());
-//            movimiento.setUsuarioId(usuario);
-//            movimientoRepository.save(movimiento);
-//        }
     }
 
     @Override
@@ -121,5 +109,17 @@ public class EntidadFinancieraServiceImpl implements EntidadFinancieraService {
     @Transactional
     public void delete(Long id) {
         entidadFinancieraRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void saveDefault(Usuario usuario) {
+        List<Parametro> parametroList = parametroRepository.findByGrupo(ConstantUtil.ENTIDADES_FINANCIERAS_DEFAULT);
+        for (Parametro parametro : parametroList) {
+            EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+            entidadFinanciera.setNombre(parametro.getDescripcion());
+            entidadFinanciera.setUsuarioId(usuario);
+            entidadFinancieraRepository.save(entidadFinanciera);
+        }
     }
 }

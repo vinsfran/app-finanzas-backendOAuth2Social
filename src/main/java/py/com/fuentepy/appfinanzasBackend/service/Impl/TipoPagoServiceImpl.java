@@ -6,13 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.fuentepy.appfinanzasBackend.converter.TipoPagoConverter;
+import py.com.fuentepy.appfinanzasBackend.data.entity.Parametro;
+import py.com.fuentepy.appfinanzasBackend.data.entity.TipoCobro;
 import py.com.fuentepy.appfinanzasBackend.data.entity.TipoPago;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
+import py.com.fuentepy.appfinanzasBackend.data.repository.ParametroRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.TipoPagoRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoModel;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoRequestNew;
 import py.com.fuentepy.appfinanzasBackend.resource.tipoPago.TipoPagoRequestUpdate;
 import py.com.fuentepy.appfinanzasBackend.service.TipoPagoService;
+import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +26,9 @@ public class TipoPagoServiceImpl implements TipoPagoService {
 
     @Autowired
     private TipoPagoRepository tipoPagoRepository;
+
+    @Autowired
+    private ParametroRepository parametroRepository;
 
     @Override
     public List<TipoPagoModel> findByUsuarioId(Long usuarioId) {
@@ -58,25 +65,6 @@ public class TipoPagoServiceImpl implements TipoPagoService {
             return true;
         }
         return false;
-
-//        if(!entity.getEstado()){
-//            Concepto concepto = conceptoRepository.findByCodigoConcepto("CA");
-//
-//            Movimiento movimiento = new Movimiento();
-//            movimiento.setNumeroComprobante("");
-//            movimiento.setFechaMovimiento(entity.getFechaVencimiento());
-//            movimiento.setMontoPagado(entity.getMontoCapital());
-//            movimiento.setNombreEntidad(entity.getEntidadFinancieraId().getNombre());
-//            movimiento.setPrestamoId(null);
-//            movimiento.setAhorroId(entity);
-//            movimiento.setTarjetaId(null);
-//            movimiento.setNumeroCuota(entity.getCantidadCuotas());
-//            movimiento.setConceptoId(concepto);
-//            movimiento.setMonedaId(entity.getMonedaId());
-////            movimiento.setTipoPagoId(entity.getTipoCobroId());
-//            movimiento.setUsuarioId(usuario);
-//            movimientoRepository.save(movimiento);
-//        }
     }
 
     @Override
@@ -93,5 +81,17 @@ public class TipoPagoServiceImpl implements TipoPagoService {
     @Transactional
     public void delete(Long id) {
         tipoPagoRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void saveDefault(Usuario usuario) {
+        List<Parametro> parametroList = parametroRepository.findByGrupo(ConstantUtil.TIPOS_PAGOS_DEFAULT);
+        for (Parametro parametro : parametroList) {
+            TipoPago tipoPago = new TipoPago();
+            tipoPago.setNombre(parametro.getDescripcion());
+            tipoPago.setUsuarioId(usuario);
+            tipoPagoRepository.save(tipoPago);
+        }
     }
 }

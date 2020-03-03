@@ -180,7 +180,7 @@ public class ConceptoServiceImpl implements ConceptoService {
         for (Parametro parametro : parametroList) {
             TipoConcepto tipoConcepto = TipoConcepto.valueOf(parametro.getValor());
             Concepto concepto = new Concepto();
-            concepto.setNombre(parametro.getCodigo());
+            concepto.setNombre(parametro.getDescripcion());
             concepto.setTipoConcepto(tipoConcepto);
             concepto.setMonedaId(moneda);
             concepto.setUsuarioId(usuario);
