@@ -50,4 +50,8 @@ public class PrestamoRequestPago implements Serializable {
     @SerializedName("monto_mora")
     private Double montoMora;
 
+    @JsonProperty("id_tipo_pago")
+    @SerializedName("id_tipo_pago")
+    private Long idTipoPago;
+
 }

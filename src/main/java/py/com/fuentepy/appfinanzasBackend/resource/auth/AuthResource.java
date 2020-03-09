@@ -94,7 +94,7 @@ public class AuthResource {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (usuarioRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new BadRequestException("Email address already in use.");
+            throw new BadRequestException("Usuario existente.");
         }
         // Creating usuario's account
         Usuario usuario = new Usuario();

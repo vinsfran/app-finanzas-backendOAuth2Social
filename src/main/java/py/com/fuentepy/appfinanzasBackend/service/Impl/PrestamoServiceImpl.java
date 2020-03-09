@@ -169,6 +169,9 @@ public class PrestamoServiceImpl implements PrestamoService {
                     cont--;
                     PrestamoCuotera prestamoCuotera = prestamoCuoteraList.get(i);
                     PrestamoPago prestamoPago = new PrestamoPago();
+                    TipoPago tipoPago = new TipoPago();
+                    tipoPago.setId(request.getIdTipoPago());
+                    prestamoPago.setTipoPagoId(tipoPago);
                     prestamo.setFechaProxVencimiento(prestamoCuotera.getFechaVencimiento());
                     prestamo.setSaldoCuota(prestamoCuotera.getSaldoCuota());
                     prestamo.setSiguienteCuota(prestamoCuotera.getNumeroCuota());

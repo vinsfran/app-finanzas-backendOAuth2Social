@@ -5,8 +5,6 @@ import lombok.extern.apachecommons.CommonsLog;
 import py.com.fuentepy.appfinanzasBackend.util.ConstantUtil;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -36,6 +34,10 @@ public class PrestamoPago implements Serializable {
     @Column(name = "fecha_pago")
     @Temporal(TemporalType.DATE)
     private Date fechaPago;
+
+    @JoinColumn(name = "tipo_pago_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private TipoPago tipoPagoId;
 
     @JoinColumn(name = "prestamo_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
