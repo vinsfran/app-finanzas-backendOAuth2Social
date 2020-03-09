@@ -43,6 +43,12 @@ public class Usuario implements Serializable {
     @NotEmpty(message = "Please provide your last name")
     private String lastName;
 
+    @Column(name = "fecha_nacimiento")
+    private Date fechaNacimiento;
+
+    @Column(name = "sexo")
+    private String sexo;
+
     @Column(name = "enabled")
     private boolean enabled;
 

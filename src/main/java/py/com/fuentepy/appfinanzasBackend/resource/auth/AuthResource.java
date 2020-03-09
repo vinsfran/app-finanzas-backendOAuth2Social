@@ -101,6 +101,8 @@ public class AuthResource {
         usuario.setFirstName(signUpRequest.getFirstName());
         usuario.setLastName(signUpRequest.getLastName());
         usuario.setEmail(signUpRequest.getEmail());
+        usuario.setFechaNacimiento(signUpRequest.getFechaNacimiento());
+        usuario.setSexo(signUpRequest.getSexo());
         usuario.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         usuario.setProvider(AuthProvider.local);
         usuario.setEmailVerified(true);

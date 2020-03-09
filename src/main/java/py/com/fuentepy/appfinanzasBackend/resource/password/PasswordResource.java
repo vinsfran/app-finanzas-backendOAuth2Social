@@ -74,8 +74,8 @@ public class PasswordResource {
                     passwordResetEmail.setFrom("support@demo.com");
                     passwordResetEmail.setTo(user.getEmail());
                     passwordResetEmail.setSubject("Password Reset Request");
-                    passwordResetEmail.setText("To reset your password, click the link below: " + appUrl
-                            + "/reset?token=" + user.getResetToken());
+                    passwordResetEmail.setText("Click en el enlace para recuperar tu password: " + appUrl
+                            + "reset?token=" + user.getResetToken());
                     emailService.sendEmail(passwordResetEmail);
                     httpStatus = HttpStatus.OK;
                     message = new MessageResponse(StatusLevel.INFO, "A password reset link has been sent to " + forgotRequest.getEmail());
