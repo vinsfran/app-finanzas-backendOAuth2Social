@@ -56,6 +56,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioModel.setFirstName(usuario.getFirstName());
             usuarioModel.setLastName(usuario.getLastName());
             usuarioModel.setEmail(usuario.getEmail());
+            usuarioModel.setFechaNacimiento(usuario.getFechaNacimiento());
+            usuarioModel.setSexo(usuario.getSexo());
             usuarioModel.setImageProfileName(archivo.getNombre());
         }
         return usuarioModel;
@@ -69,6 +71,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             Usuario usuario = optional.get();
             usuario.setFirstName(request.getFirstName());
             usuario.setLastName(request.getLastName());
+            usuario.setFechaNacimiento(request.getFechaNacimiento());
+            usuario.setSexo(request.getSexo());
             usuario = usuarioRepository.save(usuario);
             if (usuario != null) {
                 return true;
