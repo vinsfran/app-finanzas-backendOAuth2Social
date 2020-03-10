@@ -124,7 +124,28 @@ public class PrestamoServiceImpl implements PrestamoService {
     @Override
     @Transactional
     public boolean update(PrestamoRequestUpdate request, Long usuarioId) {
-        Prestamo entity = prestamoRepository.save(PrestamoConverter.prestamoUpdateToPrestamoEntity(request, usuarioId));
+        Moneda moneda = new Moneda();
+        moneda.setId(request.getMonedaId());
+        EntidadFinanciera entidadFinanciera = new EntidadFinanciera();
+        entidadFinanciera.setId(request.getEntidadFinancieraId());
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        Prestamo prestamoOld = prestamoRepository.findByIdAndUsuarioId(request.getId(), usuario).get();
+        prestamoOld.setNumeroComprobante(request.getNumeroComprobante());
+        prestamoOld.setMontoPrestamo(request.getMontoPrestamo());
+        prestamoOld.setFechaDesembolso(request.getFechaDesembolso());
+//        prestamoOld.setFechaVencimiento(request.getFechaVencimiento());
+        prestamoOld.setInteres(request.getInteres());
+        prestamoOld.setTasa(request.getTasa());
+        prestamoOld.setCantidadCuotas(request.getCantidadCuotas());
+        prestamoOld.setCantidadCuotasPagadas(request.getCantidadCuotasPagadas());
+        prestamoOld.setMontoCuota(request.getMontoCuota());
+        prestamoOld.setMontoPagado(request.getMontoPagado());
+        prestamoOld.setDestinoPrestamo(request.getDestinoPrestamo());
+        prestamoOld.setEstado(request.getEstado());
+        prestamoOld.setMonedaId(moneda);
+        prestamoOld.setEntidadFinancieraId(entidadFinanciera);
+        Prestamo entity = prestamoRepository.save(prestamoOld);
         if (entity != null) {
             return true;
         }
