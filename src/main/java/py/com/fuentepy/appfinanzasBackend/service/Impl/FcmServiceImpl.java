@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Dispositivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Mensaje;
-import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.DispositivoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MensajeRepository;
 import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationDataModel;
@@ -25,7 +24,6 @@ import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author vinsfran
@@ -94,7 +92,7 @@ public class FcmServiceImpl implements FcmService {
 //4 -> días (1-31)
 //5 -> meses (1-12)
 //6 -> día de la semana (1-7)
-    @Scheduled(cron = "0 50 17 * * *")
+    @Scheduled(cron = "${app.fcm.cron.mensajes}")
     public void envioMensajesAutomatico() throws Exception {
         send();
     }
