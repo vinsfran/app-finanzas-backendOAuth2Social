@@ -94,7 +94,7 @@ public class FcmServiceImpl implements FcmService {
 //4 -> días (1-31)
 //5 -> meses (1-12)
 //6 -> día de la semana (1-7)
-    @Scheduled(cron = "0 0 10 * * *")
+    @Scheduled(cron = "0 50 17 * * *")
     public void envioMensajesAutomatico() throws Exception {
         send();
     }
