@@ -94,7 +94,8 @@ public class FcmServiceImpl implements FcmService {
 //6 -> día de la semana (1-7)
 //    @Scheduled(cron = "${app.fcm.cron.mensajes}")
     // Se ejecuta cada 24 horas en segundos
-    @Scheduled(fixedRate = 86400)
+//    @Scheduled(fixedRate = 86400)
+    @Scheduled(fixedRateString = "${app.fcm.cron.mensajes}")
     public void envioMensajesAutomatico() throws Exception {
         LOG.info("ENTRO en envioMensajesAutomatico");
         send();
