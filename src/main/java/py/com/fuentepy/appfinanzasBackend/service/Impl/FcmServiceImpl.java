@@ -84,7 +84,7 @@ public class FcmServiceImpl implements FcmService {
                     StringEntity input = new StringEntity(json);
                     input.setContentType("application/json");
 
-                    postRequest.addHeader("Authorization", "key=" + key);
+                    postRequest.addHeader("Authorization", "Bearer " + key);
                     postRequest.setEntity(input);
 
                     HttpResponse response = httpClient.execute(postRequest);
