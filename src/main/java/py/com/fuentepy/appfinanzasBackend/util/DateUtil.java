@@ -49,7 +49,7 @@ public class DateUtil {
 
     public static boolean compararFechas(Date fecha1, Date fecha2) {
         if (extraerAnio(fecha1).equals(extraerAnio(fecha2))) {
-            if (extraerMes(fecha1).equals(fecha2)) {
+            if (extraerMes(fecha1).equals(extraerMes(fecha2))) {
                 if (extraerDia(fecha1).equals(extraerDia(fecha2))) {
                     return true;
                 }
