@@ -49,7 +49,7 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public String send() throws Exception {
         String body = null;
-        HttpResponse<JsonNode> response;
+        HttpResponse<String> response;
         try {
             for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
                 for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
@@ -76,11 +76,12 @@ public class FcmServiceImpl implements FcmService {
                         input.setContentType("application/json");
 
                         response = Unirest.post(urlFcmSend)
+                                .header("Content-Type", "application/json")
                                 .header("Authorization", "key=" + key)
-                                .body(input)
-                                .asJson();
+                                .body(json)
+                                .asEmpty();
                         if (response.getStatus() == 200) {
-                            body = response.getBody().toString();
+                            body = response.getBody();
                             LOG.info(body);
                         } else {
                             throw new Exception("Error code: " + response.getStatus());
