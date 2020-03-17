@@ -11,4 +11,7 @@ import java.util.List;
 public interface DispositivoRepository extends JpaRepository<Dispositivo, Long> {
 
     List<Dispositivo> findByUsuarioId(Usuario usuario);
+
+    Dispositivo findByToken(String token);
+
 }

@@ -108,14 +108,17 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public void registerToken(Long id, String token) throws Exception {
-        Optional<Usuario> optional = usuarioRepository.findById(id);
-        if (optional.isPresent()) {
-            Usuario usuario = optional.get();
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
             try {
-                Dispositivo dispositivo = new Dispositivo();
-                dispositivo.setUsuarioId(usuario);
-                dispositivo.setToken(token);
-                dispositivoRepository.save(dispositivo);
+                Dispositivo dispositivo = dispositivoRepository.findByToken(token);
+                if (dispositivo == null) {
+                    dispositivo = new Dispositivo();
+                    dispositivo.setUsuarioId(usuario);
+                    dispositivo.setToken(token);
+                    dispositivoRepository.save(dispositivo);
+                }
             } catch (Exception e) {
                 throw new Exception("No se pudo registrar el token del dispositivo! " + e.getMessage());
             }
