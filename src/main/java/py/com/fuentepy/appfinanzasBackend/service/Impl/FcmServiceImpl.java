@@ -64,6 +64,7 @@ public class FcmServiceImpl implements FcmService {
                         Type type = new TypeToken<NotificationRequestModel>() {
                         }.getType();
                         String json = gson.toJson(notificationRequestModel, type);
+                        LOG.info(json);
                         StringEntity input = new StringEntity(json);
                         input.setContentType("application/json");
                         response = Unirest.post(urlFcmSend)
