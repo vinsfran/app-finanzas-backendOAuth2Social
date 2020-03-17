@@ -109,7 +109,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 Mensaje mensaje = new Mensaje();
                 mensaje.setId(new Date());
                 mensaje.setTitulo("Vencimiento de Prestamo");
-                mensaje.setBody("Tu prestamo de " + request.getDestinoPrestamo() + ", " + DateUtil.parseToString(prestamoCuotera.getFechaVencimiento(), ConstantUtil.DATE_FORMAT_DD_MM_YYYY));
+                mensaje.setBody("Tu prestamo de " + request.getDestinoPrestamo() + ", vence el " + DateUtil.parseToString(prestamoCuotera.getFechaVencimiento(), ConstantUtil.DATE_FORMAT_DD_MM_YYYY));
                 mensaje.setDataJson("DATA");
                 mensaje.setUsuarioId(usuario);
                 mensaje.setStatus(false);
