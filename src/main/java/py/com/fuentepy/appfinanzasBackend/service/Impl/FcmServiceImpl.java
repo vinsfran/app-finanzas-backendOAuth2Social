@@ -1,14 +1,10 @@
 package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.entity.StringEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +19,6 @@ import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationRequestModel;
 import py.com.fuentepy.appfinanzasBackend.service.FcmService;
 import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 
-import java.lang.reflect.Type;
 import java.util.Date;
 
 /**
@@ -49,7 +44,7 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public String send() throws Exception {
         String body = null;
-        HttpResponse<JsonNode> response;
+        HttpResponse<String> response;
         try {
             for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
                 for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
@@ -66,20 +61,22 @@ public class FcmServiceImpl implements FcmService {
                         DataModel dataModel = new DataModel();
                         dataModel.setClickAction("FLUTTER_NOTIFICATION_CLICK");
                         notificationRequestModel.setData(dataModel);
-                        Gson gson = new Gson();
-                        Type type = new TypeToken<NotificationRequestModel>() {
-                        }.getType();
-                        String json = gson.toJson(notificationRequestModel, type);
-                        LOG.info(json);
-                        StringEntity input = new StringEntity(json);
-                        input.setContentType("application/json");
+
+//                        Gson gson = new Gson();
+//                        Type type = new TypeToken<NotificationRequestModel>() {
+//                        }.getType();
+//                        String json = gson.toJson(notificationRequestModel, type);
+//                        LOG.info(json);
+//                        StringEntity input = new StringEntity(json);
+//                        input.setContentType("application/json");
+
                         response = Unirest.post(urlFcmSend)
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "key=" + key)
-                                .body(json)
-                                .asJson();
+                                .body(notificationRequestModel)
+                                .asEmpty();
                         if (response.getStatus() == 200) {
-                            body = response.getBody().toString();
+                            body = response.getBody();
                         } else {
                             throw new Exception("Error code: " + response.getStatus());
                         }

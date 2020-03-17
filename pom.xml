@@ -75,10 +75,25 @@
             <version>2.9.2</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.mashape.unirest</groupId>
+            <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>1.4.9</version>
+            <version>3.4.01</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.konghq/unirest-objectmapper-jackson -->
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-objectmapper-jackson</artifactId>
+            <version>3.4.01</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/com.konghq/unirest-object-mappers-gson -->
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-object-mappers-gson</artifactId>
+            <version>3.4.01</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
