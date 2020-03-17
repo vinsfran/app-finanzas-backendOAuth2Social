@@ -6,9 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,6 @@ import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationDataModel;
 import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationRequestModel;
 import py.com.fuentepy.appfinanzasBackend.service.FcmService;
 import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
-
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -51,8 +51,9 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public String send() throws Exception {
 
-        DefaultHttpClient httpClient = new DefaultHttpClient();
+//        DefaultHttpClient httpClient = new DefaultHttpClient();
 
+        HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost postRequest = new HttpPost(urlFcmSend);
 
         String body = null;
