@@ -1,6 +1,7 @@
 package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
 import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import org.apache.commons.logging.Log;
@@ -44,7 +45,7 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public String send() throws Exception {
         String body = null;
-        HttpResponse<String> response;
+        HttpResponse<JsonNode> response;
         try {
             for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
                 for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
@@ -74,9 +75,10 @@ public class FcmServiceImpl implements FcmService {
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "key=" + key)
                                 .body(notificationRequestModel)
-                                .asEmpty();
+                                .asJson();
                         if (response.getStatus() == 200) {
-                            body = response.getBody();
+                            body = response.getBody().toString();
+                            LOG.info(body);
                         } else {
                             throw new Exception("Error code: " + response.getStatus());
                         }
