@@ -3,13 +3,13 @@ package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.UnirestException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,50 +50,72 @@ public class FcmServiceImpl implements FcmService {
 
     @Override
     public String send() throws Exception {
+
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+
+        HttpPost postRequest = new HttpPost(urlFcmSend);
+
         String body = null;
-        HttpResponse<JsonNode> response;
-        try {
-            for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
-                for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
-                    if (DateUtil.compararFechas(new Date(), mensaje.getFechaEnvio())) {
-                        LOG.info(mensaje.getBody());
-                        NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
-                        notificationRequestModel.setTo(dispositivo.getToken());
+//        HttpResponse<JsonNode> response;
+//        try {
+        for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
+            for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
+                if (DateUtil.compararFechas(new Date(), mensaje.getFechaEnvio())) {
+                    LOG.info(mensaje.getBody());
+                    NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
+                    notificationRequestModel.setTo(dispositivo.getToken());
 //                    notificationRequestModel.setTo("c-HC2bTtLJE:APA91bF7lUnAqFwyP-2wMJuQsE1QBIQA89Pig1HryhvovrY8aI1EqC_5CkMsRbu5cyPNAqDXVD9_4Nwuohj9XqA8OjpkqU77nV13J6dTKmM2kS8J2HKt3-SRjM_3ORltSc0vOkVZCZao");
-                        notificationRequestModel.setNotification(new NotificationDataModel());
-                        notificationRequestModel.getNotification().setTitle(mensaje.getTitulo());
-                        notificationRequestModel.getNotification().setBody(mensaje.getBody());
-                        notificationRequestModel.getNotification().setIcon("ic_stat_icon_controlate");
-                        notificationRequestModel.getNotification().setColor("#25cf38");
-                        DataModel dataModel = new DataModel();
-                        dataModel.setClickAction("FLUTTER_NOTIFICATION_CLICK");
-                        notificationRequestModel.setData(dataModel);
+                    notificationRequestModel.setNotification(new NotificationDataModel());
+                    notificationRequestModel.getNotification().setTitle(mensaje.getTitulo());
+                    notificationRequestModel.getNotification().setBody(mensaje.getBody());
+                    notificationRequestModel.getNotification().setIcon("ic_stat_icon_controlate");
+                    notificationRequestModel.getNotification().setColor("#25cf38");
+                    DataModel dataModel = new DataModel();
+                    dataModel.setClickAction("FLUTTER_NOTIFICATION_CLICK");
+                    notificationRequestModel.setData(dataModel);
 
-                        Gson gson = new Gson();
-                        Type type = new TypeToken<NotificationRequestModel>() {
-                        }.getType();
-                        String json = gson.toJson(notificationRequestModel, type);
-                        LOG.info(json);
-                        StringEntity input = new StringEntity(json);
-                        input.setContentType("application/json");
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<NotificationRequestModel>() {
+                    }.getType();
+                    String json = gson.toJson(notificationRequestModel, type);
+                    LOG.info(json);
 
-                        response = Unirest.post(urlFcmSend)
-                                .header("Content-Type", "application/json")
-                                .header("Authorization", "key=" + key)
-                                .body(json)
-                                .asJson();
-                        if (response.getStatus() == 200) {
-                            body = response.getBody().toString();
-                            LOG.info(body);
-                        } else {
-                            throw new Exception("Error code: " + response.getStatus());
-                        }
+                    StringEntity input = new StringEntity(json);
+                    input.setContentType("application/json");
+
+                    postRequest.addHeader("Authorization", "key=" + key);
+                    postRequest.setEntity(input);
+
+                    HttpResponse response = httpClient.execute(postRequest);
+
+                    if (response.getStatusLine().getStatusCode() != 200) {
+                        throw new RuntimeException("Failed : HTTP error code : "
+                                + response.getStatusLine().getStatusCode());
+                    } else if (response.getStatusLine().getStatusCode() == 200) {
+                        body = "response:" + EntityUtils.toString(response.getEntity());
+                        LOG.info(body);
+//                            System.out.println("response:" + EntityUtils.toString(response.getEntity()));
+
                     }
+
+//                        response = Unirest.post(urlFcmSend)
+//                                .header("Content-Type", "application/json")
+//                                .header("Authorization", "key=" + key)
+//                                .body(json)
+//                                .asJson();
+//
+//                        if (response.getStatus() == 200) {
+//                            body = response.getBody().toString();
+//                            LOG.info(body);
+//                        } else {
+//                            throw new Exception("Error code: " + response.getStatus());
+//                        }
                 }
             }
-        } catch (UnirestException ex) {
-            throw new Exception(ex.getMessage());
         }
+//        } catch (UnirestException ex) {
+//            throw new Exception(ex.getMessage());
+//        }
         return body;
     }
 
