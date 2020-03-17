@@ -65,6 +65,7 @@ public class FcmServiceImpl implements FcmService {
                         notificationRequestModel.getNotification().setColor("#25cf38");
                         DataModel dataModel = new DataModel();
                         dataModel.setClickAction("FLUTTER_NOTIFICATION_CLICK");
+                        notificationRequestModel.setData(dataModel);
                         Gson gson = new Gson();
                         Type type = new TypeToken<NotificationRequestModel>() {
                         }.getType();
