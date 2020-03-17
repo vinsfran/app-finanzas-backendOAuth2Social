@@ -95,7 +95,7 @@ public class FcmServiceImpl implements FcmService {
                     } else if (response.getStatusLine().getStatusCode() == 200) {
                         body = "response:" + EntityUtils.toString(response.getEntity());
                         LOG.info(body);
-//                            System.out.println("response:" + EntityUtils.toString(response.getEntity()));
+                        mensajeRepository.delete(mensaje);
 
                     }
 
