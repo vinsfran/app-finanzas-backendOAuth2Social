@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,6 +12,11 @@ import java.util.Date;
 public class DateUtil {
 
     private static final Log LOG = LogFactory.getLog(DateUtil.class);
+
+    public static String parseToString(Date dateTrn, String dateFormat) {
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        return format.format(dateTrn);
+    }
 
     public static Date sumarDiasAFecha(Date fecha, int dias) {
         if (dias == 0) return fecha;

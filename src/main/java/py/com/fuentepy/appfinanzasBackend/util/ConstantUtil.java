@@ -2,6 +2,7 @@ package py.com.fuentepy.appfinanzasBackend.util;
 
 public interface ConstantUtil {
 
+    String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy";
     String AHORROS = "ahorros";
     String ARCHIVOS = "archivos";
     String CONCEPTOS = "conceptos";
