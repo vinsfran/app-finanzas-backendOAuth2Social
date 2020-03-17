@@ -26,7 +26,9 @@ import py.com.fuentepy.appfinanzasBackend.service.FcmService;
 import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author vinsfran
@@ -51,21 +53,17 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public String send() throws Exception {
 
-//        DefaultHttpClient httpClient = new DefaultHttpClient();
-
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost postRequest = new HttpPost(urlFcmSend);
 
         String body = null;
-//        HttpResponse<JsonNode> response;
-//        try {
+        List<Mensaje> mensajesBorrar = new ArrayList<>();
         for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
             for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
                 if (DateUtil.compararFechas(new Date(), mensaje.getFechaEnvio())) {
                     LOG.info(mensaje.getBody());
                     NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
                     notificationRequestModel.setTo(dispositivo.getToken());
-//                    notificationRequestModel.setTo("c-HC2bTtLJE:APA91bF7lUnAqFwyP-2wMJuQsE1QBIQA89Pig1HryhvovrY8aI1EqC_5CkMsRbu5cyPNAqDXVD9_4Nwuohj9XqA8OjpkqU77nV13J6dTKmM2kS8J2HKt3-SRjM_3ORltSc0vOkVZCZao");
                     notificationRequestModel.setNotification(new NotificationDataModel());
                     notificationRequestModel.getNotification().setTitle(mensaje.getTitulo());
                     notificationRequestModel.getNotification().setBody(mensaje.getBody());
@@ -95,28 +93,16 @@ public class FcmServiceImpl implements FcmService {
                     } else if (response.getStatusLine().getStatusCode() == 200) {
                         body = "response:" + EntityUtils.toString(response.getEntity());
                         LOG.info(body);
-                        mensajeRepository.delete(mensaje);
-
+                        mensajesBorrar.add(mensaje);
                     }
-
-//                        response = Unirest.post(urlFcmSend)
-//                                .header("Content-Type", "application/json")
-//                                .header("Authorization", "key=" + key)
-//                                .body(json)
-//                                .asJson();
-//
-//                        if (response.getStatus() == 200) {
-//                            body = response.getBody().toString();
-//                            LOG.info(body);
-//                        } else {
-//                            throw new Exception("Error code: " + response.getStatus());
-//                        }
                 }
             }
         }
-//        } catch (UnirestException ex) {
-//            throw new Exception(ex.getMessage());
-//        }
+        if (!mensajesBorrar.isEmpty()) {
+            for (Mensaje mensajeBorrar : mensajesBorrar) {
+                mensajeRepository.delete(mensajeBorrar);
+            }
+        }
         return body;
     }
 
