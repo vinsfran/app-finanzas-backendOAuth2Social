@@ -10,10 +10,6 @@ import lombok.Data;
 @Data
 public class DataModel {
 
-    @JsonProperty("hello")
-    @SerializedName("hello")
-    private String hello;
-
     @JsonProperty("click_action")
     @SerializedName("click_action")
     private String clickAction;

@@ -18,5 +18,13 @@ public class NotificationDataModel {
     @SerializedName("body")
     private String body;
 
+    @JsonProperty("icon")
+    @SerializedName("icon")
+    private String icon;
+
+    @JsonProperty("color")
+    @SerializedName("color")
+    private String color;
+
 
 }

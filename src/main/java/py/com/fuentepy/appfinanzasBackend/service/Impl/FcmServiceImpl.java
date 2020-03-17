@@ -17,6 +17,7 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Dispositivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Mensaje;
 import py.com.fuentepy.appfinanzasBackend.data.repository.DispositivoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.MensajeRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.fcm.DataModel;
 import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationDataModel;
 import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationRequestModel;
 import py.com.fuentepy.appfinanzasBackend.service.FcmService;
@@ -58,8 +59,12 @@ public class FcmServiceImpl implements FcmService {
                         notificationRequestModel.setTo(dispositivo.getToken());
 //                    notificationRequestModel.setTo("c-HC2bTtLJE:APA91bF7lUnAqFwyP-2wMJuQsE1QBIQA89Pig1HryhvovrY8aI1EqC_5CkMsRbu5cyPNAqDXVD9_4Nwuohj9XqA8OjpkqU77nV13J6dTKmM2kS8J2HKt3-SRjM_3ORltSc0vOkVZCZao");
                         notificationRequestModel.setNotification(new NotificationDataModel());
-                        notificationRequestModel.getNotification().setBody(mensaje.getBody());
                         notificationRequestModel.getNotification().setTitle(mensaje.getTitulo());
+                        notificationRequestModel.getNotification().setBody(mensaje.getBody());
+                        notificationRequestModel.getNotification().setIcon("ic_stat_icon_controlate");
+                        notificationRequestModel.getNotification().setColor("#25cf38");
+                        DataModel dataModel = new DataModel();
+                        dataModel.setClickAction("FLUTTER_NOTIFICATION_CLICK");
                         Gson gson = new Gson();
                         Type type = new TypeToken<NotificationRequestModel>() {
                         }.getType();
