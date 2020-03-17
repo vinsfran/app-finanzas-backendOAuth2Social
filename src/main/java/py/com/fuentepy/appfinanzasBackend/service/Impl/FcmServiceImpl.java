@@ -49,7 +49,7 @@ public class FcmServiceImpl implements FcmService {
     @Override
     public String send() throws Exception {
         String body = null;
-        HttpResponse<String> response;
+        HttpResponse<JsonNode> response;
         try {
             for (Dispositivo dispositivo : dispositivoRepository.findAll()) {
                 for (Mensaje mensaje : mensajeRepository.findByUsuarioId(dispositivo.getUsuarioId())) {
@@ -79,9 +79,9 @@ public class FcmServiceImpl implements FcmService {
                                 .header("Content-Type", "application/json")
                                 .header("Authorization", "key=" + key)
                                 .body(json)
-                                .asEmpty();
+                                .asJson();
                         if (response.getStatus() == 200) {
-                            body = response.getBody();
+                            body = response.getBody().toString();
                             LOG.info(body);
                         } else {
                             throw new Exception("Error code: " + response.getStatus());
