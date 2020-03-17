@@ -1,11 +1,14 @@
 package py.com.fuentepy.appfinanzasBackend.service.Impl;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.entity.StringEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,6 +23,7 @@ import py.com.fuentepy.appfinanzasBackend.resource.fcm.NotificationRequestModel;
 import py.com.fuentepy.appfinanzasBackend.service.FcmService;
 import py.com.fuentepy.appfinanzasBackend.util.DateUtil;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 
 /**
@@ -63,18 +67,17 @@ public class FcmServiceImpl implements FcmService {
                         dataModel.setClickAction("FLUTTER_NOTIFICATION_CLICK");
                         notificationRequestModel.setData(dataModel);
 
-//                        Gson gson = new Gson();
-//                        Type type = new TypeToken<NotificationRequestModel>() {
-//                        }.getType();
-//                        String json = gson.toJson(notificationRequestModel, type);
-//                        LOG.info(json);
-//                        StringEntity input = new StringEntity(json);
-//                        input.setContentType("application/json");
+                        Gson gson = new Gson();
+                        Type type = new TypeToken<NotificationRequestModel>() {
+                        }.getType();
+                        String json = gson.toJson(notificationRequestModel, type);
+                        LOG.info(json);
+                        StringEntity input = new StringEntity(json);
+                        input.setContentType("application/json");
 
                         response = Unirest.post(urlFcmSend)
-                                .header("Content-Type", "application/json")
                                 .header("Authorization", "key=" + key)
-                                .body(notificationRequestModel)
+                                .body(input)
                                 .asJson();
                         if (response.getStatus() == 200) {
                             body = response.getBody().toString();
