@@ -113,7 +113,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 mensaje.setDataJson("DATA");
                 mensaje.setUsuarioId(usuario);
                 mensaje.setStatus(false);
-                mensaje.setFechaEnvio(DateUtil.sumarDiasAFecha(prestamoCuotera.getFechaVencimiento(), 1));
+                mensaje.setFechaEnvio(DateUtil.restarDiasAFecha(prestamoCuotera.getFechaVencimiento(), 1));
                 mensajeRepository.save(mensaje);
             }
             retorno = true;
