@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,21 +75,24 @@ public class AuthResource {
         BaseResponse response;
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        LoginModel loginModel = new LoginModel(tokenProvider.createToken(authentication));
-        httpStatus = HttpStatus.OK;
-        message = new MessageResponse(StatusLevel.INFO, "Autenticacion correcta");
-        messages.add(message);
-        response = new LoginResponse(httpStatus.value(), messages, loginModel);
-        return new ResponseEntity<>(response, httpStatus);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            LoginModel loginModel = new LoginModel(tokenProvider.createToken(authentication));
+            httpStatus = HttpStatus.OK;
+            message = new MessageResponse(StatusLevel.INFO, "Autenticacion correcta");
+            messages.add(message);
+            response = new LoginResponse(httpStatus.value(), messages, loginModel);
+            return new ResponseEntity<>(response, httpStatus);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Credenciales no validas");
+        }
     }
 
     @PostMapping("/signup")
