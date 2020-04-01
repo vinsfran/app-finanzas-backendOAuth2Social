@@ -144,7 +144,8 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setSigno("+");
-                movimiento.setDetalle("Cobro: " + entity.getNombre());
+//                movimiento.setDetalle("Cobro: " + entity.getNombre());
+                movimiento.setDetalle(request.getComentario());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());

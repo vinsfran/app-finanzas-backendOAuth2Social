@@ -42,4 +42,8 @@ public class ConceptoRequestCobro implements Serializable {
     @JsonDeserialize(using = JsonDateSimpleDeserializer.class)
     private Date fechaMovimiento;
 
+    @JsonProperty("comentario")
+    @SerializedName("comentario")
+    private String comentario;
+
 }
