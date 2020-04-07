@@ -119,8 +119,8 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoPagado());
                 movimiento.setSigno("-");
-//                movimiento.setDetalle("Pago: " + entity.getNombre());
-                movimiento.setDetalle(request.getComentario());
+                movimiento.setDetalle("Pago: " + entity.getNombre());
+                movimiento.setComentario(request.getComentario());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());
@@ -145,8 +145,8 @@ public class ConceptoServiceImpl implements ConceptoService {
                 movimiento.setFechaMovimiento(request.getFechaMovimiento());
                 movimiento.setMonto(request.getMontoCobrado());
                 movimiento.setSigno("+");
-//                movimiento.setDetalle("Cobro: " + entity.getNombre());
-                movimiento.setDetalle(request.getComentario());
+                movimiento.setDetalle("Cobro: " + entity.getNombre());
+                movimiento.setComentario(request.getComentario());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.CONCEPTOS);
                 movimiento.setMonedaId(entity.getMonedaId());

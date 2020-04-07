@@ -59,6 +59,9 @@ public class Movimiento implements Serializable {
     @Column(name = "tabla_nombre")
     private String tablaNombre;
 
+    @Column(name = "comentario")
+    private String comentario;
+
     @JoinColumn(name = "moneda_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Moneda monedaId;

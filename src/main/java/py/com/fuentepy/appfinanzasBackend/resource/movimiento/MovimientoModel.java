@@ -51,6 +51,10 @@ public class MovimientoModel implements Serializable {
     @SerializedName("detalle")
     private String detalle;
 
+    @JsonProperty("comentario")
+    @SerializedName("comentario")
+    private String comentario;
+
     @JsonProperty("tabla_id")
     @SerializedName("tabla_id")
     private Long tablaId;

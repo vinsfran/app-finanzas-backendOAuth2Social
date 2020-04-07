@@ -27,6 +27,7 @@ public class ConceptoConverter {
         conceptoMovimientoModel.setFechaMovimiento(movimiento.getFechaMovimiento());
         conceptoMovimientoModel.setMonto(movimiento.getMonto());
         conceptoMovimientoModel.setTipoMovimiento("INGRESO");
+        conceptoMovimientoModel.setComentario(movimiento.getComentario());
         if (movimiento.getSigno().equals("-")) {
             conceptoMovimientoModel.setTipoMovimiento("EGRESO");
         }

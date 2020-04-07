@@ -50,4 +50,8 @@ public class ConceptoMovimientoModel implements Serializable {
     @SerializedName("moneda")
     private String moneda;
 
+    @JsonProperty("comentario")
+    @SerializedName("comentario")
+    private String comentario;
+
 }

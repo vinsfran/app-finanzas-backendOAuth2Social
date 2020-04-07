@@ -35,6 +35,7 @@ public class MovimientoConverter {
         entity.setNumeroCuota(model.getNumeroCuota());
         entity.setSigno(model.getSigno());
         entity.setDetalle(model.getDetalle());
+        entity.setComentario(model.getComentario());
         entity.setNumeroCuota(model.getNumeroCuota());
         entity.setTablaId(model.getTablaId());
         entity.setTablaNombre(model.getTablaName());
