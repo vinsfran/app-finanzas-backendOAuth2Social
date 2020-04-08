@@ -91,10 +91,14 @@ public class PrestamoServiceImpl implements PrestamoService {
         boolean retorno = false;
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
+        if (request.getCantidadCuotasPagadas() > 0) {
+            request.setMontoPagado(request.getMontoCuota() * request.getCantidadCuotasPagadas());
+        }
         Prestamo prestamo = prestamoRepository.saveAndFlush(PrestamoConverter.prestamoNewToPrestamoEntity(request, usuarioId));
         if (prestamo != null) {
             int totDias = 30;
-            for (int i = 0; i < request.getCantidadCuotas(); i++) {
+            int cuotasRestantes = request.getCantidadCuotas() - request.getCantidadCuotasPagadas();
+            for (int i = 0; i < cuotasRestantes; i++) {
                 PrestamoCuotera prestamoCuotera = new PrestamoCuotera();
                 prestamoCuotera.setPrestamoId(prestamo);
                 prestamoCuotera.setNumeroCuota(i + 1);
@@ -174,6 +178,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago Prestamo: " + prestamo.getDestinoPrestamo());
+                movimiento.setComentario(request.getComentario());
                 movimiento.setTablaId(prestamo.getId());
                 movimiento.setTablaNombre(ConstantUtil.PRESTAMOS);
                 movimiento.setMonedaId(prestamo.getMonedaId());

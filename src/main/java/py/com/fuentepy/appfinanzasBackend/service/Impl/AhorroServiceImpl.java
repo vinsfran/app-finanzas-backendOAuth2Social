@@ -118,6 +118,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("-");
                 movimiento.setDetalle("Pago: Ahorro, Cuota: " + entity.getCantidadCuotasPagadas());
+                movimiento.setComentario(request.getComentario());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());
@@ -149,6 +150,7 @@ public class AhorroServiceImpl implements AhorroService {
                 movimiento.setNumeroCuota(request.getNumeroCuota());
                 movimiento.setSigno("+");
                 movimiento.setDetalle("Cobro: Ahorro, Nro: " + entity.getId());
+                movimiento.setComentario(request.getComentario());
                 movimiento.setTablaId(entity.getId());
                 movimiento.setTablaNombre(ConstantUtil.AHORROS);
                 movimiento.setMonedaId(entity.getMonedaId());

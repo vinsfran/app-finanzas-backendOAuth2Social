@@ -54,4 +54,8 @@ public class PrestamoRequestPago implements Serializable {
     @SerializedName("id_tipo_pago")
     private Long idTipoPago;
 
+    @JsonProperty("comentario")
+    @SerializedName("comentario")
+    private String comentario;
+
 }
