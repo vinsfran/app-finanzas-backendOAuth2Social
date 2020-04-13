@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleDeserializer;
 import py.com.fuentepy.appfinanzasBackend.json.JsonDateSimpleSerializer;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -54,4 +55,15 @@ public class UsuarioModel implements Serializable {
     @SerializedName("sexo")
     private String sexo;
 
+//    @JsonProperty("moneda_id")
+//    @SerializedName("moneda_id")
+//    private Integer monedaId;
+//
+//    @JsonProperty("moneda_nombre")
+//    @SerializedName("moneda_nombre")
+//    private Integer monedaNombre;
+
+    @JsonProperty("moneda")
+    @SerializedName("moneda")
+    private MonedaModel monedaModel;
 }

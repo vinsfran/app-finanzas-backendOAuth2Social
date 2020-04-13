@@ -71,4 +71,7 @@ public class Usuario implements Serializable {
     @Column(name = "provider_id")
     private String providerId;
 
+    @Column(name = "monedas_id")
+    private Integer monedaId;
+
 }

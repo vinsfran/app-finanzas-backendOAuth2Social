@@ -37,6 +37,9 @@ public class MonedaServiceImpl implements MonedaService {
     @Override
     @Transactional(readOnly = true)
     public MonedaModel findById(Integer id) {
+        if (id == null) {
+            id = 1;
+        }
         MonedaModel model = null;
         Optional<Moneda> optional = monedaRepository.findById(id);
         if (optional.isPresent()) {

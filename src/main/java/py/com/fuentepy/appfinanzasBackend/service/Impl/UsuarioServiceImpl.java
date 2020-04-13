@@ -13,8 +13,10 @@ import py.com.fuentepy.appfinanzasBackend.data.entity.Dispositivo;
 import py.com.fuentepy.appfinanzasBackend.data.entity.Usuario;
 import py.com.fuentepy.appfinanzasBackend.data.repository.DispositivoRepository;
 import py.com.fuentepy.appfinanzasBackend.data.repository.UsuarioRepository;
+import py.com.fuentepy.appfinanzasBackend.resource.moneda.MonedaModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioModel;
 import py.com.fuentepy.appfinanzasBackend.resource.usuario.UsuarioRequestUpdate;
+import py.com.fuentepy.appfinanzasBackend.service.MonedaService;
 import py.com.fuentepy.appfinanzasBackend.service.UsuarioService;
 
 import java.util.Optional;
@@ -39,6 +41,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private ArchivoServiceImpl archivoService;
 
+    @Autowired
+    private MonedaServiceImpl monedaService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -59,6 +64,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuarioModel.setFechaNacimiento(usuario.getFechaNacimiento());
             usuarioModel.setSexo(usuario.getSexo());
             usuarioModel.setImageProfileName(archivo.getNombre());
+            usuarioModel.setMonedaModel(monedaService.findById(usuario.getMonedaId()));
         }
         return usuarioModel;
     }
